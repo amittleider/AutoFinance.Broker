@@ -4,14 +4,6 @@ resources:
     checkoutOptions:
       submodules: true
 
-
-# queue:
-#   name: windows-2019
-#   demands: 
-#   - msbuild
-#   - visualstudio
-#   - vstest
-
 pool:
   vmImage: windows-2019
 
@@ -25,26 +17,13 @@ steps:
   inputs:
     version: '3.1.100'
 
-- task: NuGetToolInstaller@1
+- script: |
+    dotnet restore
+    dotnet build --output $(Build.ArtifactStagingDirectory)
+  displayName: Build
 
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)'
-
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-
-- task: VSTest@2
-  inputs:
-    testSelector: 'testAssemblies'
-    testAssemblyVer2: |
-      **\AutoFinance.Broker.UnitTests.dll
-      !**\*TestAdapter.dll
-      !**\obj\**
-    searchFolder: '$(System.DefaultWorkingDirectory)'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+- script: |
+    dotnet pack --output $(Build.ArtifactStagingDirectory) -c Release /p:Version=1.0.$(Build.BuildId)
+    dotnet nuget push $(Build.ArtifactStagingDirectory)\AutoFinance.Broker.1.0.$(Build.BuildId).nupkg --source https://www.nuget.org --api-key $(NugetApiKey)
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  displayName: Push nuget
