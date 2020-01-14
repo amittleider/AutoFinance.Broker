@@ -1,0 +1,3 @@
+[submodule "tws-api-dotnet-standard"]
+	path = tws-api-dotnet-standard
+	url = https://github.com/amittleider/tws-api-dotnet-standard.git
