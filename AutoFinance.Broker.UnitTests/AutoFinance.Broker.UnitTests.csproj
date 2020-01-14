@@ -33,7 +33,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AutoFinance.Broker\AutoFinance.Broker.csproj" />
-    <ProjectReference Include="..\InteractiveBrokers.TwsClient\InteractiveBrokers.TwsClient.csproj" />
+    <ProjectReference Include="..\tws-api-dotnet-standard\InteractiveBrokers.TwsClient\InteractiveBrokers.TwsClient.csproj" />
   </ItemGroup>
 
 </Project>

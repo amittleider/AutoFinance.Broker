@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\InteractiveBrokers.TwsClient\InteractiveBrokers.TwsClient.csproj" />
+    <ProjectReference Include="..\tws-api-dotnet-standard\InteractiveBrokers.TwsClient\InteractiveBrokers.TwsClient.csproj" />
   </ItemGroup>
 
   <ItemGroup>
