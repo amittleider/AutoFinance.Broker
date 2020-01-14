@@ -24,6 +24,7 @@ steps:
 
 - script: |
     dotnet pack --output $(Build.ArtifactStagingDirectory) -c Release /p:Version=1.0.$(Build.BuildId)
-    dotnet nuget push $(Build.ArtifactStagingDirectory)\AutoFinance.Broker.1.0.$(Build.BuildId).nupkg --source https://www.nuget.org --api-key $(NugetApiKey)
+    dotnet nuget push $(Build.ArtifactStagingDirectory)\AutoFinance.Broker.1.0.$(Build.BuildId).nupkg --source https://www.nuget.org --api-key $(BrokerNugetApiKey)
+    dotnet nuget push $(Build.ArtifactStagingDirectory)\InteractiveBrokers.TwsClient.1.0.$(Build.BuildId).nupkg --source https://www.nuget.org --api-key $(TwsClientNugetApiKey)
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   displayName: Push nuget
