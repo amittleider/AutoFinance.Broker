@@ -30,6 +30,9 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// The signal from TWS that says when to read from the queue
         /// </summary>
         private EReaderMonitorSignal signal;
+        private string host;
+        private int port;
+        private int clientId;
 
         /// <summary>
         /// The background thread that will await the signal and send events to the callback handler
@@ -42,11 +45,22 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// </summary>
         /// <param name="clientSocket">The client socket</param>
         /// <param name="twsCallbackHandler">The callback handler</param>
-        public TwsConnectionController(ITwsClientSocket clientSocket, ITwsCallbackHandler twsCallbackHandler)
+        /// <param name="host">The host name</param>
+        /// <param name="port">The port</param>
+        /// <param name="clientId">The client ID, see TWS docs</param>
+        public TwsConnectionController(
+            ITwsClientSocket clientSocket, 
+            ITwsCallbackHandler twsCallbackHandler,
+            string host,
+            int port,
+            int clientId)
         {
             this.clientSocket = clientSocket;
             this.twsCallbackHandler = twsCallbackHandler;
             this.signal = new EReaderMonitorSignal();
+            this.host = host;
+            this.port = port;
+            this.clientId = clientId;
         }
 
         /// <summary>
@@ -88,7 +102,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             ////});
 
             this.twsCallbackHandler.ConnectionAcknowledgementEvent += connectionAcknowledgementCallback;
-            this.clientSocket.Connect("localhost", 7462, 2);
+            this.clientSocket.Connect(this.host, this.port, this.clientId);
             return taskSource.Task;
         }
 

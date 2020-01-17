@@ -28,7 +28,7 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
         public async Task TwsExecutionController_Should_ReturnExecutions()
         {
             TwsObjectFactory twsObjectFactory = new TwsObjectFactory();
-            TwsConnectionController connectionController = new TwsConnectionController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler);
+            TwsConnectionController connectionController = new TwsConnectionController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler, "localhost", 7462, 1);
             ITwsNextOrderIdController nextOrderIdController = new TwsNextOrderIdController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler);
             TwsOrderPlacementController orderPlacementController = new TwsOrderPlacementController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler);
             TwsRequestIdGenerator twsRequestIdGenerator = new TwsRequestIdGenerator();
