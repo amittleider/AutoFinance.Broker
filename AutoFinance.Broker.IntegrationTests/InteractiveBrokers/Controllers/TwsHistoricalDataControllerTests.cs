@@ -31,7 +31,7 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
             TwsObjectFactory twsObjectFactory = new TwsObjectFactory();
 
             TwsRequestIdGenerator twsRequestIdGenerator = new TwsRequestIdGenerator();
-            TwsConnectionController connectionController = new TwsConnectionController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler);
+            TwsConnectionController connectionController = new TwsConnectionController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler, "localhost", 7462, 1);
             TwsHistoricalDataController historicalDataController = new TwsHistoricalDataController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler, twsRequestIdGenerator);
 
             await connectionController.ConnectAsync();

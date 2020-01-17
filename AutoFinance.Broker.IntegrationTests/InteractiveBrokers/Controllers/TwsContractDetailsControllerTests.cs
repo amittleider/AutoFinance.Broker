@@ -27,7 +27,7 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
             // Setup
             TwsObjectFactory twsObjectFactory = new TwsObjectFactory();
 
-            TwsConnectionController connectionController = new TwsConnectionController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler);
+            TwsConnectionController connectionController = new TwsConnectionController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler, "localhost", 7462, 1);
             TwsContractDetailsController contractDetailsController = new TwsContractDetailsController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler, new TwsRequestIdGenerator());
 
             await connectionController.ConnectAsync();
@@ -60,7 +60,7 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
             // Setup
             TwsObjectFactory twsObjectFactory = new TwsObjectFactory();
 
-            TwsConnectionController connectionController = new TwsConnectionController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler);
+            TwsConnectionController connectionController = new TwsConnectionController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler, "localhost", 7462, 1);
             TwsContractDetailsController contractDetailsController = new TwsContractDetailsController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler, new TwsRequestIdGenerator());
 
             await connectionController.ConnectAsync();
