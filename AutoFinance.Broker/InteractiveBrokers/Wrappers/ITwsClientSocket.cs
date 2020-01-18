@@ -104,5 +104,10 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// </summary>
         /// <param name="requestId">The request Id</param>
         void RequestExecutions(int requestId);
+
+        /// <summary>
+        /// Requests all open orders
+        /// </summary>
+        void RequestOpenOrders();
     }
 }

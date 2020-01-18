@@ -62,6 +62,11 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         public event EventHandler<OpenOrderEventArgs> OpenOrderEvent;
 
         /// <summary>
+        /// The event that is fired when OpenOrderEnd is called by TWS
+        /// </summary>
+        public event EventHandler<OpenOrderEndEventArgs> OpenOrderEndEvent;
+
+        /// <summary>
         /// The event that is fired when OrderStatus is called by TWS
         /// </summary>
         public event EventHandler<OrderStatusEventArgs> OrderStatusEvent;
@@ -284,6 +289,8 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <inheritdoc/>
         public void openOrderEnd()
         {
+            var eventArgs = new OpenOrderEndEventArgs();
+            this.OpenOrderEndEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>

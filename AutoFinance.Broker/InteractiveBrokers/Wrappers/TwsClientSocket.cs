@@ -146,5 +146,14 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         {
             this.EClientSocket.reqExecutions(requestId, new ExecutionFilter());
         }
+
+        /// <summary>
+        /// Request all open orders.
+        /// Client ID 0 behaves differently from the rest. See TWS docs.
+        /// </summary>
+        public void RequestOpenOrders()
+        {
+            this.EClientSocket.reqOpenOrders();
+        }
     }
 }
