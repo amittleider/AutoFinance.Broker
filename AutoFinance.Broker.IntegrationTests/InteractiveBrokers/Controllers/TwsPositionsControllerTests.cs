@@ -26,7 +26,7 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
         /// Test that position events come back from TWS properly
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
+        [Fact(Skip = "Only during RTH")]
         public async Task PositionsController_Should_ReturnAListOfPositions()
         {
             // Setup
@@ -36,16 +36,16 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
             ITwsNextOrderIdController nextOrderIdController = new TwsNextOrderIdController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler);
             TwsOrderPlacementController orderPlacementController = new TwsOrderPlacementController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler);
 
-            await connectionController.ConnectAsync();
+            await connectionController.EnsureConnectedAsync();
 
             // Create a position
-            Contract contract = new Contract();
-            contract.SecType = TwsContractSecType.Future;
-            contract.Symbol = TwsSymbol.Dax;
-            contract.Exchange = TwsExchange.Dtb;
-            contract.Currency = TwsCurrency.Eur;
-            contract.Multiplier = "25";
-            contract.LastTradeDateOrContractMonth = "201809";
+            Contract contract = new Contract
+            {
+                SecType = TwsContractSecType.Stock,
+                Symbol = "MSFT",
+                Exchange = TwsExchange.Smart,
+                PrimaryExch = TwsExchange.Island,
+            };
 
             Order order = new Order
             {

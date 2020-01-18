@@ -34,17 +34,15 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
             TwsOrderPlacementController orderPlacementController = new TwsOrderPlacementController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler);
             TwsOrderCancelationController orderCancelationController = new TwsOrderCancelationController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler);
 
-            await connectionController.ConnectAsync();
+            await connectionController.EnsureConnectedAsync();
 
             // Initialize the contract
             Contract contract = new Contract
             {
-                SecType = TwsContractSecType.Future,
-                Symbol = TwsSymbol.Dax,
-                Exchange = TwsExchange.Dtb,
-                Currency = TwsCurrency.Eur,
-                Multiplier = "25",
-                LastTradeDateOrContractMonth = "201809"
+                SecType = TwsContractSecType.Stock,
+                Symbol = "MSFT",
+                Exchange = TwsExchange.Smart,
+                PrimaryExch = TwsExchange.Island,
             };
 
             // Initialize the order

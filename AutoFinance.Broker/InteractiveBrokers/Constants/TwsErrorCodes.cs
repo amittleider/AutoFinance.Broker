@@ -13,5 +13,15 @@ namespace AutoFinance.Broker.InteractiveBrokers.Constants
         /// OrderCancelled error code
         /// </summary>
         public const int OrderCancelled = 202;
+
+        /// <summary>
+        /// Invalid order type error code
+        /// </summary>
+        public const int InvalidOrderType = 387;
+
+        /// <summary>
+        /// Ambiguous contract error code
+        /// </summary>
+        public const int AmbiguousContract = 200;
     }
 }

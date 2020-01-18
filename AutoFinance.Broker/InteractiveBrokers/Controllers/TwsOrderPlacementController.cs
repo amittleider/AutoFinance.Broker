@@ -15,7 +15,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
     /// <summary>
     /// Exposes APIs to place orders through TWS
     /// </summary>
-    public class TwsOrderPlacementController
+    public class TwsOrderPlacementController : ITwsOrderPlacementController
     {
         /// <summary>
         /// The client socket
@@ -66,6 +66,24 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                 }
             };
 
+            EventHandler<ErrorEventArgs> orderErrorEventCallback = null;
+            orderErrorEventCallback = (sender, eventArgs) =>
+            {
+                if (orderId == eventArgs.Id)
+                {
+                    if (eventArgs.ErrorCode == TwsErrorCodes.InvalidOrderType ||
+                        eventArgs.ErrorCode == TwsErrorCodes.AmbiguousContract
+                    )
+                    {
+                        // Unregister the callbacks
+                        this.twsCallbackHandler.OpenOrderEvent -= openOrderEventCallback;
+                        this.twsCallbackHandler.ErrorEvent -= orderErrorEventCallback;
+                        taskSource.TrySetResult(false);
+                    }
+                }
+            };
+
+            this.twsCallbackHandler.ErrorEvent += orderErrorEventCallback;
             this.twsCallbackHandler.OpenOrderEvent += openOrderEventCallback;
 
             // Set the operation to cancel after 5 seconds

@@ -5,28 +5,28 @@
 namespace AutoFinance.Broker.InteractiveBrokers.Constants
 {
     /// <summary>
-    /// Constants for the TWS exchanges
+    /// Tws Order Types
     /// </summary>
-    public class TwsExchange
+    public class TwsOrderType
     {
         /// <summary>
-        /// The DTB exchange in Germany
+        /// Limit order
         /// </summary>
-        public const string Dtb = "DTB";
+        public const string Limit = "LMT";
 
         /// <summary>
-        /// Smart routing by IB
+        /// Peg to market order (Used to be PEG MKT but seems to have been changed, docs don't reflect it).
         /// </summary>
-        public const string Smart = "SMART";
+        public const string PegToMarket = "REL";
 
         /// <summary>
-        /// The Island Exchange
+        /// Market roders
         /// </summary>
-        public const string Island = "ISLAND";
+        public const string Market = "MKT";
 
         /// <summary>
-        /// IEX
+        /// Stop loss
         /// </summary>
-        public const string Iex = "IEX";
+        public const string StopLoss = "STP";
     }
 }

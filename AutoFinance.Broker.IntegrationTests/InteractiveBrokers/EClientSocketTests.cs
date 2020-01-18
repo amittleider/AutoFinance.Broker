@@ -65,13 +65,13 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers
             reader.Start();
 
             // Process messages when the signal comes
-            Contract contract = new Contract();
-            contract.SecType = TwsContractSecType.Future;
-            contract.Symbol = TwsSymbol.Dax;
-            contract.Exchange = TwsExchange.Dtb;
-            contract.Currency = TwsCurrency.Eur;
-            contract.Multiplier = "25";
-            contract.LastTradeDateOrContractMonth = "201809";
+            Contract contract = new Contract
+            {
+                SecType = TwsContractSecType.Stock,
+                Symbol = "MSFT",
+                Exchange = TwsExchange.Smart,
+                PrimaryExch = TwsExchange.Island,
+            };
 
             Thread thread = new Thread(
              () =>
@@ -397,12 +397,10 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers
             // Initialize the contract that will be traded
             Contract contract = new Contract
             {
-                SecType = TwsContractSecType.Future,
-                Symbol = TwsSymbol.Dax,
-                Exchange = TwsExchange.Dtb,
-                Currency = TwsCurrency.Eur,
-                Multiplier = "25",
-                LastTradeDateOrContractMonth = "201809"
+                SecType = TwsContractSecType.Stock,
+                Symbol = "MSFT",
+                Exchange = TwsExchange.Smart,
+                PrimaryExch = TwsExchange.Island,
             };
 
             // Initialize the order
@@ -504,15 +502,11 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers
         {
             // Setup
             // Initialize the contract that will be traded
-            Contract contract = new Contract
-            {
-                SecType = TwsContractSecType.Future,
-                Symbol = TwsSymbol.Dax,
-                Exchange = TwsExchange.Dtb,
-                Currency = TwsCurrency.Eur,
-                Multiplier = "25",
-                LastTradeDateOrContractMonth = "201809"
-            };
+            Contract contract = new Contract();
+            contract.SecType = TwsContractSecType.Stock;
+            contract.Symbol = "MSFT";
+            contract.Exchange = TwsExchange.Smart;
+            contract.PrimaryExch = TwsExchange.Island;
 
             // Initialize the order
             Order order = new Order
@@ -584,12 +578,10 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers
             // Initialize the contract that will be traded
             Contract contract = new Contract
             {
-                SecType = TwsContractSecType.Future,
-                Symbol = TwsSymbol.Dax,
-                Exchange = TwsExchange.Dtb,
-                Currency = TwsCurrency.Eur,
-                Multiplier = "25",
-                LastTradeDateOrContractMonth = "201809"
+                SecType = TwsContractSecType.Stock,
+                Symbol = "MSFT",
+                Exchange = TwsExchange.Smart,
+                PrimaryExch = TwsExchange.Island,
             };
 
             // Initialize the order
@@ -677,19 +669,17 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers
         /// <summary>
         /// Tests requesting historical data from TWS
         /// </summary>
-        [Fact]
+        [Fact(Skip = "Requires market data subscription")]
         public void ReqHistoricalData_Should_Callback()
         {
             // Setup
             // Initialize the contract that will be traded
             Contract contract = new Contract
             {
-                SecType = TwsContractSecType.Future,
-                Symbol = TwsSymbol.Dax,
-                Exchange = TwsExchange.Dtb,
-                Currency = TwsCurrency.Eur,
-                Multiplier = "25",
-                LastTradeDateOrContractMonth = "201809"
+                SecType = TwsContractSecType.Stock,
+                Symbol = "MSFT",
+                Exchange = TwsExchange.Smart,
+                PrimaryExch = TwsExchange.Iex,
             };
 
             Mock<EWrapper> mockTwsWrapper = new Mock<EWrapper>();
@@ -771,19 +761,17 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers
         /// <summary>
         /// Tests requesting historical data from TWS
         /// </summary>
-        [Fact]
+        [Fact(Skip = "Only works during RTH")]
         public void ReqRealtimeBars_Should_SubscribeForever()
         {
             // Setup
             // Initialize the contract that will be traded
             Contract contract = new Contract
             {
-                SecType = TwsContractSecType.Future,
-                Symbol = TwsSymbol.Dax,
-                Exchange = TwsExchange.Dtb,
-                Currency = TwsCurrency.Eur,
-                Multiplier = "25",
-                LastTradeDateOrContractMonth = "201809"
+                SecType = TwsContractSecType.Stock,
+                Symbol = "MSFT",
+                Exchange = TwsExchange.Smart,
+                PrimaryExch = TwsExchange.Island,
             };
 
             Mock<EWrapper> mockTwsWrapper = new Mock<EWrapper>();
@@ -873,7 +861,7 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers
             // EWrapper.openOrder(0, FUT ESTX50 EUR DTB, Order, OrderState)
             // EWrapper.orderStatus(0, "Submitted", 0, 1, 0, 1149884527, 0, 0, 0, null)
             // EWrapper.openOrderEnd()
-            mockTwsWrapper.Verify(mock => mock.openOrderEnd(), Times.Once);
+            mockTwsWrapper.Verify(mock => mock.openOrderEnd(), Times.AtLeastOnce);
         }
 
         /// <summary>
