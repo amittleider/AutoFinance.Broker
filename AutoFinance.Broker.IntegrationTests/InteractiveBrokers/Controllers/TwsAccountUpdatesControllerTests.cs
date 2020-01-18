@@ -27,7 +27,7 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
             TwsObjectFactory twsObjectFactory = new TwsObjectFactory();
             TwsConnectionController connectionController = new TwsConnectionController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler, "localhost", 7462, 1);
             TwsAccountUpdatesController accountUpdatesController = new TwsAccountUpdatesController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler);
-            await connectionController.ConnectAsync();
+            await connectionController.EnsureConnectedAsync();
 
             // Call
             string accountId = "DU1052488";

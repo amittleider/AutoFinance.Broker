@@ -13,5 +13,10 @@ namespace AutoFinance.Broker.InteractiveBrokers.Constants
         /// A futures contract
         /// </summary>
         public const string Future = "FUT";
+
+        /// <summary>
+        /// A stock contract
+        /// </summary>
+        public const string Stock = "STK";
     }
 }

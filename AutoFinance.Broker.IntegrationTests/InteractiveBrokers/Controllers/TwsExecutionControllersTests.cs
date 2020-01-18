@@ -34,7 +34,7 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
             TwsRequestIdGenerator twsRequestIdGenerator = new TwsRequestIdGenerator();
             TwsExecutionController executionController = new TwsExecutionController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler, twsRequestIdGenerator);
 
-            await connectionController.ConnectAsync();
+            await connectionController.EnsureConnectedAsync();
 
             // Create a position
             Contract contract = new Contract();

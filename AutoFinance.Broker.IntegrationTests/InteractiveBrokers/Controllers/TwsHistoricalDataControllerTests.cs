@@ -24,7 +24,7 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
         /// Ensure that the historical data controller can retrieve data
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
+        [Fact(Skip = "Requires market data subscription")]
         public async Task HistoricalDataController_Should_RetrieveHistoricalData()
         {
             // Setup
@@ -34,16 +34,14 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
             TwsConnectionController connectionController = new TwsConnectionController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler, "localhost", 7462, 1);
             TwsHistoricalDataController historicalDataController = new TwsHistoricalDataController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler, twsRequestIdGenerator);
 
-            await connectionController.ConnectAsync();
+            await connectionController.EnsureConnectedAsync();
 
             Contract contract = new Contract
             {
-                SecType = TwsContractSecType.Future,
-                Symbol = TwsSymbol.Dax,
-                Exchange = TwsExchange.Dtb,
-                Currency = TwsCurrency.Eur,
-                Multiplier = "25",
-                LastTradeDateOrContractMonth = "201809"
+                SecType = TwsContractSecType.Stock,
+                Symbol = "MSFT",
+                Exchange = TwsExchange.Smart,
+                PrimaryExch = TwsExchange.Island,
             };
 
             string queryTime = DateTime.Now.AddMonths(-6).ToString("yyyyMMdd HH:mm:ss");
