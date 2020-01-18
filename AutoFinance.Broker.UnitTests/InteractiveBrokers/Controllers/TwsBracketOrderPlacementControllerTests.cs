@@ -32,6 +32,7 @@ namespace AutoFinance.Broker.UnitTests.InteractiveBrokers.Controllers
                 Action = TwsOrderActions.Buy,
                 OrderType = TwsOrderType.PegToMarket,
                 TotalQuantity = 100,
+                Tif = TwsTimeInForce.GoodTillCancelled,
                 Transmit = false,
                 PermId = 234234, // Set a random perm id unique per order, it's only for the unit test - normally TWS sets this value
             };
@@ -42,6 +43,7 @@ namespace AutoFinance.Broker.UnitTests.InteractiveBrokers.Controllers
                 OrderType = TwsOrderType.Limit,
                 TotalQuantity = 100,
                 LmtPrice = 190,
+                Tif = TwsTimeInForce.GoodTillCancelled,
                 ParentId = 1,
                 Transmit = false,
                 PermId = 52345,
@@ -54,6 +56,7 @@ namespace AutoFinance.Broker.UnitTests.InteractiveBrokers.Controllers
                 TotalQuantity = 100,
                 AuxPrice = 150,
                 ParentId = 1,
+                Tif = TwsTimeInForce.GoodTillCancelled,
                 Transmit = true,
                 PermId = 615,
             };

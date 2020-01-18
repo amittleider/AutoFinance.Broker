@@ -55,6 +55,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                 Action = entryAction,
                 OrderType = TwsOrderType.PegToMarket,
                 TotalQuantity = quantity,
+                Tif = TwsTimeInForce.GoodTillCancelled,
                 Transmit = false,
             };
 
@@ -65,6 +66,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                 TotalQuantity = quantity,
                 LmtPrice = takePrice,
                 ParentId = entryOrderId,
+                Tif = TwsTimeInForce.GoodTillCancelled,
                 Transmit = false,
             };
 
@@ -75,6 +77,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                 TotalQuantity = quantity,
                 AuxPrice = stopPrice,
                 ParentId = entryOrderId,
+                Tif = TwsTimeInForce.GoodTillCancelled,
                 Transmit = true,
             };
 
