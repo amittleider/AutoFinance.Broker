@@ -1,6 +1,4 @@
-﻿// Copyright (c) Andrew Mittleider. All Rights Reserved.
-// Unauthorized copying of this file, via any medium is strictly prohibited.
-// Proprietary and confidential.
+﻿// Licensed under the Apache License, Version 2.0.
 
 namespace AutoFinance.Broker.InteractiveBrokers.Controllers
 {
@@ -72,8 +70,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                 if (orderId == eventArgs.Id)
                 {
                     if (eventArgs.ErrorCode == TwsErrorCodes.InvalidOrderType ||
-                        eventArgs.ErrorCode == TwsErrorCodes.AmbiguousContract
-                    )
+                        eventArgs.ErrorCode == TwsErrorCodes.AmbiguousContract)
                     {
                         // Unregister the callbacks
                         this.twsCallbackHandler.OpenOrderEvent -= openOrderEventCallback;

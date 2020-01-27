@@ -1,6 +1,4 @@
-﻿// Copyright (c) Andrew Mittleider. All Rights Reserved.
-// Unauthorized copying of this file, via any medium is strictly prohibited.
-// Proprietary and confidential.
+﻿// Licensed under the Apache License, Version 2.0.
 
 namespace AutoFinance.Broker.InteractiveBrokers.Controllers
 {
@@ -111,11 +109,11 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         {
             var taskSource = new TaskCompletionSource<bool>();
 
-            void connectionAcknowledgementCallback(object sender, EventArgs eventArgs)
+            void ConnectionAcknowledgementCallback(object sender, EventArgs eventArgs)
             {
                 // When the connection is acknowledged, create a reader to consume messages from the TWS.
                 // The EReader will consume the incoming messages and the callback handler will begin to fire events.
-                this.twsCallbackHandler.ConnectionAcknowledgementEvent -= connectionAcknowledgementCallback;
+                this.twsCallbackHandler.ConnectionAcknowledgementEvent -= ConnectionAcknowledgementCallback;
                 var reader = new EReader(this.clientSocket.EClientSocket, this.signal);
                 reader.Start();
 
@@ -141,7 +139,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             ////    taskSource.SetCanceled();
             ////});
 
-            this.twsCallbackHandler.ConnectionAcknowledgementEvent += connectionAcknowledgementCallback;
+            this.twsCallbackHandler.ConnectionAcknowledgementEvent += ConnectionAcknowledgementCallback;
             this.clientSocket.Connect(this.host, this.port, this.clientId);
             return taskSource.Task;
         }

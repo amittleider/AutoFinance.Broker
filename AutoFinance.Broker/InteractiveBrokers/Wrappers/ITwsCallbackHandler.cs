@@ -1,6 +1,4 @@
-﻿// Copyright (c) Andrew Mittleider. All Rights Reserved.
-// Unauthorized copying of this file, via any medium is strictly prohibited.
-// Proprietary and confidential.
+﻿// Licensed under the Apache License, Version 2.0.
 
 namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
 {
@@ -100,8 +98,10 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// </summary>
         event EventHandler<ExecutionDetailsEndEventArgs> ExecutionDetailsEndEvent;
 
-        // TWS APIs are not written with quality, ignore warnings in this file that depend directly on them
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable SA1600 // Elements must be documented
 #pragma warning disable SA1300 // Element must begin with upper-case letter
+
         /// <summary>
         /// This is called at the end of an AccountDetails request
         /// </summary>
@@ -245,7 +245,6 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <param name="data">The data (itself)(?)</param>
         void fundamentalData(int reqId, string data);
 
-#pragma warning disable SA1313 // Parameter names must begin with lower-case letter
         /// <summary>
         /// The historical data callback from TWS
         /// </summary>
@@ -260,9 +259,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <param name="WAP">The weighted average price</param>
         /// <param name="hasGaps">If the data has gaps</param>
         void historicalData(int reqId, string date, double open, double high, double low, double close, int volume, int count, double WAP, bool hasGaps);
-#pragma warning restore SA1313 // Parameter names must begin with lower-case letter
 
-#pragma warning disable SA1600 // Elements must be documented
         void historicalDataEnd(int reqId, string start, string end);
 
         void managedAccounts(string accountsList);
@@ -285,9 +282,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
 
         void positionMultiEnd(int requestId);
 
-#pragma warning disable SA1313 // Parameter names must begin with lower-case letter
         void realtimeBar(int reqId, long time, double open, double high, double low, double close, long volume, double WAP, int count);
-#pragma warning restore SA1313 // Parameter names must begin with lower-case letter
 
         void receiveFA(int faDataType, string faXmlData);
 
@@ -336,7 +331,8 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         void verifyCompleted(bool isSuccessful, string errorText);
 
         void verifyMessageAPI(string apiData);
-#pragma warning restore SA1600 // Elements must be documented
 #pragma warning restore SA1300 // Element must begin with upper-case letter
+#pragma warning restore SA1600 // Elements must be documented
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     }
 }

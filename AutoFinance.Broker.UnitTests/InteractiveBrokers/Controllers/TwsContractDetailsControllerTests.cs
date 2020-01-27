@@ -1,7 +1,3 @@
-// Copyright (c) Andrew Mittleider. All Rights Reserved.
-// Unauthorized copying of this file, via any medium is strictly prohibited.
-// Proprietary and confidential.
-
 namespace AutoFinance.Broker.UnitTests.InteractiveBrokers
 {
     using System.Threading.Tasks;
