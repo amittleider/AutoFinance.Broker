@@ -1,6 +1,4 @@
-﻿// Copyright (c) Andrew Mittleider. All Rights Reserved.
-// Unauthorized copying of this file, via any medium is strictly prohibited.
-// Proprietary and confidential.
+﻿// Licensed under the Apache License, Version 2.0.
 
 namespace AutoFinance.Broker.InteractiveBrokers
 {

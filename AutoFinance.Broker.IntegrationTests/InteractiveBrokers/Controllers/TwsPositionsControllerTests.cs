@@ -1,8 +1,4 @@
-﻿// Copyright (c) Andrew Mittleider. All Rights Reserved.
-// Unauthorized copying of this file, via any medium is strictly prohibited.
-// Proprietary and confidential.
-
-namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
+﻿namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
 {
     using System.Collections.Concurrent;
     using System.Collections.Generic;

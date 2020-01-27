@@ -267,3 +267,5 @@ __pycache__/
 .ipynb_checkpoints/
 nosetests.xml
 *.ipynb
+
+.vscode/

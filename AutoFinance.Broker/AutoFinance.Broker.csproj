@@ -11,29 +11,25 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <LangVersion>7.2</LangVersion>
+    <NoWarn>1701;1702;SA1313</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="stylecop.json" />
   </ItemGroup>
-
   <ItemGroup>
     <AdditionalFiles Include="stylecop.json" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.0.2" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\tws-api-dotnet-standard\InteractiveBrokers.TwsClient\InteractiveBrokers.TwsClient.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="System">
-      <HintPath>System</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>
