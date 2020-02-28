@@ -12,7 +12,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
     /// <summary>
     /// This controller handles canceling orders through TWS.
     /// </summary>
-    internal class TwsOrderCancelationController
+    internal class TwsOrderCancelationController : ITwsOrderCancelationController
     {
         /// <summary>
         /// The client socket

@@ -83,5 +83,62 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
 
             return entryOrderAckTask.Result && takeProfitOrderAckTask.Result && stopOrderAckTask.Result;
         }
+
+        /// <summary>
+        /// Places a bracket order with a limit order entry
+        /// </summary>
+        /// <param name="contract">The contract</param>
+        /// <param name="entryAction">Buy/sell/ssell</param>
+        /// <param name="quantity">The quantity</param>
+        /// <param name="entryOrderPrice">The limit order entry price</param>
+        /// <param name="takePrice">The take profit price</param>
+        /// <param name="stopPrice">The stop loss price</param>
+        /// <returns>True if the orders are correctly placed</returns>
+        public async Task<bool> PlaceBracketOrder(Contract contract, string entryAction, double quantity, double entryOrderPrice, double takePrice, double stopPrice)
+        {
+            await this.connectionController.EnsureConnectedAsync();
+
+            // Generate the order IDs
+            int entryOrderId = await this.nextOrderIdController.GetNextValidIdAsync();
+            var takeProfitOrderId = await this.nextOrderIdController.GetNextValidIdAsync();
+            var stopOrderId = await this.nextOrderIdController.GetNextValidIdAsync();
+
+            // Initialize the order
+            Order entryOrder = new Order()
+            {
+                Action = entryAction,
+                OrderType = TwsOrderType.Limit,
+                TotalQuantity = quantity,
+                LmtPrice = entryOrderPrice,
+                Transmit = false,
+            };
+
+            Order takeProfit = new Order()
+            {
+                Action = TwsOrderActions.Reverse(entryAction),
+                OrderType = TwsOrderType.Limit,
+                TotalQuantity = quantity,
+                LmtPrice = takePrice,
+                ParentId = entryOrderId,
+                Transmit = false,
+            };
+
+            Order stopLoss = new Order()
+            {
+                Action = TwsOrderActions.Reverse(entryAction),
+                OrderType = TwsOrderType.StopLoss,
+                TotalQuantity = quantity,
+                AuxPrice = stopPrice,
+                ParentId = entryOrderId,
+                Transmit = true,
+            };
+
+            var entryOrderAckTask = this.orderPlacementController.PlaceOrderAsync(entryOrderId, contract, entryOrder);
+            var takeProfitOrderAckTask = this.orderPlacementController.PlaceOrderAsync(takeProfitOrderId, contract, takeProfit);
+            var stopOrderAckTask = this.orderPlacementController.PlaceOrderAsync(stopOrderId, contract, stopLoss);
+            Task.WaitAll(entryOrderAckTask, takeProfitOrderAckTask, stopOrderAckTask);
+
+            return entryOrderAckTask.Result && takeProfitOrderAckTask.Result && stopOrderAckTask.Result;
+        }
     }
 }

@@ -144,5 +144,13 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         {
             this.EClientSocket.reqExecutions(requestId, new ExecutionFilter());
         }
+
+        /// <summary>
+        /// Request the open orders
+        /// </summary>
+        public void RequestAllOpenOrders()
+        {
+            this.EClientSocket.reqAllOpenOrders();
+        }
     }
 }

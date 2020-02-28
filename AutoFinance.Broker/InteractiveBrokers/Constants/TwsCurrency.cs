@@ -11,5 +11,6 @@ namespace AutoFinance.Broker.InteractiveBrokers.Constants
         /// Euro string
         /// </summary>
         public const string Eur = "EUR";
+        public const string Usd = "USD";
     }
 }
