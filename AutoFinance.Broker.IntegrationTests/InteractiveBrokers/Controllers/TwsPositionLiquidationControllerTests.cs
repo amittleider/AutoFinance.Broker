@@ -54,7 +54,7 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
             Thread.Sleep(1000); // TWS takes some time to put the order in the portfolio. Wait for it.
 
             // Liquidate the position
-            bool success = await positionLiquidationController.LiquidatePosition(TwsSymbol.Dax);
+            bool success = await positionLiquidationController.LiquidatePosition(TwsSymbol.Dax, TwsExchange.Dtb);
             success.Should().BeTrue();
         }
 
@@ -100,7 +100,7 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
             Thread.Sleep(1000); // TWS takes some time to put the order in the portfolio. Wait for it.
 
             // Liquidate the position
-            bool success = await positionLiquidationController.LiquidatePosition(TwsSymbol.Dax);
+            bool success = await positionLiquidationController.LiquidatePosition(TwsSymbol.Dax, TwsExchange.Dtb);
             success.Should().BeTrue();
         }
     }
