@@ -3,7 +3,6 @@ using AutoFinance.Broker.InteractiveBrokers.Constants;
 using AutoFinance.Broker.InteractiveBrokers.Controllers;
 using FluentAssertions;
 using IBApi;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -13,7 +12,7 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
     public class TwsPortfolioOrderCancellationControllerTests
     {
         [Fact]
-        public async Task TwsExecutionController_Should_ReturnExecutions()
+        public async Task Should_CancelOrders()
         {
             TwsObjectFactory twsObjectFactory = new TwsObjectFactory();
             TwsConnectionController connectionController = new TwsConnectionController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler, "localhost", 7462, 1);
