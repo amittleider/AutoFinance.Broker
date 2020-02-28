@@ -1,11 +1,16 @@
-﻿using AutoFinance.Broker.InteractiveBrokers.Constants;
-using IBApi;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿// Licensed under the Apache License, Version 2.0.
 
 namespace AutoFinance.Broker.InteractiveBrokers.Controllers
 {
+    using System;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using AutoFinance.Broker.InteractiveBrokers.Constants;
+    using IBApi;
+
+    /// <summary>
+    /// Liquidates a position
+    /// </summary>
     public class TwsPositionLiquidationController
     {
         private TwsConnectionController connectionController;
@@ -14,6 +19,14 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         private TwsOrderPlacementController orderPlacementController;
         private TwsPortfolioOrderCancellationController portfolioOrderCancellationController;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TwsPositionLiquidationController"/> class.
+        /// </summary>
+        /// <param name="twsConnectionController">The connection controller</param>
+        /// <param name="positionsController">The position controller</param>
+        /// <param name="nextOrderIdController">The order Id controller</param>
+        /// <param name="orderPlacementController">The order placement controller</param>
+        /// <param name="portfolioOrderCancellationController">The portfolio order cancellation controller</param>
         public TwsPositionLiquidationController(
             TwsConnectionController twsConnectionController,
             TwsPositionsController positionsController,
@@ -70,7 +83,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             };
 
             position.Contract.Exchange = exchange; // TWS does not save the original traded exchange on the contract.
-            
+
             int liquidationOrderId = await this.nextOrderIdController.GetNextValidIdAsync();
             bool success = await this.orderPlacementController.PlaceOrderAsync(liquidationOrderId, position.Contract, order);
 

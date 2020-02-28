@@ -10,7 +10,7 @@
     /// <summary>
     /// Get open orders from TWS
     /// </summary>
-    internal class TwsOpenOrdersController : ITwsOpenOrdersController
+    public class TwsOpenOrdersController : ITwsOpenOrdersController
     {
         /// <summary>
         /// The client socket
