@@ -62,6 +62,11 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         void ReqAccountDetails(bool subscribe, string accountCode);
 
         /// <summary>
+        /// Request open orders
+        /// </summary>
+        void RequestAllOpenOrders();
+
+        /// <summary>
         /// Request historical data from TWS
         /// </summary>
         /// <param name="requestId">The request Id. IB messed up the naming convention and sometimes calls this "tickerId".</param>
