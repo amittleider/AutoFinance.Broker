@@ -29,6 +29,7 @@
                 OrderType = TwsOrderType.PegToMarket,
                 TotalQuantity = 100,
                 Transmit = false,
+                Tif = "GTC",
                 PermId = 234234, // Set a random perm id unique per order, it's only for the unit test - normally TWS sets this value
             };
 
@@ -40,6 +41,7 @@
                 LmtPrice = 190,
                 ParentId = 1,
                 Transmit = false,
+                Tif = "GTC",
                 PermId = 52345,
             };
 
@@ -51,6 +53,7 @@
                 AuxPrice = 150,
                 ParentId = 1,
                 Transmit = true,
+                Tif = "GTC",
                 PermId = 615,
             };
 
