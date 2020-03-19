@@ -415,7 +415,7 @@
                 orderId = oid;
             });
             mockTwsWrapper.Setup(mock => mock.openOrder(orderId, It.IsAny<Contract>(), It.IsAny<Order>(), It.IsAny<OrderState>()));
-            mockTwsWrapper.Setup(mock => mock.orderStatus(orderId, It.IsAny<string>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<double>(), clientId, It.IsAny<string>()));
+            mockTwsWrapper.Setup(mock => mock.orderStatus(orderId, It.IsAny<string>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<double>(), clientId, It.IsAny<string>(), It.IsAny<double>()));
 
             EReaderMonitorSignal signal = new EReaderMonitorSignal();
             EClientSocket clientSocket = new EClientSocket(mockTwsWrapper.Object, signal);
@@ -485,7 +485,7 @@
             // EWrapper.orderStatus(104, "Cancelled", 0, 1, 0, 1752774138, 0, 0, 2, null)}
             // EWrapper.error(104, 202, "Order Canceled - reason:Reject: This order would cross a related resting order in this or an affiliated account.")}
             mockTwsWrapper.Verify(mock => mock.openOrder(orderId, It.IsAny<Contract>(), It.IsAny<Order>(), It.IsAny<OrderState>()), Times.AtLeastOnce);
-            mockTwsWrapper.Verify(mock => mock.orderStatus(orderId, It.IsAny<string>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<double>(), clientId, It.IsAny<string>()), Times.AtLeastOnce);
+            mockTwsWrapper.Verify(mock => mock.orderStatus(orderId, It.IsAny<string>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<double>(), clientId, It.IsAny<string>(), It.IsAny<double>()), Times.AtLeastOnce);
         }
 
         /// <summary>
@@ -520,7 +520,7 @@
                 orderId = oid;
             });
             mockTwsWrapper.Setup(mock => mock.openOrder(orderId, It.IsAny<Contract>(), It.IsAny<Order>(), It.IsAny<OrderState>()));
-            mockTwsWrapper.Setup(mock => mock.orderStatus(orderId, It.IsAny<string>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<double>(), clientId, It.IsAny<string>()));
+            mockTwsWrapper.Setup(mock => mock.orderStatus(orderId, It.IsAny<string>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<double>(), clientId, It.IsAny<string>(), It.IsAny<double>()));
 
             EReaderMonitorSignal signal = new EReaderMonitorSignal();
             EClientSocket clientSocket = new EClientSocket(mockTwsWrapper.Object, signal);
@@ -658,7 +658,7 @@
             // EWrapper.orderStatus(141, "Cancelled", 0, 1, 0, 1375368034, 0, 0, 2, null)
             // EWrapper.error(141, 202, "Order Canceled - reason:")
             // EWrapper.connectionClosed()
-            mockTwsWrapper.Verify(mock => mock.orderStatus(orderId, "Cancelled", It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<double>(), clientId, It.IsAny<string>()), Times.Once);
+            mockTwsWrapper.Verify(mock => mock.orderStatus(orderId, "Cancelled", It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<double>(), clientId, It.IsAny<string>(), It.IsAny<double>()), Times.Once);
             mockTwsWrapper.Verify(mock => mock.error(orderId, 202, It.IsAny<string>()), Times.Once);
         }
 
@@ -707,7 +707,7 @@
             // Call
             int requestId = 4001;
             string queryTime = DateTime.Now.AddMonths(-6).ToString("yyyyMMdd HH:mm:ss");
-            clientSocket.reqHistoricalData(requestId, contract, queryTime, "1 M", "1 day", "MIDPOINT", 1, 1, null);
+            clientSocket.reqHistoricalData(requestId, contract, queryTime, "1 M", "1 day", "MIDPOINT", 1, 1, false, null);
 
             // Wait for the order to be placed and the callbacks to be called
             Thread.Sleep(1000);
@@ -750,7 +750,7 @@
             // EWrapper.historicalData(4001, "20171123", 12987, 13067, 12918, 13022.75, -1, -1, -1, False)
             // EWrapper.historicalData(4001, "20171124", 13017.75, 13178.75, 12993.75, 13082.5, -1, -1, -1, False)
             // EWrapper.historicalDataEnd(4001, "20171025  16:53:27", "20171125  16:53:27")
-            mockTwsWrapper.Verify(mock => mock.historicalData(requestId, It.IsAny<string>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<double>(), It.IsAny<bool>()));
+            mockTwsWrapper.Verify(mock => mock.historicalData(requestId, It.IsAny<Bar>()));
             mockTwsWrapper.Verify(mock => mock.historicalDataEnd(requestId, It.IsAny<string>(), It.IsAny<string>()));
         }
 
@@ -817,7 +817,7 @@
             // Setup
             Mock<EWrapper> mockTwsWrapper = new Mock<EWrapper>();
             mockTwsWrapper.Setup(mock => mock.openOrder(It.IsAny<int>(), It.IsAny<Contract>(), It.IsAny<Order>(), It.IsAny<OrderState>()));
-            mockTwsWrapper.Setup(mock => mock.orderStatus(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<string>()));
+            mockTwsWrapper.Setup(mock => mock.orderStatus(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<double>()));
             mockTwsWrapper.Setup(mock => mock.openOrderEnd());
 
             EReaderMonitorSignal signal = new EReaderMonitorSignal();

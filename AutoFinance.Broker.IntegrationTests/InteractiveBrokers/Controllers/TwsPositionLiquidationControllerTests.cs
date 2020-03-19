@@ -33,13 +33,13 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
             await connectionController.EnsureConnectedAsync();
 
             // Create a position
-            Contract contract = new Contract();
-            contract.SecType = TwsContractSecType.Future;
-            contract.Symbol = TwsSymbol.Dax;
-            contract.Exchange = TwsExchange.Dtb;
-            contract.Currency = TwsCurrency.Eur;
-            contract.Multiplier = "25";
-            contract.LastTradeDateOrContractMonth = "202003";
+            Contract contract = new Contract
+            {
+                SecType = TwsContractSecType.Stock,
+                Symbol = "MSFT",
+                Exchange = TwsExchange.Smart,
+                PrimaryExch = TwsExchange.Island,
+            };
 
             Order order = new Order
             {
@@ -54,7 +54,7 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
             Thread.Sleep(1000); // TWS takes some time to put the order in the portfolio. Wait for it.
 
             // Liquidate the position
-            bool success = await positionLiquidationController.LiquidatePosition(TwsSymbol.Dax, TwsExchange.Dtb);
+            bool success = await positionLiquidationController.LiquidatePosition("MSFT", TwsExchange.Smart);
             success.Should().BeTrue();
         }
 
@@ -79,13 +79,14 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
             await connectionController.EnsureConnectedAsync();
 
             // Create a position
-            Contract contract = new Contract();
-            contract.SecType = TwsContractSecType.Future;
-            contract.Symbol = TwsSymbol.Dax;
-            contract.Exchange = TwsExchange.Dtb;
-            contract.Currency = TwsCurrency.Eur;
-            contract.Multiplier = "25";
-            contract.LastTradeDateOrContractMonth = "202003";
+            Contract contract = new Contract
+            {
+                SecType = TwsContractSecType.Stock,
+                Symbol = "MSFT",
+                Exchange = TwsExchange.Smart,
+                PrimaryExch = TwsExchange.Island,
+            };
+
 
             Order order = new Order
             {
@@ -100,7 +101,7 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
             Thread.Sleep(1000); // TWS takes some time to put the order in the portfolio. Wait for it.
 
             // Liquidate the position
-            bool success = await positionLiquidationController.LiquidatePosition(TwsSymbol.Dax, TwsExchange.Dtb);
+            bool success = await positionLiquidationController.LiquidatePosition("MSFT", TwsExchange.Smart);
             success.Should().BeTrue();
         }
     }

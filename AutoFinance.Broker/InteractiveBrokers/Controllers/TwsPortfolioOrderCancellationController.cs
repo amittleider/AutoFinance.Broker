@@ -1,4 +1,6 @@
-﻿namespace AutoFinance.Broker.InteractiveBrokers.Controllers
+﻿// Licensed under the Apache License, Version 2.0.
+
+namespace AutoFinance.Broker.InteractiveBrokers.Controllers
 {
     using System.Linq;
     using System.Threading.Tasks;

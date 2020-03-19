@@ -105,9 +105,19 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         public event EventHandler<ExecutionDetailsEventArgs> ExecutionDetailsEvent;
 
         /// <summary>
-        /// The event that is fired when Executions
+        /// The event that is fired when Executions end
         /// </summary>
         public event EventHandler<ExecutionDetailsEndEventArgs> ExecutionDetailsEndEvent;
+
+        /// <summary>
+        /// The event that is fired on a tick news event
+        /// </summary>
+        public event EventHandler<TickNewsEventArgs> TickNewsEvent;
+
+        /// <summary>
+        /// The event that is fired on news provider events
+        /// </summary>
+        public event EventHandler<NewsProviderEventArgs> NewsProviderEvent;
 
         /// <inheritdoc/>
         public void accountDownloadEnd(string account)
@@ -153,6 +163,18 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         }
 
         /// <inheritdoc/>
+        public void completedOrder(Contract contract, Order order, OrderState orderState)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public void completedOrdersEnd()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
         public void connectAck()
         {
             this.ConnectionAcknowledgementEvent.Invoke(this, null);
@@ -187,7 +209,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         }
 
         /// <inheritdoc/>
-        public void deltaNeutralValidation(int reqId, UnderComp underComp)
+        public void deltaNeutralValidation(int reqId, DeltaNeutralContract deltaNeutralContract)
         {
             throw new NotImplementedException();
         }
@@ -238,17 +260,53 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         }
 
         /// <inheritdoc/>
+        public void familyCodes(FamilyCode[] familyCodes)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
         public void fundamentalData(int reqId, string data)
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc/>
+        public void headTimestamp(int reqId, string headTimestamp)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public void histogramData(int reqId, HistogramEntry[] data)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// A callback for historical data, fixing a breaking change by the IB API to keep this signature
+        /// </summary>
+        /// <param name="reqId">The req id</param>
+        /// <param name="date">The date</param>
+        /// <param name="open">The open</param>
+        /// <param name="high">The high</param>
+        /// <param name="low">The low</param>
+        /// <param name="close">The close</param>
+        /// <param name="volume">The volume</param>
+        /// <param name="count">The count</param>
+        /// <param name="WAP">The WAP</param>
+        /// <param name="hasGaps">Whether the data has gaps</param>
         public void historicalData(int reqId, string date, double open, double high, double low, double close, int volume, int count, double WAP, bool hasGaps)
         {
             // Raise an event which can be listened throughout the application
             var eventArgs = new HistoricalDataEventArgs(reqId, date, open, high, low, close, volume, count, WAP, hasGaps);
             this.HistoricalDataEvent.Invoke(this, eventArgs);
+        }
+
+        /// <inheritdoc/>
+        public void historicalData(int reqId, Bar bar)
+        {
+            this.historicalData(reqId, bar.Time, bar.Open, bar.High, bar.Low, bar.Close, (int)bar.Volume, bar.Count, bar.WAP, false);
         }
 
         /// <inheritdoc/>
@@ -260,6 +318,42 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         }
 
         /// <inheritdoc/>
+        public void historicalDataUpdate(int reqId, Bar bar)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public void historicalNews(int requestId, string time, string providerCode, string articleId, string headline)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public void historicalNewsEnd(int requestId, bool hasMore)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public void historicalTicks(int reqId, HistoricalTick[] ticks, bool done)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public void historicalTicksBidAsk(int reqId, HistoricalTickBidAsk[] ticks, bool done)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public void historicalTicksLast(int reqId, HistoricalTickLast[] ticks, bool done)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
         public void managedAccounts(string accountsList)
         {
         }
@@ -268,6 +362,31 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         public void marketDataType(int reqId, int marketDataType)
         {
             throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public void marketRule(int marketRuleId, PriceIncrement[] priceIncrements)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public void mktDepthExchanges(DepthMktDataDescription[] depthMktDataDescriptions)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public void newsArticle(int requestId, int articleType, string articleText)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public void newsProviders(NewsProvider[] newsProviders)
+        {
+            var eventArgs = new NewsProviderEventArgs(newsProviders);
+            this.NewsProviderEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>
@@ -292,10 +411,28 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         }
 
         /// <inheritdoc/>
-        public void orderStatus(int orderId, string status, double filled, double remaining, double avgFillPrice, int permId, int parentId, double lastFillPrice, int clientId, string whyHeld)
+        public void orderBound(long orderId, int apiClientId, int apiOrderId)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public void orderStatus(int orderId, string status, double filled, double remaining, double avgFillPrice, int permId, int parentId, double lastFillPrice, int clientId, string whyHeld, double mktCapPrice)
         {
             var eventArgs = new OrderStatusEventArgs(orderId, status, filled, remaining, avgFillPrice, permId, parentId, lastFillPrice, clientId, whyHeld);
             this.OrderStatusEvent?.Invoke(this, eventArgs);
+        }
+
+        /// <inheritdoc/>
+        public void pnl(int reqId, double dailyPnL, double unrealizedPnL, double realizedPnL)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public void pnlSingle(int reqId, int pos, double dailyPnL, double unrealizedPnL, double realizedPnL, double value)
+        {
+            throw new NotImplementedException();
         }
 
         /// <inheritdoc/>
@@ -338,6 +475,18 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         }
 
         /// <inheritdoc/>
+        public void rerouteMktDataReq(int reqId, int conId, string exchange)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public void rerouteMktDepthReq(int reqId, int conId, string exchange)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
         public void scannerData(int reqId, int rank, ContractDetails contractDetails, string distance, string benchmark, string projection, string legsStr)
         {
             throw new NotImplementedException();
@@ -368,7 +517,37 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         }
 
         /// <inheritdoc/>
+        public void smartComponents(int reqId, Dictionary<int, KeyValuePair<string, char>> theMap)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
         public void softDollarTiers(int reqId, SoftDollarTier[] tiers)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public void symbolSamples(int reqId, ContractDescription[] contractDescriptions)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public void tickByTickAllLast(int reqId, int tickType, long time, double price, int size, TickAttribLast tickAttriblast, string exchange, string specialConditions)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public void tickByTickBidAsk(int reqId, long time, double bidPrice, double askPrice, int bidSize, int askSize, TickAttribBidAsk tickAttribBidAsk)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public void tickByTickMidPoint(int reqId, long time, double midPoint)
         {
             throw new NotImplementedException();
         }
@@ -386,6 +565,13 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         }
 
         /// <inheritdoc/>
+        public void tickNews(int tickerId, long timeStamp, string providerCode, string articleId, string headline, string extraData)
+        {
+            var eventArgs = new TickNewsEventArgs(tickerId, timeStamp, providerCode, articleId, headline, extraData);
+            this.TickNewsEvent?.Invoke(this, eventArgs);
+        }
+
+        /// <inheritdoc/>
         public void tickOptionComputation(int tickerId, int field, double impliedVolatility, double delta, double optPrice, double pvDividend, double gamma, double vega, double theta, double undPrice)
         {
             throw new NotImplementedException();
@@ -393,6 +579,18 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
 
         /// <inheritdoc/>
         public void tickPrice(int tickerId, int field, double price, int canAutoExecute)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public void tickPrice(int tickerId, int field, double price, TickAttrib attribs)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public void tickReqParams(int tickerId, double minTick, string bboExchange, int snapshotPermissions)
         {
             throw new NotImplementedException();
         }
@@ -435,6 +633,12 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
 
         /// <inheritdoc/>
         public void updateMktDepthL2(int tickerId, int position, string marketMaker, int operation, int side, double price, int size)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public void updateMktDepthL2(int tickerId, int position, string marketMaker, int operation, int side, double price, int size, bool isSmartDepth)
         {
             throw new NotImplementedException();
         }

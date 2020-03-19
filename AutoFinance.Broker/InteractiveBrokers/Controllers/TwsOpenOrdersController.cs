@@ -1,4 +1,6 @@
-﻿namespace AutoFinance.Broker.InteractiveBrokers.Controllers
+﻿// Licensed under the Apache License, Version 2.0.
+
+namespace AutoFinance.Broker.InteractiveBrokers.Controllers
 {
     using System;
     using System.Collections.Generic;
@@ -27,7 +29,6 @@
         /// </summary>
         /// <param name="clientSocket">The TWS client socket</param>
         /// <param name="twsCallbackHandler">The TWS callback handler</param>
-        /// <param name="twsRequestIdGenerator">The TWS request ID generator</param>
         public TwsOpenOrdersController(ITwsClientSocket clientSocket, ITwsCallbackHandler twsCallbackHandler)
         {
             this.clientSocket = clientSocket;
