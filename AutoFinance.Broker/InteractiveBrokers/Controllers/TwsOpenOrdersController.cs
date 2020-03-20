@@ -56,7 +56,7 @@
                 this.twsCallbackHandler.OpenOrderEvent -= openOrderEventHandler;
                 this.twsCallbackHandler.OpenOrderEndEvent -= openOrderEndEventHandler;
 
-                taskSource.SetResult(openOrderEvents);
+                taskSource.TrySetResult(openOrderEvents);
             };
 
             this.twsCallbackHandler.OpenOrderEvent += openOrderEventHandler;
