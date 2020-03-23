@@ -166,5 +166,18 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         {
             this.EClientSocket.reqMktData(requestId, contract, genericTickList, snapshot, regulatorySnaphsot, marketDataOptions);
         }
+
+        /// <summary>
+        /// Request option chain details
+        /// </summary>
+        /// <param name="reqId">The request Id</param>
+        /// <param name="underlyingSymbol">The underlying symbol</param>
+        /// <param name="futFopExchange">The exchange</param>
+        /// <param name="underlyingSecType">The underlying security type</param>
+        /// <param name="underlyingConId">The underlying contract id</param>
+        public void RequestSecurityDefinitionOptionParameters(int reqId, string underlyingSymbol, string futFopExchange, string underlyingSecType, int underlyingConId)
+        {
+            this.EClientSocket.reqSecDefOptParams(reqId, underlyingSymbol, futFopExchange, underlyingSecType, underlyingConId);
+        }
     }
 }

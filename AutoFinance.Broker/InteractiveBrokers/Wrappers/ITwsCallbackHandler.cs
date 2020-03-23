@@ -113,6 +113,16 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// </summary>
         event EventHandler<NewsProviderEventArgs> NewsProviderEvent;
 
+        /// <summary>
+        /// The event that is fired when TWS sends a security definition event
+        /// </summary>
+        event EventHandler<SecurityDefinitionOptionParameterEventArgs> SecurityDefinitionOptionParameterEvent;
+
+        /// <summary>
+        /// The event that is fired at the end of security definition requests
+        /// </summary>
+        event EventHandler SecurityDefinitionOptionParameterEndEvent;
+
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 #pragma warning disable SA1600 // Elements must be documented
 #pragma warning disable SA1300 // Element must begin with upper-case letter

@@ -119,5 +119,15 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <param name="regulatorySnaphsot">The regulatory snapshot</param>
         /// <param name="marketDataOptions">The market data options</param>
         void RequestMarketData(int requestId, Contract contract, string genericTickList, bool snapshot, bool regulatorySnaphsot, List<TagValue> marketDataOptions);
+
+        /// <summary>
+        /// Request option chain details
+        /// </summary>
+        /// <param name="reqId">The request Id</param>
+        /// <param name="underlyingSymbol">The underlying symbol</param>
+        /// <param name="futFopExchange">The exchange</param>
+        /// <param name="underlyingSecType">The underlying security type</param>
+        /// <param name="underlyingConId">The underlying contract id</param>
+        void RequestSecurityDefinitionOptionParameters(int reqId, string underlyingSymbol, string futFopExchange, string underlyingSecType, int underlyingConId);
     }
 }

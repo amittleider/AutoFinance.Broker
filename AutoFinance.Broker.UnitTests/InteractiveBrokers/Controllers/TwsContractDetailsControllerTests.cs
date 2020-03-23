@@ -1,5 +1,6 @@
 namespace AutoFinance.Broker.UnitTests.InteractiveBrokers
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using AutoFinance.Broker.InteractiveBrokers;
     using AutoFinance.Broker.InteractiveBrokers.Constants;
@@ -66,10 +67,10 @@ namespace AutoFinance.Broker.UnitTests.InteractiveBrokers
             TwsContractDetailsController contractDetailsController = new TwsContractDetailsController(mockTwsClientSocket.Object, mockTwsCallbackHandler.Object, mockTwsRequestIdGenerator.Object);
 
             // Call
-            ContractDetails actualContractDetails = await contractDetailsController.GetContractAsync(contract);
+            List<ContractDetails> actualContractDetails = await contractDetailsController.GetContractAsync(contract);
 
             // Assert
-            actualContractDetails.Should().Be(expectedContractDetails);
+            actualContractDetails[0].Should().Be(expectedContractDetails);
         }
     }
 }
