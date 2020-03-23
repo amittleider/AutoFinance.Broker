@@ -78,7 +78,8 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <param name="useRTH">Whether to use regular trading hours</param>
         /// <param name="formatDate">Whether to format the date</param>
         /// <param name="chartOptions">The chart options</param>
-        void ReqHistoricalData(int requestId, Contract contract, string endDateTime, string durationString, string barSizeSetting, string whatToShow, int useRTH, int formatDate, List<TagValue> chartOptions);
+        /// <param name="keepUpToDate">Keep up to date or not</param>
+        void ReqHistoricalData(int requestId, Contract contract, string endDateTime, string durationString, string barSizeSetting, string whatToShow, int useRTH, int formatDate, List<TagValue> chartOptions, bool keepUpToDate = false);
 
         /// <summary>
         /// Request realtime data from TWS
@@ -107,5 +108,16 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// </summary>
         /// <param name="requestId">The request Id</param>
         void RequestExecutions(int requestId);
+
+        /// <summary>
+        /// Request market data (for news as well)
+        /// </summary>
+        /// <param name="requestId">The request</param>
+        /// <param name="contract">The contract</param>
+        /// <param name="genericTickList">The generic tick list</param>
+        /// <param name="snapshot">The snapshot</param>
+        /// <param name="regulatorySnaphsot">The regulatory snapshot</param>
+        /// <param name="marketDataOptions">The market data options</param>
+        void RequestMarketData(int requestId, Contract contract, string genericTickList, bool snapshot, bool regulatorySnaphsot, List<TagValue> marketDataOptions);
     }
 }

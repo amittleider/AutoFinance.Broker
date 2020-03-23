@@ -7,7 +7,6 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
 
     /// <summary>
     /// This class is a wrapper around the TwsClientSocket.
-    /// It's used in order to genera
     /// </summary>
     internal class TwsClientSocket : ITwsClientSocket
     {
@@ -91,7 +90,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <summary>
         /// Request historical data from TWS
         /// </summary>
-        /// <param name="tickerId">The ticker Id</param>
+        /// <param name="requestId">The ticker Id</param>
         /// <param name="contract">The contract</param>
         /// <param name="endDateTime">The end time</param>
         /// <param name="durationString">The duration string</param>
@@ -100,9 +99,10 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <param name="useRTH">Whether to use regular trading hours</param>
         /// <param name="formatDate">Whether to format the date</param>
         /// <param name="chartOptions">The chart options</param>
-        public void ReqHistoricalData(int tickerId, Contract contract, string endDateTime, string durationString, string barSizeSetting, string whatToShow, int useRTH, int formatDate, List<TagValue> chartOptions)
+        /// <param name="keepUpToDate">Keep the chart up to date or not</param>
+        public void ReqHistoricalData(int requestId, Contract contract, string endDateTime, string durationString, string barSizeSetting, string whatToShow, int useRTH, int formatDate, List<TagValue> chartOptions, bool keepUpToDate = false)
         {
-            this.EClientSocket.reqHistoricalData(tickerId, contract, endDateTime, durationString, barSizeSetting, whatToShow, useRTH, formatDate, chartOptions);
+            this.EClientSocket.reqHistoricalData(requestId, contract, endDateTime, durationString, barSizeSetting, whatToShow, useRTH, formatDate, keepUpToDate, chartOptions);
         }
 
         /// <summary>
@@ -151,6 +151,20 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         public void RequestAllOpenOrders()
         {
             this.EClientSocket.reqAllOpenOrders();
+        }
+
+        /// <summary>
+        /// Request market data (for news as well)
+        /// </summary>
+        /// <param name="requestId">The request</param>
+        /// <param name="contract">The contract</param>
+        /// <param name="genericTickList">The generic tick list</param>
+        /// <param name="snapshot">The snapshot</param>
+        /// <param name="regulatorySnaphsot">The regulatory snapshot</param>
+        /// <param name="marketDataOptions">The market data options</param>
+        public void RequestMarketData(int requestId, Contract contract, string genericTickList, bool snapshot, bool regulatorySnaphsot, List<TagValue> marketDataOptions)
+        {
+            this.EClientSocket.reqMktData(requestId, contract, genericTickList, snapshot, regulatorySnaphsot, marketDataOptions);
         }
     }
 }

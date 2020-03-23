@@ -15,7 +15,7 @@ namespace AutoFinance.Broker.InteractiveBrokers
     /// This class receives messages from TWS regarding contract details and stores them.
     /// It then exposes an API to retreive them on demand.
     /// </summary>
-    internal class TwsContractDetailsController
+    public class TwsContractDetailsController
     {
         /// <summary>
         /// The client socket
@@ -66,14 +66,14 @@ namespace AutoFinance.Broker.InteractiveBrokers
             this.twsCallbackHandler.ContractDetailsEndEvent += (sender, args) =>
             {
                 // When the contract details end event is fired, check if it's for this request ID and return it.
-                taskSource.SetResult(this.contractDetailsPerRequest[requestId]);
+                taskSource.TrySetResult(this.contractDetailsPerRequest[requestId]);
             };
 
             // Set the operation to cancel after 5 seconds
             CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
             tokenSource.Token.Register(() =>
             {
-                taskSource.SetCanceled();
+                taskSource.TrySetCanceled();
             });
 
             this.clientSocket.ReqContractDetails(requestId, contract);

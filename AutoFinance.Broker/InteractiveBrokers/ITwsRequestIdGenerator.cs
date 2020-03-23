@@ -5,7 +5,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
     /// <summary>
     /// Interface to obtain the next request Id for TWS
     /// </summary>
-    internal interface ITwsRequestIdGenerator
+    public interface ITwsRequestIdGenerator
     {
         /// <summary>
         /// Get the next request Id

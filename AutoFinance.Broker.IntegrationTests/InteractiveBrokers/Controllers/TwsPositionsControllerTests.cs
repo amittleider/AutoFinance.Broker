@@ -22,7 +22,7 @@
         /// Test that position events come back from TWS properly
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact(Skip = "Only during RTH")]
+        [Fact]
         public async Task PositionsController_Should_ReturnAListOfPositions()
         {
             // Setup

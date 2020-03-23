@@ -13,7 +13,7 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
     public class TwsOpenOrdersControllerTests
     {
         [Fact]
-        public async Task TwsExecutionController_Should_ReturnOpenOrders()
+        public async Task Should_ReturnOpenOrders()
         {
             TwsObjectFactory twsObjectFactory = new TwsObjectFactory();
             TwsConnectionController connectionController = new TwsConnectionController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler, "localhost", 7462, 1);

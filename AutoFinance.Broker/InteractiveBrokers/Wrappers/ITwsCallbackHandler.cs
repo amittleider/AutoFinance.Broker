@@ -103,6 +103,16 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// </summary>
         event EventHandler<ExecutionDetailsEndEventArgs> ExecutionDetailsEndEvent;
 
+        /// <summary>
+        /// The event that is fired on a news event
+        /// </summary>
+        event EventHandler<TickNewsEventArgs> TickNewsEvent;
+
+        /// <summary>
+        /// The event that is fired on news provider events
+        /// </summary>
+        event EventHandler<NewsProviderEventArgs> NewsProviderEvent;
+
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 #pragma warning disable SA1600 // Elements must be documented
 #pragma warning disable SA1300 // Element must begin with upper-case letter
@@ -192,8 +202,8 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// The delta neutral validation callback
         /// </summary>
         /// <param name="reqId">The request Id</param>
-        /// <param name="underComp">The under comp</param>
-        void deltaNeutralValidation(int reqId, UnderComp underComp);
+        /// <param name="deltaNeutralContract">The deltaNeutralContract</param>
+        void deltaNeutralValidation(int reqId, DeltaNeutralContract deltaNeutralContract);
 
         /// <summary>
         /// The display group list callback
@@ -277,7 +287,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
 
         void openOrderEnd();
 
-        void orderStatus(int orderId, string status, double filled, double remaining, double avgFillPrice, int permId, int parentId, double lastFillPrice, int clientId, string whyHeld);
+        void orderStatus(int orderId, string status, double filled, double remaining, double avgFillPrice, int permId, int parentId, double lastFillPrice, int clientId, string whyHeld, double mktCapPrice);
 
         void position(string account, Contract contract, double pos, double avgCost);
 
