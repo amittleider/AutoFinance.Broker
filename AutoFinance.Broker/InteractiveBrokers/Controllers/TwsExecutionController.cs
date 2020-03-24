@@ -65,7 +65,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                 this.twsCallbackHandler.ExecutionDetailsEvent -= executionDetailsEvent;
                 this.twsCallbackHandler.ExecutionDetailsEndEvent -= executionDetailsEndEvent;
 
-                taskSource.SetResult(executionDetailsEvents);
+                taskSource.TrySetResult(executionDetailsEvents);
             };
 
             this.twsCallbackHandler.ExecutionDetailsEvent += executionDetailsEvent;

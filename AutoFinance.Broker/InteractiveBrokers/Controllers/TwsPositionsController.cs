@@ -58,7 +58,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                 this.twsCallbackHandler.PositionStatusEvent -= positionStatusEventHandler;
                 this.twsCallbackHandler.RequestPositionsEndEvent -= requestPositionsEndEventHandler;
 
-                taskSource.SetResult(positionStatusEvents);
+                taskSource.TrySetResult(positionStatusEvents);
             };
 
             this.twsCallbackHandler.PositionStatusEvent += positionStatusEventHandler;
