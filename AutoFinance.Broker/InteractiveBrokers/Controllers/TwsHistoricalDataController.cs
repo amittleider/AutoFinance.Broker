@@ -8,6 +8,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
     using System.Threading;
     using System.Threading.Tasks;
     using AutoFinance.Broker.InteractiveBrokers.EventArgs;
+    using AutoFinance.Broker.InteractiveBrokers.Exceptions;
     using AutoFinance.Broker.InteractiveBrokers.Wrappers;
     using IBApi;
 
@@ -67,6 +68,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
 
             EventHandler<HistoricalDataEventArgs> historicalDataEventHandler = null;
             EventHandler<HistoricalDataEndEventArgs> historicalDataEndEventHandler = null;
+            EventHandler<ErrorEventArgs> errorEventHandler = null;
 
             List<HistoricalDataEventArgs> historicalDataList = new List<HistoricalDataEventArgs>();
 
@@ -79,18 +81,36 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             {
                 this.twsCallbackHandler.HistoricalDataEvent -= historicalDataEventHandler;
                 this.twsCallbackHandler.HistoricalDataEndEvent -= historicalDataEndEventHandler;
-                taskSource.SetResult(historicalDataList);
+                this.twsCallbackHandler.ErrorEvent -= errorEventHandler;
+                taskSource.TrySetResult(historicalDataList);
+            };
+
+            errorEventHandler = (sender, args) =>
+            {
+                if (args.Id == requestId)
+                {
+                    // The error is associated with this request
+                    this.twsCallbackHandler.HistoricalDataEvent -= historicalDataEventHandler;
+                    this.twsCallbackHandler.HistoricalDataEndEvent -= historicalDataEndEventHandler;
+                    this.twsCallbackHandler.ErrorEvent -= errorEventHandler;
+                    taskSource.TrySetException(new TwsException(args.ErrorMessage));
+                }
             };
 
             // Set the operation to cancel after 5 seconds
             CancellationTokenSource tokenSource = new CancellationTokenSource(10000);
             tokenSource.Token.Register(() =>
             {
-                taskSource.SetCanceled();
+                this.twsCallbackHandler.HistoricalDataEvent -= historicalDataEventHandler;
+                this.twsCallbackHandler.HistoricalDataEndEvent -= historicalDataEndEventHandler;
+                this.twsCallbackHandler.ErrorEvent -= errorEventHandler;
+
+                taskSource.TrySetCanceled();
             });
 
             this.twsCallbackHandler.HistoricalDataEvent += historicalDataEventHandler;
             this.twsCallbackHandler.HistoricalDataEndEvent += historicalDataEndEventHandler;
+            this.twsCallbackHandler.ErrorEvent += errorEventHandler;
 
             this.clientSocket.ReqHistoricalData(requestId, contract, endDateTime, durationString, barSizeSetting, whatToShow, useRth, formatDate, chartOptions);
             return taskSource.Task;

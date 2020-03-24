@@ -1,5 +1,7 @@
 ﻿namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using AutoFinance.Broker.InteractiveBrokers;
     using AutoFinance.Broker.InteractiveBrokers.Constants;
@@ -37,7 +39,7 @@
             };
 
             // Call
-            ContractDetails contractDetails = await contractDetailsController.GetContractAsync(contract);
+            List<ContractDetails> contractDetails = await contractDetailsController.GetContractAsync(contract);
 
             // Assert
             contractDetails.Should().NotBeNull();
@@ -68,10 +70,10 @@
             contract.Exchange = "IDEALPRO";
 
             // Call
-            ContractDetails contractDetails = await contractDetailsController.GetContractAsync(contract);
+            List<ContractDetails> contractDetails = await contractDetailsController.GetContractAsync(contract);
 
             // Assert
-            contractDetails.Should().NotBeNull();
+            contractDetails.First().Should().NotBeNull();
 
             // Tear down
             await connectionController.DisconnectAsync();

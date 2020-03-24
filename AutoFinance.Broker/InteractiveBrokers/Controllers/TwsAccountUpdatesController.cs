@@ -53,14 +53,14 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             var taskSource = new TaskCompletionSource<ConcurrentDictionary<string, string>>();
             this.twsCallbackHandler.AccountDownloadEndEvent += (sender, args) =>
             {
-                taskSource.SetResult(this.accountUpdates);
+                taskSource.TrySetResult(this.accountUpdates);
             };
 
             // Set the operation to cancel after 5 seconds
             CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
             tokenSource.Token.Register(() =>
             {
-                taskSource.SetCanceled();
+                taskSource.TrySetCanceled();
             });
 
             this.clientSocket.ReqAccountDetails(true, accountId);

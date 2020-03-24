@@ -16,5 +16,10 @@ namespace AutoFinance.Broker.InteractiveBrokers.Constants
         /// A stock contract
         /// </summary>
         public const string Stock = "STK";
+
+        /// <summary>
+        /// An option contract
+        /// </summary>
+        public const string Option = "OPT";
     }
 }

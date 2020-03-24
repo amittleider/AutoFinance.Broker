@@ -73,7 +73,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             {
                 // The next valid Id has already been assigned. Increment it and return.
                 Interlocked.Increment(ref nextValidOrderId);
-                taskSource.SetResult((int)nextId);
+                taskSource.TrySetResult((int)nextId);
             }
 
             return taskSource.Task;

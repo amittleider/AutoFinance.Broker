@@ -87,14 +87,14 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             this.twsCallbackHandler.ConnectionClosedEvent += (sender, eventArgs) =>
             {
                 // Abort the reader thread
-                taskSource.SetResult(true);
+                taskSource.TrySetResult(true);
             };
 
             // Set the operation to cancel after 5 seconds
             CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
             tokenSource.Token.Register(() =>
             {
-                taskSource.SetCanceled();
+                taskSource.TrySetCanceled();
             });
 
             this.clientSocket.Disconnect();
@@ -129,7 +129,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                 { IsBackground = true };
                 this.readerThread.Start();
 
-                taskSource.SetResult(true);
+                taskSource.TrySetResult(true);
             }
 
             // Set the operation to cancel after 5 seconds

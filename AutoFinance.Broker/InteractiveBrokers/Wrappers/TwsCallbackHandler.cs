@@ -119,6 +119,16 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// </summary>
         public event EventHandler<NewsProviderEventArgs> NewsProviderEvent;
 
+        /// <summary>
+        /// The event that is fired when option security definitions are requested
+        /// </summary>
+        public event EventHandler<SecurityDefinitionOptionParameterEventArgs> SecurityDefinitionOptionParameterEvent;
+
+        /// <summary>
+        /// The event that is fired at the end of the option security definition request
+        /// </summary>
+        public event EventHandler SecurityDefinitionOptionParameterEndEvent;
+
         /// <inheritdoc/>
         public void accountDownloadEnd(string account)
         {
@@ -507,13 +517,14 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <inheritdoc/>
         public void securityDefinitionOptionParameter(int reqId, string exchange, int underlyingConId, string tradingClass, string multiplier, HashSet<string> expirations, HashSet<double> strikes)
         {
-            throw new NotImplementedException();
+            var eventArgs = new SecurityDefinitionOptionParameterEventArgs(reqId, exchange, underlyingConId, tradingClass, multiplier, expirations, strikes);
+            this.SecurityDefinitionOptionParameterEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>
         public void securityDefinitionOptionParameterEnd(int reqId)
         {
-            throw new NotImplementedException();
+            this.SecurityDefinitionOptionParameterEndEvent?.Invoke(this, EventArgs.Empty);
         }
 
         /// <inheritdoc/>
