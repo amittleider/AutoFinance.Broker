@@ -20,9 +20,10 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
             TwsObjectFactory twsObjectFactory = new TwsObjectFactory();
 
             TwsRequestIdGenerator twsRequestIdGenerator = new TwsRequestIdGenerator();
-            TwsConnectionController connectionController = new TwsConnectionController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler, "localhost", 7462, 1);
+            TwsConnectionController connectionController = new TwsConnectionController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler, "localhost", 4002, 1);
             TwsSecurityDefinitionOptionParametersController securityDefinitionController = new TwsSecurityDefinitionOptionParametersController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler, twsRequestIdGenerator);
             TwsContractDetailsController twsContractDetailsController = new TwsContractDetailsController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler, twsRequestIdGenerator);
+            TwsHistoricalDataController twsHistoricalDataController = new TwsHistoricalDataController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler, twsRequestIdGenerator);
             await connectionController.EnsureConnectedAsync();
 
             Contract contract = new Contract
@@ -39,21 +40,55 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
             securityDefinitions.Count.Should().BeGreaterThan(1);
 
             // If you want, you can request the contract details from this info or get historical data for it
-            ////Contract option = new Contract()
-            ////{
-            ////    SecType = TwsContractSecType.Option,
-            ////    Symbol = "MSFT", 
-            ////    Exchange = stuff[0].Exchange,
-            ////    Strike = strike,
-            ////    LastTradeDateOrContractMonth = expiration,
-            ////    Right = "C",
-            ////    Multiplier = stuff[0].Multiplier,
-            ////    Currency = TwsCurrency.Usd,
-            ////};
+            Contract option = new Contract()
+            {
+                SecType = TwsContractSecType.Option,
+                Symbol = "MSFT",
+                Exchange = securityDefinitions[0].Exchange,
+                Strike = 150,
+                LastTradeDateOrContractMonth = securityDefinitions[0].Expirations.First(),
+                Right = "C",
+                Multiplier = securityDefinitions[0].Multiplier,
+                Currency = TwsCurrency.Usd,
+            };
 
-            ////var optionContractDetails = await twsContractDetailsController.GetContractAsync(option);
-            ////string queryTime = DateTime.Now.AddMonths(-6).ToString("yyyyMMdd HH:mm:ss");
-            ////List<HistoricalDataEventArgs> historicalDataEvents = await historicalDataController.GetHistoricalDataAsync(option, queryTime, "1 M", "1 day", "MIDPOINT");
+            var optionContractDetails = await twsContractDetailsController.GetContractAsync(option);
+            string queryTime = DateTime.Now.AddMonths(-6).ToString("yyyyMMdd HH:mm:ss");
+            List<HistoricalDataEventArgs> historicalDataEvents = await twsHistoricalDataController.GetHistoricalDataAsync(option, queryTime, "1 M", "1 day", "MIDPOINT");
+        }
+
+        [Fact]
+        public async Task Should_GetVixFuturesContracts()
+        {
+            TwsObjectFactory twsObjectFactory = new TwsObjectFactory();
+
+            TwsRequestIdGenerator twsRequestIdGenerator = new TwsRequestIdGenerator();
+            TwsConnectionController connectionController = new TwsConnectionController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler, "localhost", 4002, 1);
+            TwsSecurityDefinitionOptionParametersController securityDefinitionController = new TwsSecurityDefinitionOptionParametersController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler, twsRequestIdGenerator);
+            TwsContractDetailsController twsContractDetailsController = new TwsContractDetailsController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler, twsRequestIdGenerator);
+            TwsHistoricalDataController twsHistoricalDataController = new TwsHistoricalDataController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler, twsRequestIdGenerator);
+            await connectionController.EnsureConnectedAsync();
+
+            Contract contract = new Contract
+            {
+                SecType = TwsContractSecType.Future,
+                Symbol = "VIX",
+                Exchange = "CFE",
+                Currency = TwsCurrency.Usd,
+                Multiplier = "1000",
+                LastTradeDateOrContractMonth = "202006",
+                TradingClass = "VX"
+            };
+
+            // Get the contract details of the STOCK so that you can find the underlying security ID, required for the security definitions call.
+            var contractDetails = await twsContractDetailsController.GetContractAsync(contract);
+            var securityDefinitions = await securityDefinitionController.RequestSecurityDefinitionOptionParameters("VIX", "", "IND", 13455763);
+
+            securityDefinitions.Count.Should().BeGreaterThan(1);
+
+            // If you want, you can request the contract details from this info or get historical data for it
+            string queryTime = DateTime.Now.AddMonths(-6).ToString("yyyyMMdd HH:mm:ss");
+            List<HistoricalDataEventArgs> historicalDataEvents = await twsHistoricalDataController.GetHistoricalDataAsync(contract, queryTime, "1 M", "1 day", "MIDPOINT");
         }
     }
 }
