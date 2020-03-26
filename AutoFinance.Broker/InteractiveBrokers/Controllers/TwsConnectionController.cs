@@ -133,11 +133,11 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             }
 
             // Set the operation to cancel after 5 seconds
-            ////CancellationTokenSource tokenSource = new CancellationTokenSource(10000);
-            ////tokenSource.Token.Register(() =>
-            ////{
-            ////    taskSource.SetCanceled();
-            ////});
+            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
+            tokenSource.Token.Register(() =>
+            {
+               taskSource.TrySetCanceled();
+            });
 
             this.twsCallbackHandler.ConnectionAcknowledgementEvent += ConnectionAcknowledgementCallback;
             this.clientSocket.Connect(this.host, this.port, this.clientId);
