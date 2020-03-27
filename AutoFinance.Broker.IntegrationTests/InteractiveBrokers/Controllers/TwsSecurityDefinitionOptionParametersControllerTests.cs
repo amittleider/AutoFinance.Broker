@@ -44,17 +44,17 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
             {
                 SecType = TwsContractSecType.Option,
                 Symbol = "MSFT",
-                Exchange = securityDefinitions[0].Exchange,
+                Exchange = "SMART",
                 Strike = 150,
-                LastTradeDateOrContractMonth = securityDefinitions[0].Expirations.First(),
+                LastTradeDateOrContractMonth = securityDefinitions[0].Expirations.First(), // March 27, 20
                 Right = "C",
                 Multiplier = securityDefinitions[0].Multiplier,
                 Currency = TwsCurrency.Usd,
             };
 
             var optionContractDetails = await twsContractDetailsController.GetContractAsync(option);
-            string queryTime = DateTime.Now.AddMonths(-6).ToString("yyyyMMdd HH:mm:ss");
-            List<HistoricalDataEventArgs> historicalDataEvents = await twsHistoricalDataController.GetHistoricalDataAsync(option, queryTime, "1 M", "1 day", "MIDPOINT");
+            var queryTime = DateTime.Now;
+            List<HistoricalDataEventArgs> historicalDataEvents = await twsHistoricalDataController.GetHistoricalDataAsync(option, queryTime, TwsDuration.OneMonth, TwsBarSizeSetting.OneSecond, TwsHistoricalDataRequestType.Trade);
         }
 
         [Fact]
@@ -87,8 +87,8 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
             securityDefinitions.Count.Should().BeGreaterThan(1);
 
             // If you want, you can request the contract details from this info or get historical data for it
-            string queryTime = DateTime.Now.AddMonths(-6).ToString("yyyyMMdd HH:mm:ss");
-            List<HistoricalDataEventArgs> historicalDataEvents = await twsHistoricalDataController.GetHistoricalDataAsync(contract, queryTime, "1 M", "1 day", "MIDPOINT");
+            var queryTime = DateTime.Now.AddMonths(-6);
+            List<HistoricalDataEventArgs> historicalDataEvents = await twsHistoricalDataController.GetHistoricalDataAsync(contract, queryTime, TwsDuration.OneMonth, TwsBarSizeSetting.OneSecond, TwsHistoricalDataRequestType.Midpoint);
         }
     }
 }
