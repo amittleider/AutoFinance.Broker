@@ -98,8 +98,8 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                 }
             };
 
-            // Set the operation to cancel after 2 minutes
-            CancellationTokenSource tokenSource = new CancellationTokenSource(120 * 1000);
+            // Set the operation to cancel after 1 minute
+            CancellationTokenSource tokenSource = new CancellationTokenSource(60 * 1000);
             tokenSource.Token.Register(() =>
             {
                 this.twsCallbackHandler.HistoricalDataEvent -= historicalDataEventHandler;
