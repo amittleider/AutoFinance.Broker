@@ -25,7 +25,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Constants
         /// <summary>
         /// Trade
         /// </summary>
-        private static TwsHistoricalDataRequestType trade = new TwsHistoricalDataRequestType("TRADE");
+        private static TwsHistoricalDataRequestType trades = new TwsHistoricalDataRequestType("TRADES");
 
         /// <summary>
         /// The underlying string
@@ -59,7 +59,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Constants
         /// <summary>
         /// Gets trade
         /// </summary>
-        public static TwsHistoricalDataRequestType Trade { get => trade; }
+        public static TwsHistoricalDataRequestType Trades { get => trades; }
 
         /// <summary>
         /// The string version of the parameter when sending to the TWS API
