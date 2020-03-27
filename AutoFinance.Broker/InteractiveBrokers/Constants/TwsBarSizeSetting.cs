@@ -5,46 +5,78 @@ namespace AutoFinance.Broker.InteractiveBrokers.Constants
     /// <summary>
     /// Constants to specify a TWS bar size setting for historical data requests.
     /// </summary>
-    internal class TwsBarSizeSetting
+    public class TwsBarSizeSetting : ITwsStringParameter
     {
-        /// <summary>
-        /// One second
-        /// </summary>
-        public const string OneSecond = "1 secs";
+        private static TwsBarSizeSetting oneSecond = new TwsBarSizeSetting("1 secs");
+        private static TwsBarSizeSetting fiveSeconds = new TwsBarSizeSetting("5 secs");
+        private static TwsBarSizeSetting oneMinute = new TwsBarSizeSetting("1 min");
+        private static TwsBarSizeSetting fiveMinutes = new TwsBarSizeSetting("5 mins");
+        private static TwsBarSizeSetting fifteenMinutes = new TwsBarSizeSetting("15 mins");
+        private static TwsBarSizeSetting thirtyMinutes = new TwsBarSizeSetting("30 mins");
+        private static TwsBarSizeSetting oneHour = new TwsBarSizeSetting("1 hour");
+        private static TwsBarSizeSetting oneDay = new TwsBarSizeSetting("1 day");
 
         /// <summary>
-        /// Five seconds
+        /// The underlying string
         /// </summary>
-        public const string FiveSeconds = "5 secs";
+        private readonly string type;
 
         /// <summary>
-        /// One minute
+        /// Initializes a new instance of the <see cref="TwsBarSizeSetting"/> class.
         /// </summary>
-        public const string OneMinute = "1 min";
+        /// <param name="type">The underlying string</param>
+        private TwsBarSizeSetting(string type)
+        {
+            this.type = type;
+        }
 
         /// <summary>
-        /// Five minutes
+        /// Gets one second
         /// </summary>
-        public const string FiveMinutes = "5 mins";
+        public static TwsBarSizeSetting OneSecond { get => oneSecond; }
 
         /// <summary>
-        /// Fifteen minutes
+        /// Gets five seconds
         /// </summary>
-        public const string FifteenMinutes = "15 mins";
+        public static TwsBarSizeSetting FiveSeconds { get => fiveSeconds; }
 
         /// <summary>
-        /// Thirty minutes
+        /// Gets one minute
         /// </summary>
-        public const string ThirtyMinutes = "30 mins";
+        public static TwsBarSizeSetting OneMinute { get => oneMinute; }
 
         /// <summary>
-        /// One hour
+        /// Gets five minutes
         /// </summary>
-        public const string OneHour = "1 hour";
+        public static TwsBarSizeSetting FiveMinutes { get => fiveMinutes; }
 
         /// <summary>
-        /// One day
+        /// Gets fifteen minutes
         /// </summary>
-        public const string OneDay = "1 day";
+        public static TwsBarSizeSetting FifteenMinutes { get => fifteenMinutes; }
+
+        /// <summary>
+        /// Gets thirty minutes
+        /// </summary>
+        public static TwsBarSizeSetting ThirtyMinutes { get => thirtyMinutes; }
+
+        /// <summary>
+        /// Gets one hour
+        /// </summary>
+        public static TwsBarSizeSetting OneHour { get => oneHour; }
+
+        /// <summary>
+        /// Gets one day
+        /// </summary>
+        public static TwsBarSizeSetting OneDay { get => oneDay; }
+
+        /// <summary>
+        /// Get the TWS parameter
+        /// </summary>
+        /// <returns>The TWS parameter</returns>
+        public string ToTwsParameter()
+        {
+            return this.type;
+        }
     }
 }

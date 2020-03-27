@@ -7,6 +7,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using AutoFinance.Broker.InteractiveBrokers.Constants;
     using AutoFinance.Broker.InteractiveBrokers.EventArgs;
     using AutoFinance.Broker.InteractiveBrokers.Exceptions;
     using AutoFinance.Broker.InteractiveBrokers.Wrappers;
@@ -51,11 +52,11 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// </summary>
         /// <param name="contract">The contract type</param>
         /// <param name="endDateTime">The end date of the request</param>
-        /// <param name="durationString">The duration of the request</param>
+        /// <param name="duration">The duration of the request</param>
         /// <param name="barSizeSetting">The bar size to reuest</param>
         /// <param name="whatToShow">The historical data request type</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public Task<List<HistoricalDataEventArgs>> GetHistoricalDataAsync(Contract contract, string endDateTime, string durationString, string barSizeSetting, string whatToShow)
+        public Task<List<HistoricalDataEventArgs>> GetHistoricalDataAsync(Contract contract, DateTime endDateTime, TwsDuration duration, TwsBarSizeSetting barSizeSetting, TwsHistoricalDataRequestType whatToShow)
         {
             int requestId = this.twsRequestIdGenerator.GetNextRequestId();
             int useRth = 1;
@@ -97,8 +98,8 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                 }
             };
 
-            // Set the operation to cancel after 5 seconds
-            CancellationTokenSource tokenSource = new CancellationTokenSource(10000);
+            // Set the operation to cancel after 1 minute
+            CancellationTokenSource tokenSource = new CancellationTokenSource(60 * 1000);
             tokenSource.Token.Register(() =>
             {
                 this.twsCallbackHandler.HistoricalDataEvent -= historicalDataEventHandler;
@@ -112,7 +113,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             this.twsCallbackHandler.HistoricalDataEndEvent += historicalDataEndEventHandler;
             this.twsCallbackHandler.ErrorEvent += errorEventHandler;
 
-            this.clientSocket.ReqHistoricalData(requestId, contract, endDateTime, durationString, barSizeSetting, whatToShow, useRth, formatDate, chartOptions);
+            this.clientSocket.ReqHistoricalData(requestId, contract, endDateTime.ToString("yyyyMMdd HH:mm:ss"), duration.ToTwsParameter(), barSizeSetting.ToTwsParameter(), whatToShow.ToTwsParameter(), useRth, formatDate, chartOptions);
             return taskSource.Task;
         }
     }

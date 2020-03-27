@@ -40,10 +40,10 @@
                 PrimaryExch = TwsExchange.Island,
             };
 
-            string queryTime = DateTime.Now.AddMonths(-6).ToString("yyyyMMdd HH:mm:ss");
+            var queryTime = DateTime.Now.AddMonths(-6);
 
             // Call
-            List<HistoricalDataEventArgs> historicalDataEvents = await historicalDataController.GetHistoricalDataAsync(contract, queryTime, "1 M", "1 day", "MIDPOINT");
+            List<HistoricalDataEventArgs> historicalDataEvents = await historicalDataController.GetHistoricalDataAsync(contract, queryTime, TwsDuration.OneMonth, TwsBarSizeSetting.OneDay, TwsHistoricalDataRequestType.Midpoint);
 
             // Assert
             historicalDataEvents.Count.Should().BeGreaterThan(0);

@@ -5,26 +5,69 @@ namespace AutoFinance.Broker.InteractiveBrokers.Constants
     /// <summary>
     /// The TWS historical data request type, which is called 'whatToShow' in IB parameter naming convention
     /// </summary>
-    public class TwsHistoricalDataRequestType
+    public class TwsHistoricalDataRequestType : ITwsStringParameter
     {
         /// <summary>
-        /// Bid type
+        /// Bid
         /// </summary>
-        public const string Bid = "BID";
+        private static TwsHistoricalDataRequestType bid = new TwsHistoricalDataRequestType("BID");
 
         /// <summary>
-        /// Ask type
+        /// Ask
         /// </summary>
-        public const string Ask = "ASK";
+        private static TwsHistoricalDataRequestType ask = new TwsHistoricalDataRequestType("ASK");
 
         /// <summary>
-        /// Midpoint type
+        /// Midpoint
         /// </summary>
-        public const string Midpoint = "MIDPOINT";
+        private static TwsHistoricalDataRequestType midpoint = new TwsHistoricalDataRequestType("MIDPOINT");
 
         /// <summary>
-        /// Trade type
+        /// Trade
         /// </summary>
-        public const string Trade = "TRADE";
+        private static TwsHistoricalDataRequestType trades = new TwsHistoricalDataRequestType("TRADES");
+
+        /// <summary>
+        /// The underlying string
+        /// </summary>
+        private readonly string type;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TwsHistoricalDataRequestType"/> class.
+        /// </summary>
+        /// <param name="type">The underlying string</param>
+        private TwsHistoricalDataRequestType(string type)
+        {
+            this.type = type;
+        }
+
+        /// <summary>
+        /// Gets bid
+        /// </summary>
+        public static TwsHistoricalDataRequestType Bid { get => bid; }
+
+        /// <summary>
+        /// Gets ask
+        /// </summary>
+        public static TwsHistoricalDataRequestType Ask { get => ask; }
+
+        /// <summary>
+        /// Gets midpoint
+        /// </summary>
+        public static TwsHistoricalDataRequestType Midpoint { get => midpoint; }
+
+        /// <summary>
+        /// Gets trade
+        /// </summary>
+        public static TwsHistoricalDataRequestType Trades { get => trades; }
+
+        /// <summary>
+        /// The string version of the parameter when sending to the TWS API
+        /// </summary>
+        /// <returns>A string for the TWS API</returns>
+        public string ToTwsParameter()
+        {
+            return this.type;
+        }
     }
 }
