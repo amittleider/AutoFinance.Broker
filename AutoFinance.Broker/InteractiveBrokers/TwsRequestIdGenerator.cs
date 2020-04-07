@@ -8,7 +8,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
     /// Retreive a request ID for Interactive Brokers
     /// The request ID actually doesn't matter on the IB side, it is only to match up the responses on the client side.
     /// </summary>
-    public class TwsRequestIdGenerator : ITwsRequestIdGenerator
+    internal class TwsRequestIdGenerator : ITwsRequestIdGenerator
     {
         /// <summary>
         /// Holds the state of the request Id for TWS

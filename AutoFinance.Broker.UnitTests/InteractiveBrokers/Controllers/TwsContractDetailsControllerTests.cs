@@ -64,7 +64,7 @@ namespace AutoFinance.Broker.UnitTests.InteractiveBrokers
                     mockTwsCallbackHandler.Object.contractDetailsEnd(fakeRequestId);
                 });
 
-            TwsContractDetailsController contractDetailsController = new TwsContractDetailsController(mockTwsClientSocket.Object, mockTwsCallbackHandler.Object, mockTwsRequestIdGenerator.Object);
+            TwsControllerBase contractDetailsController = new TwsControllerBase(mockTwsClientSocket.Object, mockTwsCallbackHandler.Object, "mock", 0, 0);
 
             // Call
             List<ContractDetails> actualContractDetails = await contractDetailsController.GetContractAsync(contract);

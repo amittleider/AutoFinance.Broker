@@ -58,19 +58,16 @@
             };
 
             // Initialize the controllers
-            Mock<ITwsNextOrderIdController> mockTwsRequestIdGenerator = new Mock<ITwsNextOrderIdController>();
-            mockTwsRequestIdGenerator.SetupSequence(mock => mock.GetNextValidIdAsync())
+            Mock<ITwsControllerBase> mockControllerBase = new Mock<ITwsControllerBase>();
+            mockControllerBase.SetupSequence(mock => mock.GetNextValidIdAsync())
                 .ReturnsAsync(1)
                 .ReturnsAsync(2)
                 .ReturnsAsync(3);
 
-            Mock<ITwsOrderPlacementController> mockOrderPlacementController = new Mock<ITwsOrderPlacementController>();
-            mockOrderPlacementController.Setup(mock => mock.PlaceOrderAsync(1, contract, entryOrder)).ReturnsAsync(true);
-            mockOrderPlacementController.Setup(mock => mock.PlaceOrderAsync(2, contract, takeProfit)).ReturnsAsync(true);
-            mockOrderPlacementController.Setup(mock => mock.PlaceOrderAsync(3, contract, stopLoss)).ReturnsAsync(true);
-
-            Mock<ITwsConnectionController> mockConnectionController = new Mock<ITwsConnectionController>();
-            mockConnectionController.Setup(mock => mock.EnsureConnectedAsync()).Returns(Task.CompletedTask);
+            mockControllerBase.Setup(mock => mock.PlaceOrderAsync(1, contract, entryOrder)).ReturnsAsync(true);
+            mockControllerBase.Setup(mock => mock.PlaceOrderAsync(2, contract, takeProfit)).ReturnsAsync(true);
+            mockControllerBase.Setup(mock => mock.PlaceOrderAsync(3, contract, stopLoss)).ReturnsAsync(true);
+            mockControllerBase.Setup(mock => mock.EnsureConnectedAsync()).Returns(Task.CompletedTask);
 
             // Initialize the order details
             string entryAction = TwsOrderActions.Buy;
@@ -78,7 +75,7 @@
             double takePrice = 190;
             double stopPrice = 150;
 
-            var twsBracketOrderPlacementController = new TwsBracketOrderPlacementController(mockConnectionController.Object, mockTwsRequestIdGenerator.Object, mockOrderPlacementController.Object);
+            var twsBracketOrderPlacementController = new TwsBracketOrderPlacementController(mockControllerBase.Object);
 
             // Call
             bool orderAck = await twsBracketOrderPlacementController.PlaceBracketOrder(contract, entryAction, quantity, takePrice, stopPrice);
@@ -86,9 +83,7 @@
             // Asssert
             orderAck.Should().BeTrue();
 
-            mockConnectionController.VerifyAll();
-            mockTwsRequestIdGenerator.VerifyAll();
-            mockOrderPlacementController.VerifyAll();
+            mockControllerBase.VerifyAll();
         }
     }
 }

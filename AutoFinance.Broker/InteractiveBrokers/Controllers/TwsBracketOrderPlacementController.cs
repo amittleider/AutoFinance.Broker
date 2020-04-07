@@ -11,21 +11,15 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
     /// </summary>
     public class TwsBracketOrderPlacementController
     {
-        private ITwsConnectionController connectionController;
-        private ITwsNextOrderIdController nextOrderIdController;
-        private ITwsOrderPlacementController orderPlacementController;
+        private ITwsControllerBase twsController;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TwsBracketOrderPlacementController"/> class.
         /// </summary>
-        /// <param name="connectionController">The connection controller</param>
-        /// <param name="nextOrderIdController">The order ID generation controller</param>
-        /// <param name="orderPlacementController">The base order placement controller</param>
-        public TwsBracketOrderPlacementController(ITwsConnectionController connectionController, ITwsNextOrderIdController nextOrderIdController, ITwsOrderPlacementController orderPlacementController)
+        /// <param name="twsController">The tws base controller</param>
+        public TwsBracketOrderPlacementController(ITwsControllerBase twsController)
         {
-            this.connectionController = connectionController;
-            this.nextOrderIdController = nextOrderIdController;
-            this.orderPlacementController = orderPlacementController;
+            this.twsController = twsController;
         }
 
         /// <summary>
@@ -40,12 +34,12 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task<bool> PlaceBracketOrder(Contract contract, string entryAction, double quantity, double takePrice, double stopPrice)
         {
-            await this.connectionController.EnsureConnectedAsync();
+            await this.twsController.EnsureConnectedAsync();
 
             // Generate the order IDs
-            int entryOrderId = await this.nextOrderIdController.GetNextValidIdAsync();
-            var takeProfitOrderId = await this.nextOrderIdController.GetNextValidIdAsync();
-            var stopOrderId = await this.nextOrderIdController.GetNextValidIdAsync();
+            int entryOrderId = await this.twsController.GetNextValidIdAsync();
+            var takeProfitOrderId = await this.twsController.GetNextValidIdAsync();
+            var stopOrderId = await this.twsController.GetNextValidIdAsync();
 
             // Initialize the order
             Order entryOrder = new Order()
@@ -79,9 +73,9 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                 Transmit = true,
             };
 
-            var entryOrderAckTask = this.orderPlacementController.PlaceOrderAsync(entryOrderId, contract, entryOrder);
-            var takeProfitOrderAckTask = this.orderPlacementController.PlaceOrderAsync(takeProfitOrderId, contract, takeProfit);
-            var stopOrderAckTask = this.orderPlacementController.PlaceOrderAsync(stopOrderId, contract, stopLoss);
+            var entryOrderAckTask = this.twsController.PlaceOrderAsync(entryOrderId, contract, entryOrder);
+            var takeProfitOrderAckTask = this.twsController.PlaceOrderAsync(takeProfitOrderId, contract, takeProfit);
+            var stopOrderAckTask = this.twsController.PlaceOrderAsync(stopOrderId, contract, stopLoss);
             Task.WaitAll(entryOrderAckTask, takeProfitOrderAckTask, stopOrderAckTask);
 
             return entryOrderAckTask.Result && takeProfitOrderAckTask.Result && stopOrderAckTask.Result;
@@ -99,12 +93,12 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <returns>True if the orders are correctly placed</returns>
         public async Task<bool> PlaceBracketOrder(Contract contract, string entryAction, double quantity, double entryOrderPrice, double takePrice, double stopPrice)
         {
-            await this.connectionController.EnsureConnectedAsync();
+            await this.twsController.EnsureConnectedAsync();
 
             // Generate the order IDs
-            int entryOrderId = await this.nextOrderIdController.GetNextValidIdAsync();
-            var takeProfitOrderId = await this.nextOrderIdController.GetNextValidIdAsync();
-            var stopOrderId = await this.nextOrderIdController.GetNextValidIdAsync();
+            int entryOrderId = await this.twsController.GetNextValidIdAsync();
+            var takeProfitOrderId = await this.twsController.GetNextValidIdAsync();
+            var stopOrderId = await this.twsController.GetNextValidIdAsync();
 
             // Initialize the order
             Order entryOrder = new Order()
@@ -139,9 +133,9 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                 Transmit = true,
             };
 
-            var entryOrderAckTask = this.orderPlacementController.PlaceOrderAsync(entryOrderId, contract, entryOrder);
-            var takeProfitOrderAckTask = this.orderPlacementController.PlaceOrderAsync(takeProfitOrderId, contract, takeProfit);
-            var stopOrderAckTask = this.orderPlacementController.PlaceOrderAsync(stopOrderId, contract, stopLoss);
+            var entryOrderAckTask = this.twsController.PlaceOrderAsync(entryOrderId, contract, entryOrder);
+            var takeProfitOrderAckTask = this.twsController.PlaceOrderAsync(takeProfitOrderId, contract, takeProfit);
+            var stopOrderAckTask = this.twsController.PlaceOrderAsync(stopOrderId, contract, stopLoss);
             Task.WaitAll(entryOrderAckTask, takeProfitOrderAckTask, stopOrderAckTask);
 
             return entryOrderAckTask.Result && takeProfitOrderAckTask.Result && stopOrderAckTask.Result;

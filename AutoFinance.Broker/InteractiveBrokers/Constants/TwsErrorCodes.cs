@@ -21,5 +21,15 @@ namespace AutoFinance.Broker.InteractiveBrokers.Constants
         /// Ambiguous contract error code
         /// </summary>
         public const int AmbiguousContract = 200;
+
+        /// <summary>
+        /// Order can't be cancelled (possibly filled)
+        /// </summary>
+        public const int OrderCannotBeCancelled = 10148;
+
+        /// <summary>
+        /// Order can't be cancelled (possibly filled)
+        /// </summary>
+        public const int OrderCannotBeCancelled2 = 10147;
     }
 }

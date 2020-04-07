@@ -2,6 +2,7 @@
 
 namespace AutoFinance.Broker.InteractiveBrokers.Controllers
 {
+    using AutoFinance.Broker.InteractiveBrokers.Exceptions;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -10,21 +11,15 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
     /// </summary>
     public class TwsPortfolioOrderCancellationController
     {
-        private ITwsConnectionController connectionController;
-        private ITwsOpenOrdersController openOrdersController;
-        private ITwsOrderCancelationController orderCancellationController;
+        private ITwsControllerBase twsControllerBase;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TwsPortfolioOrderCancellationController"/> class.
         /// </summary>
-        /// <param name="connectionController">The connection controller</param>
-        /// <param name="openOrdersController">The open orders controller</param>
-        /// <param name="orderCancellationController">The order cancellation controller</param>
-        public TwsPortfolioOrderCancellationController(ITwsConnectionController connectionController, ITwsOpenOrdersController openOrdersController, ITwsOrderCancelationController orderCancellationController)
+        /// <param name="twsControllerBase">The tws base controller</param>
+        public TwsPortfolioOrderCancellationController(ITwsControllerBase twsControllerBase)
         {
-            this.connectionController = connectionController;
-            this.openOrdersController = openOrdersController;
-            this.orderCancellationController = orderCancellationController;
+            this.twsControllerBase = twsControllerBase;
         }
 
         /// <summary>
@@ -34,10 +29,10 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <returns>True if successful, false otherwise</returns>
         public async Task<bool> CancelOrders(string symbol)
         {
-            await this.connectionController.EnsureConnectedAsync();
+            await this.twsControllerBase.EnsureConnectedAsync();
 
-            var openOrders = await this.openOrdersController.RequestOpenOrders();
-            var openOrdersForSymbol = openOrders.Where(orderEvent => orderEvent.Contract.Symbol == symbol).ToList();
+            var openOrders = await this.twsControllerBase.RequestOpenOrders();
+            var openOrdersForSymbol = openOrders.Where(orderEvent => orderEvent.Contract.Symbol == symbol).Select(o => o.OrderId).Distinct().ToList();
 
             if (openOrdersForSymbol.Count == 0)
             {
@@ -47,7 +42,13 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             bool success = true;
             foreach (var openOrder in openOrdersForSymbol)
             {
-                success &= await this.orderCancellationController.CancelOrderAsync(openOrder.OrderId);
+                try
+                {
+                    success &= await this.twsControllerBase.CancelOrderAsync(openOrder);
+                }
+                catch (TwsException)
+                {
+                }
             }
 
             return success;
