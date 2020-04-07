@@ -26,7 +26,9 @@ namespace AutoFinance.Broker.InteractiveBrokers
 
             this.signal = new EReaderMonitorSignal();
             this.ClientSocket = new TwsClientSocket(new EClientSocket(this.TwsCallbackHandler, this.signal));
+
             this.TwsControllerBase = new TwsControllerBase(this.ClientSocket, this.TwsCallbackHandler, host, port, clientId);
+            this.TwsController = new TwsController(this.TwsControllerBase);
         }
 
         /// <summary>
@@ -53,6 +55,15 @@ namespace AutoFinance.Broker.InteractiveBrokers
         /// Gets the base controller
         /// </summary>
         public ITwsControllerBase TwsControllerBase
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets the Tws controller
+        /// </summary>
+        public TwsController TwsController
         {
             get;
             private set;
