@@ -42,6 +42,19 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <returns>A <see cref="Task"/> representing the asynchronous operation. True if the broker acknowledged the cancelation request, false otherwise.</returns>
         public Task<bool> CancelOrderAsync(int orderId)
         {
+            // Set the operation to cancel after 5 seconds
+            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
+            return this.CancelOrderAsync(orderId, tokenSource.Token);
+        }
+
+        /// <summary>
+        /// Cancels an order in TWS.
+        /// </summary>
+        /// <param name="orderId">The order Id to cancel</param>
+        /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation. True if the broker acknowledged the cancelation request, false otherwise.</returns>
+        public Task<bool> CancelOrderAsync(int orderId, CancellationToken cancellationToken)
+        {
             var taskSource = new TaskCompletionSource<bool>();
 
             EventHandler<OrderStatusEventArgs> orderStatusEventCallback = null;
@@ -71,9 +84,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                 }
             };
 
-            // Set the operation to cancel after 5 seconds
-            CancellationTokenSource tokenSource = new CancellationTokenSource(50000);
-            tokenSource.Token.Register(() =>
+            cancellationToken.Register(() =>
             {
                 taskSource.TrySetCanceled();
             });

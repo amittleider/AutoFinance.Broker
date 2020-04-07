@@ -41,6 +41,18 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <returns>A list of execution details events from TWS.</returns>
         public Task<List<OpenOrderEventArgs>> RequestOpenOrders()
         {
+            // Set the operation to cancel after 5 seconds
+            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
+            return this.RequestOpenOrders(tokenSource.Token);
+        }
+
+        /// <summary>
+        /// Get a list of all the executions from TWS
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
+        /// <returns>A list of execution details events from TWS.</returns>
+        public Task<List<OpenOrderEventArgs>> RequestOpenOrders(CancellationToken cancellationToken)
+        {
             List<OpenOrderEventArgs> openOrderEvents = new List<OpenOrderEventArgs>();
             var taskSource = new TaskCompletionSource<List<OpenOrderEventArgs>>();
             EventHandler<OpenOrderEventArgs> openOrderEventHandler = null;
@@ -63,9 +75,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             this.twsCallbackHandler.OpenOrderEvent += openOrderEventHandler;
             this.twsCallbackHandler.OpenOrderEndEvent += openOrderEndEventHandler;
 
-            // Set the operation to cancel after 5 seconds
-            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
-            tokenSource.Token.Register(() =>
+            cancellationToken.Register(() =>
             {
                 taskSource.TrySetCanceled();
             });

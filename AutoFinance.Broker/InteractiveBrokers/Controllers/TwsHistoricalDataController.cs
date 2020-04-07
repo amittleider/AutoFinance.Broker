@@ -57,6 +57,23 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public Task<List<HistoricalDataEventArgs>> GetHistoricalDataAsync(Contract contract, string endDateTime, string durationString, string barSizeSetting, string whatToShow)
         {
+            // Set the operation to cancel after 10 seconds
+            CancellationTokenSource tokenSource = new CancellationTokenSource(10000);
+            return this.GetHistoricalDataAsync(contract, endDateTime, durationString, barSizeSetting, whatToShow, tokenSource.Token);
+        }
+
+        /// <summary>
+        /// Gets historical data from TWS.
+        /// </summary>
+        /// <param name="contract">The contract type</param>
+        /// <param name="endDateTime">The end date of the request</param>
+        /// <param name="durationString">The duration of the request</param>
+        /// <param name="barSizeSetting">The bar size to reuest</param>
+        /// <param name="whatToShow">The historical data request type</param>
+        /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public Task<List<HistoricalDataEventArgs>> GetHistoricalDataAsync(Contract contract, string endDateTime, string durationString, string barSizeSetting, string whatToShow, CancellationToken cancellationToken)
+        {
             int requestId = this.twsRequestIdGenerator.GetNextRequestId();
             int useRth = 1;
             int formatDate = 1;
@@ -97,9 +114,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                 }
             };
 
-            // Set the operation to cancel after 5 seconds
-            CancellationTokenSource tokenSource = new CancellationTokenSource(10000);
-            tokenSource.Token.Register(() =>
+            cancellationToken.Register(() =>
             {
                 this.twsCallbackHandler.HistoricalDataEvent -= historicalDataEventHandler;
                 this.twsCallbackHandler.HistoricalDataEndEvent -= historicalDataEndEventHandler;

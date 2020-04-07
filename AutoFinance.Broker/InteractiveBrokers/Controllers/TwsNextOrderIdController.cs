@@ -45,6 +45,18 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <returns>The next valid order Id</returns>
         public Task<int> GetNextValidIdAsync()
         {
+            // Set the operation to cancel after 5 seconds
+            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
+            return this.GetNextValidIdAsync(tokenSource.Token);
+        }
+
+        /// <summary>
+        /// Get the next valid order Id.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
+        /// <returns>The next valid order Id</returns>
+        public Task<int> GetNextValidIdAsync(CancellationToken cancellationToken)
+        {
             var taskSource = new TaskCompletionSource<int>();
 
             long nextId = Interlocked.Read(ref nextValidOrderId);
@@ -62,9 +74,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                     taskSource.TrySetResult((int)nextId);
                 };
 
-                // Set the operation to cancel after 5 seconds
-                CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
-                tokenSource.Token.Register(() =>
+                cancellationToken.Register(() =>
                 {
                     taskSource.TrySetCanceled();
                 });

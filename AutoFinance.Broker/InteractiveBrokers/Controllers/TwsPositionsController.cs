@@ -42,6 +42,18 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <returns>A list of position status events from TWS.</returns>
         public Task<List<PositionStatusEventArgs>> RequestPositions()
         {
+            // Set the operation to cancel after 5 seconds
+            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
+            return this.RequestPositions(tokenSource.Token);
+        }
+
+        /// <summary>
+        /// Get a list of all the positions in TWS.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
+        /// <returns>A list of position status events from TWS.</returns>
+        public Task<List<PositionStatusEventArgs>> RequestPositions(CancellationToken cancellationToken)
+        {
             List<PositionStatusEventArgs> positionStatusEvents = new List<PositionStatusEventArgs>();
             var taskSource = new TaskCompletionSource<List<PositionStatusEventArgs>>();
             EventHandler<PositionStatusEventArgs> positionStatusEventHandler = null;
@@ -64,9 +76,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             this.twsCallbackHandler.PositionStatusEvent += positionStatusEventHandler;
             this.twsCallbackHandler.RequestPositionsEndEvent += requestPositionsEndEventHandler;
 
-            // Set the operation to cancel after 5 seconds
-            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
-            tokenSource.Token.Register(() =>
+            cancellationToken.Register(() =>
             {
                 taskSource.TrySetCanceled();
             });

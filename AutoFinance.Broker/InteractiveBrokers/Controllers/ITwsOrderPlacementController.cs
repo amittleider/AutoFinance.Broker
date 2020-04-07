@@ -2,6 +2,7 @@
 
 namespace AutoFinance.Broker.InteractiveBrokers.Controllers
 {
+    using System.Threading;
     using System.Threading.Tasks;
     using IBApi;
 
@@ -18,5 +19,15 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <param name="order">The order parameters</param>
         /// <returns>True if acknowledged</returns>
         Task<bool> PlaceOrderAsync(int orderId, Contract contract, Order order);
+
+        /// <summary>
+        /// Send an order to TWS
+        /// </summary>
+        /// <param name="orderId">The order id</param>
+        /// <param name="contract">The contract to trade</param>
+        /// <param name="order">The order parameters</param>
+        /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
+        /// <returns>True if acknowledged</returns>
+        Task<bool> PlaceOrderAsync(int orderId, Contract contract, Order order, CancellationToken cancellationToken);
     }
 }
