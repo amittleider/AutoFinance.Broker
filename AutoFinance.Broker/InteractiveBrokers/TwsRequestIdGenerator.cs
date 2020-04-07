@@ -13,7 +13,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <summary>
         /// Holds the state of the request Id for TWS
         /// </summary>
-        private static int requestId = 1;
+        private static int requestId = 0;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TwsRequestIdGenerator"/> class.

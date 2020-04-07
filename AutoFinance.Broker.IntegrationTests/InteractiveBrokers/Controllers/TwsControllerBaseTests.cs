@@ -107,7 +107,7 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TwsExecutionController_Should_ReturnExecutions()
+        public async Task Should_PlaceOrder()
         {
             TwsObjectFactory twsObjectFactory = new TwsObjectFactory("localhost", 7462, 1);
             ITwsControllerBase twsController = twsObjectFactory.TwsControllerBase;
@@ -115,13 +115,13 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
             await twsController.EnsureConnectedAsync();
 
             // Create a position
-            Contract contract = new Contract();
-            contract.SecType = TwsContractSecType.Future;
-            contract.Symbol = TwsSymbol.Dax;
-            contract.Exchange = TwsExchange.Dtb;
-            contract.Currency = TwsCurrency.Eur;
-            contract.Multiplier = "25";
-            contract.LastTradeDateOrContractMonth = "201809";
+            Contract contract = new Contract
+            {
+                SecType = TwsContractSecType.Stock,
+                Symbol = "MSFT",
+                Exchange = TwsExchange.Smart,
+                PrimaryExch = TwsExchange.Island,
+            };
 
             Order order = new Order
             {
@@ -172,6 +172,8 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
 
             // Assert
             historicalDataEvents.Count.Should().BeGreaterThan(0);
+
+            await twsController.DisconnectAsync();
         }
 
         [Fact]
@@ -207,6 +209,8 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
 
             var msftOrders = openOrders.Where(orderEvent => orderEvent.Contract.Symbol == "MSFT").ToList();
             msftOrders.Count.Should().BeGreaterOrEqualTo(1);
+
+            await twsController.DisconnectAsync();
         }
 
         [Fact]
@@ -244,6 +248,8 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
 
             var openOrders2 = await twsController.RequestOpenOrders();
             openOrders2.Count.Should().BeGreaterOrEqualTo(1);
+
+            await twsController.DisconnectAsync();
         }
 
         /// <summary>
@@ -287,6 +293,8 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
 
             // Assert
             cancelationAcknowledged.Should().BeTrue();
+
+            await twsController.DisconnectAsync();
         }
 
         /// <summary>
@@ -327,8 +335,7 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
             successfullyPlaced.Should().BeTrue();
 
             // Tear down
-            // It appears something is wrong with the disconnection API, which could be screwing up all the integration tests if you don't run them individually.
-            ////await connectionController.DisconnectAsync();
+            await twsController.DisconnectAsync();
         }
 
         /// <summary>
@@ -620,7 +627,7 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
         {
             TwsObjectFactory twsObjectFactory = new TwsObjectFactory("localhost", 7462, 1);
             ITwsControllerBase twsController = twsObjectFactory.TwsControllerBase;
-            
+
             await twsController.EnsureConnectedAsync();
 
             Contract contract = new Contract
@@ -635,6 +642,8 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
             var securityDefinitions = await twsController.RequestSecurityDefinitionOptionParameters("MSFT", "", "STK", contractDetails.First().Contract.ConId);
 
             securityDefinitions.Count.Should().BeGreaterThan(1);
+
+            await twsController.DisconnectAsync();
 
             ////// If you want, you can request the contract details from this info or get historical data for it
             ////Contract option = new Contract()
