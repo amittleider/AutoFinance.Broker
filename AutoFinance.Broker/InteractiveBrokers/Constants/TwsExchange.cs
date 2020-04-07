@@ -26,5 +26,10 @@ namespace AutoFinance.Broker.InteractiveBrokers.Constants
         /// IEX
         /// </summary>
         public const string Iex = "IEX";
+
+        /// <summary>
+        /// IEX
+        /// </summary>
+        public const string Cboe = "CBOE";
     }
 }

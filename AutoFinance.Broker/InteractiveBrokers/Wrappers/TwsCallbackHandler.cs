@@ -239,6 +239,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <inheritdoc/>
         public void error(Exception e)
         {
+            throw e;
         }
 
         /// <inheritdoc/>

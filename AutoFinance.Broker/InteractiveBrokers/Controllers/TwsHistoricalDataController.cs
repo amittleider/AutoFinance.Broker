@@ -7,6 +7,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using AutoFinance.Broker.InteractiveBrokers.Constants;
     using AutoFinance.Broker.InteractiveBrokers.EventArgs;
     using AutoFinance.Broker.InteractiveBrokers.Exceptions;
     using AutoFinance.Broker.InteractiveBrokers.Wrappers;
@@ -51,15 +52,15 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// </summary>
         /// <param name="contract">The contract type</param>
         /// <param name="endDateTime">The end date of the request</param>
-        /// <param name="durationString">The duration of the request</param>
-        /// <param name="barSizeSetting">The bar size to reuest</param>
+        /// <param name="duration">The duration of the request</param>
+        /// <param name="barSizeSetting">The bar size to request</param>
         /// <param name="whatToShow">The historical data request type</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public Task<List<HistoricalDataEventArgs>> GetHistoricalDataAsync(Contract contract, string endDateTime, string durationString, string barSizeSetting, string whatToShow)
+        public Task<List<HistoricalDataEventArgs>> GetHistoricalDataAsync(Contract contract, DateTime endDateTime, TwsDuration duration, TwsBarSizeSetting barSizeSetting, TwsHistoricalDataRequestType whatToShow)
         {
-            // Set the operation to cancel after 10 seconds
-            CancellationTokenSource tokenSource = new CancellationTokenSource(10000);
-            return this.GetHistoricalDataAsync(contract, endDateTime, durationString, barSizeSetting, whatToShow, tokenSource.Token);
+            // Set the operation to cancel after 1 minute
+            CancellationTokenSource tokenSource = new CancellationTokenSource(60 * 1000);
+            return this.GetHistoricalDataAsync(contract, endDateTime, duration, barSizeSetting, whatToShow, tokenSource.Token);
         }
 
         /// <summary>
@@ -67,12 +68,12 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// </summary>
         /// <param name="contract">The contract type</param>
         /// <param name="endDateTime">The end date of the request</param>
-        /// <param name="durationString">The duration of the request</param>
-        /// <param name="barSizeSetting">The bar size to reuest</param>
+        /// <param name="duration">The duration of the request</param>
+        /// <param name="barSizeSetting">The bar size to request</param>
         /// <param name="whatToShow">The historical data request type</param>
         /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public Task<List<HistoricalDataEventArgs>> GetHistoricalDataAsync(Contract contract, string endDateTime, string durationString, string barSizeSetting, string whatToShow, CancellationToken cancellationToken)
+        public Task<List<HistoricalDataEventArgs>> GetHistoricalDataAsync(Contract contract, DateTime endDateTime, TwsDuration duration, TwsBarSizeSetting barSizeSetting, TwsHistoricalDataRequestType whatToShow, CancellationToken cancellationToken)
         {
             int requestId = this.twsRequestIdGenerator.GetNextRequestId();
             int useRth = 1;
@@ -127,7 +128,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             this.twsCallbackHandler.HistoricalDataEndEvent += historicalDataEndEventHandler;
             this.twsCallbackHandler.ErrorEvent += errorEventHandler;
 
-            this.clientSocket.ReqHistoricalData(requestId, contract, endDateTime, durationString, barSizeSetting, whatToShow, useRth, formatDate, chartOptions);
+            this.clientSocket.ReqHistoricalData(requestId, contract, endDateTime.ToString("yyyyMMdd HH:mm:ss"), duration.ToTwsParameter(), barSizeSetting.ToTwsParameter(), whatToShow.ToTwsParameter(), useRth, formatDate, chartOptions);
             return taskSource.Task;
         }
     }
