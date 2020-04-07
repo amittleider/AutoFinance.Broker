@@ -72,6 +72,11 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             if (!this.connected)
             {
                 await this.ConnectAsync();
+
+                // Sometimes TWS flushes the socket on a new connection
+                // And the socket will get really fucked up any commands come in during that time
+                // Just wait 5 seconds for it to finish
+                await Task.Delay(5000);
                 this.connected = true;
             }
         }
