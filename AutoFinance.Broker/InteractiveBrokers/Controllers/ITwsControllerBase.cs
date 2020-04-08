@@ -5,6 +5,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.Threading;
     using System.Threading.Tasks;
     using AutoFinance.Broker.InteractiveBrokers.Constants;
     using AutoFinance.Broker.InteractiveBrokers.EventArgs;
@@ -35,10 +36,24 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         Task<int> GetNextValidIdAsync();
 
         /// <summary>
+        /// Gets the next valid order Id for TWS
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
+        /// <returns>The next valid order Id</returns>
+        Task<int> GetNextValidIdAsync(CancellationToken cancellationToken);
+
+        /// <summary>
         /// Requests open orders
         /// </summary>
         /// <returns>Open orders</returns>
         Task<List<OpenOrderEventArgs>> RequestOpenOrders();
+
+        /// <summary>
+        /// Requests open orders
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
+        /// <returns>Open orders</returns>
+        Task<List<OpenOrderEventArgs>> RequestOpenOrders(CancellationToken cancellationToken);
 
         /// <summary>
         /// Cancels an order
@@ -46,6 +61,14 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <param name="orderId">The order ID</param>
         /// <returns>True if it was successfully cancelled</returns>
         Task<bool> CancelOrderAsync(int orderId);
+
+        /// <summary>
+        /// Cancels an order
+        /// </summary>
+        /// <param name="orderId">The order ID</param>
+        /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
+        /// <returns>True if it was successfully cancelled</returns>
+        Task<bool> CancelOrderAsync(int orderId, CancellationToken cancellationToken);
 
         /// <summary>
         /// Send an order to TWS
@@ -57,11 +80,29 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         Task<bool> PlaceOrderAsync(int orderId, Contract contract, Order order);
 
         /// <summary>
+        /// Send an order to TWS
+        /// </summary>
+        /// <param name="orderId">The order id</param>
+        /// <param name="contract">The contract to trade</param>
+        /// <param name="order">The order parameters</param>
+        /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
+        /// <returns>True if acknowledged</returns>
+        Task<bool> PlaceOrderAsync(int orderId, Contract contract, Order order, CancellationToken cancellationToken);
+
+        /// <summary>
         /// Get an account detail
         /// </summary>
         /// <param name="accountId">The account Id</param>
         /// <returns>The account values</returns>
         Task<ConcurrentDictionary<string, string>> GetAccountDetailsAsync(string accountId);
+
+        /// <summary>
+        /// Get an account detail
+        /// </summary>
+        /// <param name="accountId">The account Id</param>
+        /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
+        /// <returns>The account values</returns>
+        Task<ConcurrentDictionary<string, string>> GetAccountDetailsAsync(string accountId, CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets a contract by request.
@@ -82,7 +123,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <param name="contract">The contract type</param>
         /// <param name="endDateTime">The end date of the request</param>
         /// <param name="duration">The duration of the request</param>
-        /// <param name="barSizeSetting">The bar size to reuest</param>
+        /// <param name="barSizeSetting">The bar size to request</param>
         /// <param name="whatToShow">The historical data request type</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         Task<List<HistoricalDataEventArgs>> GetHistoricalDataAsync(Contract contract, DateTime endDateTime, TwsDuration duration, TwsBarSizeSetting barSizeSetting, TwsHistoricalDataRequestType whatToShow);

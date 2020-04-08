@@ -148,6 +148,19 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <returns>The account values</returns>
         public Task<ConcurrentDictionary<string, string>> GetAccountDetailsAsync(string accountId)
         {
+            // Set the operation to cancel after 5 seconds
+            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
+            return this.GetAccountDetailsAsync(accountId, tokenSource.Token);
+        }
+
+        /// <summary>
+        /// Get an account detail
+        /// </summary>
+        /// <param name="accountId">The account Id</param>
+        /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
+        /// <returns>The account values</returns>
+        public Task<ConcurrentDictionary<string, string>> GetAccountDetailsAsync(string accountId, CancellationToken cancellationToken)
+        {
             string value = string.Empty;
 
             var taskSource = new TaskCompletionSource<ConcurrentDictionary<string, string>>();
@@ -156,9 +169,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                 taskSource.TrySetResult(this.accountUpdates);
             };
 
-            // Set the operation to cancel after 5 seconds
-            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
-            tokenSource.Token.Register(() =>
+            cancellationToken.Register(() =>
             {
                 taskSource.TrySetCanceled();
             });
@@ -268,7 +279,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <param name="contract">The contract type</param>
         /// <param name="endDateTime">The end date of the request</param>
         /// <param name="duration">The duration of the request</param>
-        /// <param name="barSizeSetting">The bar size to reuest</param>
+        /// <param name="barSizeSetting">The bar size to request</param>
         /// <param name="whatToShow">The historical data request type</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public Task<List<HistoricalDataEventArgs>> GetHistoricalDataAsync(Contract contract, DateTime endDateTime, TwsDuration duration, TwsBarSizeSetting barSizeSetting, TwsHistoricalDataRequestType whatToShow)
@@ -360,6 +371,18 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <returns>The next valid order Id</returns>
         public Task<int> GetNextValidIdAsync()
         {
+            // Set the operation to cancel after 5 seconds
+            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
+            return this.GetNextValidIdAsync(tokenSource.Token);
+        }
+
+        /// <summary>
+        /// Get the next valid order Id.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
+        /// <returns>The next valid order Id</returns>
+        public Task<int> GetNextValidIdAsync(CancellationToken cancellationToken)
+        {
             var taskSource = new TaskCompletionSource<int>();
 
             long nextId = Interlocked.Read(ref nextValidOrderId);
@@ -378,8 +401,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                 };
 
                 // Set the operation to cancel after 5 seconds
-                CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
-                tokenSource.Token.Register(() =>
+                cancellationToken.Register(() =>
                 {
                     taskSource.TrySetCanceled();
                 });
@@ -398,7 +420,19 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// Get a list of all the executions from TWS
         /// </summary>
         /// <returns>A list of execution details events from TWS.</returns>
-        public Task<List<OpenOrderEventArgs>> RequestOpenOrders()
+        public async Task<List<OpenOrderEventArgs>> RequestOpenOrders()
+        {
+            // Set the operation to cancel after 5 seconds
+            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
+            return await this.RequestOpenOrders(tokenSource.Token);
+        }
+
+        /// <summary>
+        /// Get a list of all the executions from TWS
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
+        /// <returns>A list of execution details events from TWS.</returns>
+        public Task<List<OpenOrderEventArgs>> RequestOpenOrders(CancellationToken cancellationToken)
         {
             List<OpenOrderEventArgs> openOrderEvents = new List<OpenOrderEventArgs>();
             var taskSource = new TaskCompletionSource<List<OpenOrderEventArgs>>();
@@ -423,8 +457,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             this.twsCallbackHandler.OpenOrderEndEvent += openOrderEndEventHandler;
 
             // Set the operation to cancel after 5 seconds
-            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
-            tokenSource.Token.Register(() =>
+            cancellationToken.Register(() =>
             {
                 taskSource.TrySetCanceled();
             });
@@ -440,6 +473,19 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <param name="orderId">The order Id to cancel</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation. True if the broker acknowledged the cancelation request, false otherwise.</returns>
         public Task<bool> CancelOrderAsync(int orderId)
+        {
+            // Set the operation to cancel after 5 seconds
+            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
+            return this.CancelOrderAsync(orderId, tokenSource.Token);
+        }
+
+        /// <summary>
+        /// Cancels an order in TWS.
+        /// </summary>
+        /// <param name="orderId">The order Id to cancel</param>
+        /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation. True if the broker acknowledged the cancelation request, false otherwise.</returns>
+        public Task<bool> CancelOrderAsync(int orderId, CancellationToken cancellationToken)
         {
             var taskSource = new TaskCompletionSource<bool>();
 
@@ -478,8 +524,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             };
 
             // Set the operation to cancel after 5 seconds
-            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
-            tokenSource.Token.Register(() =>
+            cancellationToken.Register(() =>
             {
                 taskSource.TrySetCanceled();
             });
@@ -498,6 +543,21 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <param name="order">The order</param>
         /// <returns>True if the order was acknowledged, false otherwise</returns>
         public Task<bool> PlaceOrderAsync(int orderId, Contract contract, Order order)
+        {
+            // Set the operation to cancel after 5 seconds
+            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
+            return this.PlaceOrderAsync(orderId, contract, order, tokenSource.Token);
+        }
+
+        /// <summary>
+        /// Places an order and returns whether the order placement was successful or not.
+        /// </summary>
+        /// <param name="orderId">The order Id</param>
+        /// <param name="contract">The contract to trade</param>
+        /// <param name="order">The order</param>
+        /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
+        /// <returns>True if the order was acknowledged, false otherwise</returns>
+        public Task<bool> PlaceOrderAsync(int orderId, Contract contract, Order order, CancellationToken cancellationToken)
         {
             var taskSource = new TaskCompletionSource<bool>();
 
@@ -537,14 +597,11 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             this.twsCallbackHandler.ErrorEvent += orderErrorEventCallback;
             this.twsCallbackHandler.OpenOrderEvent += openOrderEventCallback;
 
-            // Set the operation to cancel after 5 seconds
-            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
-            tokenSource.Token.Register(() =>
+            cancellationToken.Register(() =>
             {
                 taskSource.TrySetCanceled();
             });
 
-            // TODO: Implement the error handler here as well
             this.clientSocket.PlaceOrder(orderId, contract, order);
             return taskSource.Task;
         }
@@ -554,6 +611,18 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// </summary>
         /// <returns>A list of position status events from TWS.</returns>
         public Task<List<PositionStatusEventArgs>> RequestPositions()
+        {
+            // Set the operation to cancel after 5 seconds
+            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
+            return this.RequestPositions(tokenSource.Token);
+        }
+
+        /// <summary>
+        /// Get a list of all the positions in TWS.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
+        /// <returns>A list of position status events from TWS.</returns>
+        public Task<List<PositionStatusEventArgs>> RequestPositions(CancellationToken cancellationToken)
         {
             List<PositionStatusEventArgs> positionStatusEvents = new List<PositionStatusEventArgs>();
             var taskSource = new TaskCompletionSource<List<PositionStatusEventArgs>>();
@@ -577,9 +646,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             this.twsCallbackHandler.PositionStatusEvent += positionStatusEventHandler;
             this.twsCallbackHandler.RequestPositionsEndEvent += requestPositionsEndEventHandler;
 
-            // Set the operation to cancel after 5 seconds
-            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
-            tokenSource.Token.Register(() =>
+            cancellationToken.Register(() =>
             {
                 taskSource.TrySetCanceled();
             });
@@ -604,6 +671,28 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             string underlyingSecType,
             int underlyingConId)
         {
+            // Set the operation to cancel after 10 seconds
+            CancellationTokenSource tokenSource = new CancellationTokenSource(10000);
+            return this.RequestSecurityDefinitionOptionParameters(underlyingSymbol, exchange, underlyingSecType, underlyingConId, tokenSource.Token);
+        }
+
+        /// <summary>
+        /// Request security definition parameters.
+        /// This is mainly used for finding strikes, multipliers, exchanges, and expirations for options contracts.
+        /// </summary>
+        /// <param name="underlyingSymbol">The underlying symbol</param>
+        /// <param name="exchange">The exchange</param>
+        /// <param name="underlyingSecType">The underlying security type</param>
+        /// <param name="underlyingConId">The underlying contract ID, retrieved from the Contract Details call</param>
+        /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
+        /// <returns>The security definitions for options</returns>
+        public Task<List<SecurityDefinitionOptionParameterEventArgs>> RequestSecurityDefinitionOptionParameters(
+            string underlyingSymbol,
+            string exchange,
+            string underlyingSecType,
+            int underlyingConId,
+            CancellationToken cancellationToken)
+        {
             var taskSource = new TaskCompletionSource<List<SecurityDefinitionOptionParameterEventArgs>>();
 
             List<SecurityDefinitionOptionParameterEventArgs> securityDefinitionEvents = new List<SecurityDefinitionOptionParameterEventArgs>();
@@ -623,9 +712,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                 taskSource.TrySetResult(securityDefinitionEvents);
             };
 
-            // Set the operation to cancel after 5 seconds
-            CancellationTokenSource tokenSource = new CancellationTokenSource(10000);
-            tokenSource.Token.Register(() =>
+            cancellationToken.Register(() =>
             {
                 taskSource.TrySetCanceled();
             });

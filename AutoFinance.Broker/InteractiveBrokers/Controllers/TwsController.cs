@@ -6,6 +6,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using AutoFinance.Broker.InteractiveBrokers.Constants;
     using AutoFinance.Broker.InteractiveBrokers.EventArgs;
@@ -245,12 +246,27 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             return await this.twsControllerBase.GetNextValidIdAsync();
         }
 
+        public async Task<int> GetNextValidIdAsync(CancellationToken cancellationToken)
+        {
+            return await this.twsControllerBase.GetNextValidIdAsync(cancellationToken);
+        }
+
         public async Task<List<OpenOrderEventArgs>> RequestOpenOrders()
         {
             return await this.twsControllerBase.RequestOpenOrders();
         }
 
+        public async Task<List<OpenOrderEventArgs>> RequestOpenOrders(CancellationToken cancellationToken)
+        {
+            return await this.twsControllerBase.RequestOpenOrders(cancellationToken);
+        }
+
         public async Task<bool> CancelOrderAsync(int orderId)
+        {
+            return await this.twsControllerBase.CancelOrderAsync(orderId);
+        }
+
+        public async Task<bool> CancelOrderAsync(int orderId, CancellationToken cancellationToken)
         {
             return await this.twsControllerBase.CancelOrderAsync(orderId);
         }
@@ -260,9 +276,19 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             return await this.twsControllerBase.PlaceOrderAsync(orderId, contract, order);
         }
 
+        public async Task<bool> PlaceOrderAsync(int orderId, Contract contract, Order order, CancellationToken cancellationToken)
+        {
+            return await this.twsControllerBase.PlaceOrderAsync(orderId, contract, order, cancellationToken);
+        }
+
         public async Task<ConcurrentDictionary<string, string>> GetAccountDetailsAsync(string accountId)
         {
             return await this.twsControllerBase.GetAccountDetailsAsync(accountId);
+        }
+
+        public async Task<ConcurrentDictionary<string, string>> GetAccountDetailsAsync(string accountId, CancellationToken cancellationToken)
+        {
+            return await this.GetAccountDetailsAsync(accountId, cancellationToken);
         }
 
         public async Task<List<ContractDetails>> GetContractAsync(Contract contract)
