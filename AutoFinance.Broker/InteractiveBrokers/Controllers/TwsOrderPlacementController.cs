@@ -45,6 +45,21 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <returns>True if the order was acknowledged, false otherwise</returns>
         public Task<bool> PlaceOrderAsync(int orderId, Contract contract, Order order)
         {
+            // Set the operation to cancel after 5 seconds
+            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
+            return this.PlaceOrderAsync(orderId, contract, order, tokenSource.Token);
+        }
+
+        /// <summary>
+        /// Places an order and returns whether the order placement was successful or not.
+        /// </summary>
+        /// <param name="orderId">The order Id</param>
+        /// <param name="contract">The contract to trade</param>
+        /// <param name="order">The order</param>
+        /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
+        /// <returns>True if the order was acknowledged, false otherwise</returns>
+        public Task<bool> PlaceOrderAsync(int orderId, Contract contract, Order order, CancellationToken cancellationToken)
+        {
             var taskSource = new TaskCompletionSource<bool>();
 
             EventHandler<OpenOrderEventArgs> openOrderEventCallback = null;
@@ -83,9 +98,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             this.twsCallbackHandler.ErrorEvent += orderErrorEventCallback;
             this.twsCallbackHandler.OpenOrderEvent += openOrderEventCallback;
 
-            // Set the operation to cancel after 5 seconds
-            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
-            tokenSource.Token.Register(() =>
+            cancellationToken.Register(() =>
             {
                 taskSource.TrySetCanceled();
             });

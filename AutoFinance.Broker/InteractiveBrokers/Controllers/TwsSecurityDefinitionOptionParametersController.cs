@@ -57,6 +57,28 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             string underlyingSecType,
             int underlyingConId)
         {
+            // Set the operation to cancel after 10 seconds
+            CancellationTokenSource tokenSource = new CancellationTokenSource(10000);
+            return this.RequestSecurityDefinitionOptionParameters(underlyingSymbol, exchange, underlyingSecType, underlyingConId, tokenSource.Token);
+        }
+
+        /// <summary>
+        /// Request security definition parameters.
+        /// This is mainly used for finding strikes, multipliers, exchanges, and expirations for options contracts.
+        /// </summary>
+        /// <param name="underlyingSymbol">The underlying symbol</param>
+        /// <param name="exchange">The exchange</param>
+        /// <param name="underlyingSecType">The underlying security type</param>
+        /// <param name="underlyingConId">The underlying contract ID, retrieved from the Contract Details call</param>
+        /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
+        /// <returns>The security definitions for options</returns>
+        public Task<List<SecurityDefinitionOptionParameterEventArgs>> RequestSecurityDefinitionOptionParameters(
+            string underlyingSymbol,
+            string exchange,
+            string underlyingSecType,
+            int underlyingConId,
+            CancellationToken cancellationToken)
+        {
             var taskSource = new TaskCompletionSource<List<SecurityDefinitionOptionParameterEventArgs>>();
 
             List<SecurityDefinitionOptionParameterEventArgs> securityDefinitionEvents = new List<SecurityDefinitionOptionParameterEventArgs>();
@@ -76,9 +98,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                 taskSource.TrySetResult(securityDefinitionEvents);
             };
 
-            // Set the operation to cancel after 5 seconds
-            CancellationTokenSource tokenSource = new CancellationTokenSource(10000);
-            tokenSource.Token.Register(() =>
+            cancellationToken.Register(() =>
             {
                 taskSource.TrySetCanceled();
             });

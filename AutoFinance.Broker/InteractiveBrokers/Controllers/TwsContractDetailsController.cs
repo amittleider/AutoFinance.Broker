@@ -55,6 +55,19 @@ namespace AutoFinance.Broker.InteractiveBrokers
         /// <returns>The details of the contract</returns>
         public Task<List<ContractDetails>> GetContractAsync(Contract contract)
         {
+            // Set the operation to cancel after 5 seconds
+            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
+            return this.GetContractAsync(contract, tokenSource.Token);
+        }
+
+        /// <summary>
+        /// Gets a contract by request.
+        /// </summary>
+        /// <param name="contract">The requested contract.</param>
+        /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
+        /// <returns>The details of the contract</returns>
+        public Task<List<ContractDetails>> GetContractAsync(Contract contract, CancellationToken cancellationToken)
+        {
             int requestId = this.twsRequestIdGenerator.GetNextRequestId();
             List<ContractDetails> contractDetailsList = new List<ContractDetails>();
 
@@ -87,9 +100,7 @@ namespace AutoFinance.Broker.InteractiveBrokers
                 }
             };
 
-            // Set the operation to cancel after 5 seconds
-            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
-            tokenSource.Token.Register(() =>
+            cancellationToken.Register(() =>
             {
                 taskSource.TrySetCanceled();
             });

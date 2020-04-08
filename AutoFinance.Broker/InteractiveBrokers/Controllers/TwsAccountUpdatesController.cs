@@ -48,6 +48,19 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <returns>The account values</returns>
         public Task<ConcurrentDictionary<string, string>> GetAccountDetailsAsync(string accountId)
         {
+            // Set the operation to cancel after 5 seconds
+            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
+            return this.GetAccountDetailsAsync(accountId, tokenSource.Token);
+        }
+
+        /// <summary>
+        /// Get an account detail
+        /// </summary>
+        /// <param name="accountId">The account Id</param>
+        /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
+        /// <returns>The account values</returns>
+        public Task<ConcurrentDictionary<string, string>> GetAccountDetailsAsync(string accountId, CancellationToken cancellationToken)
+        {
             string value = string.Empty;
 
             var taskSource = new TaskCompletionSource<ConcurrentDictionary<string, string>>();
@@ -56,9 +69,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                 taskSource.TrySetResult(this.accountUpdates);
             };
 
-            // Set the operation to cancel after 5 seconds
-            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
-            tokenSource.Token.Register(() =>
+            cancellationToken.Register(() =>
             {
                 taskSource.TrySetCanceled();
             });

@@ -3,6 +3,7 @@
 namespace AutoFinance.Broker.InteractiveBrokers.Controllers
 {
     using System.Collections.Generic;
+    using System.Threading;
     using System.Threading.Tasks;
     using AutoFinance.Broker.InteractiveBrokers.EventArgs;
 
@@ -16,5 +17,12 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// </summary>
         /// <returns>Open orders</returns>
         Task<List<OpenOrderEventArgs>> RequestOpenOrders();
+
+        /// <summary>
+        /// Requests open orders
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
+        /// <returns>Open orders</returns>
+        Task<List<OpenOrderEventArgs>> RequestOpenOrders(CancellationToken cancellationToken);
     }
 }
