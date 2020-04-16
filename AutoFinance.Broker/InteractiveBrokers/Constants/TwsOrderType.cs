@@ -26,5 +26,10 @@ namespace AutoFinance.Broker.InteractiveBrokers.Constants
         /// Stop loss
         /// </summary>
         public const string StopLoss = "STP";
+
+        /// <summary>
+        /// Stop limit
+        /// </summary>
+        public const string StopLimit = "STP LMT";
     }
 }

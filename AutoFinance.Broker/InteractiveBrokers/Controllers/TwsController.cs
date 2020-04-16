@@ -150,6 +150,68 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         }
 
         /// <summary>
+        /// Places a bracket order with a limit order entry and stop limit exit
+        /// </summary>
+        /// <param name="contract">The contract</param>
+        /// <param name="entryAction">Buy/sell/ssell</param>
+        /// <param name="quantity">The quantity</param>
+        /// <param name="entryOrderPrice">The limit order entry price</param>
+        /// <param name="takePrice">The take profit price</param>
+        /// <param name="stopActivationPrice">The stop loss price</param>
+        /// <param name="stopLimitPrice">The price to put the limit after the stop activation price is touched</param>
+        /// <returns>True if the orders are correctly placed</returns>
+        public async Task<bool> PlaceBracketOrder(Contract contract, string entryAction, double quantity, double entryOrderPrice, double takePrice, double stopActivationPrice, double stopLimitPrice)
+        {
+            await this.EnsureConnectedAsync();
+
+            // Generate the order IDs
+            int entryOrderId = await this.GetNextValidIdAsync();
+            var takeProfitOrderId = await this.GetNextValidIdAsync();
+            var stopOrderId = await this.GetNextValidIdAsync();
+
+            // Initialize the order
+            Order entryOrder = new Order()
+            {
+                Action = entryAction,
+                OrderType = TwsOrderType.Limit,
+                TotalQuantity = quantity,
+                LmtPrice = entryOrderPrice,
+                Tif = TwsTimeInForce.GoodTillClose,
+                Transmit = false,
+            };
+
+            Order takeProfit = new Order()
+            {
+                Action = TwsOrderActions.Reverse(entryAction),
+                OrderType = TwsOrderType.Limit,
+                TotalQuantity = quantity,
+                LmtPrice = takePrice,
+                ParentId = entryOrderId,
+                Tif = TwsTimeInForce.GoodTillClose,
+                Transmit = false,
+            };
+
+            Order stopLoss = new Order()
+            {
+                Action = TwsOrderActions.Reverse(entryAction),
+                OrderType = TwsOrderType.StopLimit,
+                TotalQuantity = quantity,
+                AuxPrice = stopActivationPrice,
+                LmtPrice = stopLimitPrice,
+                ParentId = entryOrderId,
+                Tif = TwsTimeInForce.GoodTillClose,
+                Transmit = true,
+            };
+
+            var entryOrderAckTask = this.PlaceOrderAsync(entryOrderId, contract, entryOrder);
+            var takeProfitOrderAckTask = this.PlaceOrderAsync(takeProfitOrderId, contract, takeProfit);
+            var stopOrderAckTask = this.PlaceOrderAsync(stopOrderId, contract, stopLoss);
+            Task.WaitAll(entryOrderAckTask, takeProfitOrderAckTask, stopOrderAckTask);
+
+            return entryOrderAckTask.Result && takeProfitOrderAckTask.Result && stopOrderAckTask.Result;
+        }
+
+        /// <summary>
         /// Cancels all orders with the given symbol
         /// </summary>
         /// <param name="symbol">The symbol</param>
