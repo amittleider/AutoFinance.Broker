@@ -5,7 +5,7 @@ This project is a wrapper around the Interactive Brokers C# client API. It aims 
 Running integration tests will place real orders in TWS. Only run integration tests against a paper trading account.
 
 ## How to use
-Each call to the API requires its corresponding controller object. All controller objects are initialized with the same parameters. 
+Use the `TwsController` object to call into Tws methods.
 ```C#
 TwsObjectFactory twsObjectFactory = new TwsObjectFactory("localhost", 7462, 1);
 TwsController twsController = twsObjectFactory.TwsController;
