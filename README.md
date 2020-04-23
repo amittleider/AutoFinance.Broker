@@ -7,16 +7,10 @@ Running integration tests will place real orders in TWS. Only run integration te
 ## How to use
 Each call to the API requires its corresponding controller object. All controller objects are initialized with the same parameters. 
 ```C#
-// Initialize a controller object
-TwsObjectFactory twsObjectFactory = new TwsObjectFactory();
-TwsConnectionController connectionController = new TwsConnectionController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler, "localhost", 7462, 1);
-ITwsNextOrderIdController nextOrderIdController = new TwsNextOrderIdController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler);
-TwsOrderPlacementController orderPlacementController = new TwsOrderPlacementController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler);
-TwsRequestIdGenerator twsRequestIdGenerator = new TwsRequestIdGenerator();
-TwsExecutionController executionController = new TwsExecutionController(twsObjectFactory.ClientSocket, twsObjectFactory.TwsCallbackHandler, twsRequestIdGenerator);
+TwsObjectFactory twsObjectFactory = new TwsObjectFactory("localhost", 7462, 1);
+TwsController twsController = twsObjectFactory.TwsController;
 
-// Ensure the connection is made with TWS before calling any controller methods
-await connectionController.EnsureConnectedAsync();
+await twsController.EnsureConnectedAsync();
 ```
 
 Place an order
@@ -36,19 +30,19 @@ Order order = new Order
     TotalQuantity = 1
 };
 
-int orderId = await nextOrderIdController.GetNextValidIdAsync();
-bool successfullyPlaced = await orderPlacementController.PlaceOrderAsync(orderId, contract, order);
+int orderId = await twsController.GetNextValidIdAsync();
+bool successfullyPlaced = await twsController.PlaceOrderAsync(orderId, contract, order);
 ```
 
 Get a list of the current positions
 ```C#
-List<PositionStatusEventArgs> positionStatusEvents = await positionsController.RequestPositions();
+List<PositionStatusEventArgs> positionStatusEvents = await twsController.RequestPositions();
 ```
 
 Get various account information
 ```C#
 string accountId = "DU1052488";
-ConcurrentDictionary<string, string> accountUpdates = await accountUpdatesController.GetAccountDetailsAsync(accountId);
+ConcurrentDictionary<string, string> accountUpdates = await twsController.GetAccountDetailsAsync(accountId);
 ```
 
 Get historical data
@@ -64,18 +58,20 @@ Contract contract = new Contract
 string queryTime = DateTime.Now.AddMonths(-6).ToString("yyyyMMdd HH:mm:ss");
 
 // Call
-List<HistoricalDataEventArgs> historicalDataEvents = await historicalDataController.GetHistoricalDataAsync(contract, queryTime, "1 M", "1 day", "MIDPOINT");
+List<HistoricalDataEventArgs> historicalDataEvents = await twsController.GetHistoricalDataAsync(contract, queryTime, "1 M", "1 day", "MIDPOINT");
 ```
 
 Cancel an order
 ```C#
-bool cancelationAcknowledged = await orderCancelationController.CancelOrderAsync(orderId);
+bool cancelationAcknowledged = await twsController.CancelOrderAsync(orderId);
 ```
 
 Place a bracket order (Entry + Stop loss + Take profit), where the entry order is pegged to the market.
 ```C#
-bool orderAck = await twsBracketOrderPlacementController.PlaceBracketOrder(contract, entryAction, quantity, takePrice, stopPrice);
+bool orderAck = await twsController.PlaceBracketOrder(contract, entryAction, quantity, takePrice, stopPrice);
 ```
+
+Check out the tests in [TwsControllerBaseTests.cs](../master/AutoFinance.Broker.IntegrationTests/InteractiveBrokers/Controllers/TwsControllerBaseTests.cs) and [TwsControllerTests.cs](../master/AutoFinance.Broker.IntegrationTests/InteractiveBrokers/Controllers/TwsControllerTests.cs) for more examples. A full list of implemented APIs can be found in [the TwsController](../master/AutoFinance.Broker/InteractiveBrokers/Controllers/TwsController.cs).
 
 ## Build + Nuget
 [![Build Status](https://dev.azure.com/amittleider/AutoFinance.Broker/_apis/build/status/amittleider.AutoFinance.Broker?branchName=master)](https://dev.azure.com/amittleider/AutoFinance.Broker/_build/latest?definitionId=5&branchName=master)
