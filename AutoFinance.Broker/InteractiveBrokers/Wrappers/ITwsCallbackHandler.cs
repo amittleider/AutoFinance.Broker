@@ -69,6 +69,11 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         event EventHandler<HistoricalDataEventArgs> HistoricalDataEvent;
 
         /// <summary>
+        /// The event that is fired when continuous HistoricalDataUpdateEvent is called by TWS
+        /// </summary>
+        event EventHandler<HistoricalDataEventArgs> HistoricalDataUpdateEvent;
+
+        /// <summary>
         /// The event that is fired when HistoricalDataEnd is called by TWS
         /// </summary>
         event EventHandler<HistoricalDataEndEventArgs> HistoricalDataEndEvent;
