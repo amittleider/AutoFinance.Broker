@@ -46,7 +46,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Constants
         /// <summary>
         /// A warrant contract
         /// </summary>
-        public const string Warran = "WAR";
+        public const string Warrant = "WAR";
 
         /// <summary>
         /// A bond contract
