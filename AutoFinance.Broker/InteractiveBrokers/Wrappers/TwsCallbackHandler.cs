@@ -4,7 +4,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
 {
     using System;
     using System.Collections.Generic;
-    using AutoFinance.Broker.InteractiveBrokers.EventArgs;
+    using EventArgs;
     using IBApi;
 
     /// <summary>
@@ -78,7 +78,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// The event that is fired when continuous HistoricalDataUpdateEvent is called by TWS
         /// </summary>
         public event EventHandler<HistoricalDataEventArgs> HistoricalDataUpdateEvent;
-        
+
         /// <summary>
         /// The event that is fired when HistoricalDataEnd is called by TWS
         /// </summary>
@@ -134,71 +134,167 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// </summary>
         public event EventHandler SecurityDefinitionOptionParameterEndEvent;
 
+        /// <summary>
+        /// The event that is fired when the account summary is received.
+        /// </summary>
+        public event EventHandler<AccountSummaryEventArgs> AccountSummaryEvent;
+
+        /// <summary>
+        /// The event that is fired when the account summary request is completed.
+        /// </summary>
+        public event EventHandler<RequestEndEventArgs> AccountSummaryEndEvent;
+
+        /// <summary>
+        /// The event that is fired when the account updates are received.
+        /// </summary>
+        public event EventHandler<AccountUpdateMultiEventArgs> AccountUpdateMultiEvent;
+
+        /// <summary>
+        /// The event that is fired when the account updates are completely received.
+        /// </summary>
+        public event EventHandler<RequestEndEventArgs> AccountUpdateMultiEndEvent;
+
+        /// <summary>
+        /// The event that is fired when the minimum price increments are returned for a market rule.
+        /// </summary>
+        public event EventHandler<MarketRuleEventArgs> MarketRuleEvent;
+
+        /// <summary>
+        /// The event that is fired when the commission report of an execution is received.
+        /// </summary>
+        public event EventHandler<CommissionReportEventArgs> CommissionReportEvent;
+
+        /// <summary>
+        /// The event that is fired when a completed order is received.
+        /// </summary>
+        public event EventHandler<CompletedOrderEventArgs> CompletedOrderEvent;
+
+        /// <summary>
+        /// The event that is fired when all completed orders are fetched.
+        /// </summary>
+        public event EventHandler CompletedOrdersEndEvent;
+
+        /// <summary>
+        /// The event that is fired when a bond contract data is  received.
+        /// </summary>
+        public event EventHandler<BondContractDetailsEventArgs> BondContractDetailsEvent;
+
+        /// <summary>
+        /// The event that is fired when histogram data is received.
+        /// </summary>
+        public event EventHandler<HistogramDataEventArgs> HistogramDataEvent;
+
+        /// <summary>
+        /// When historical ticks event are received.
+        /// </summary>
+        public event EventHandler<HistoricalTicksEventArgs> HistoricalTicksEvent;
+
+        /// <summary>
+        /// The event that is fired when historical ticks bid ask data is received.
+        /// </summary>
+        public event EventHandler<HistoricalTicksBidAskEventArgs> HistoricalTicksBidAskEvent;
+
+        /// <summary>
+        /// The event that is fired when historical ticks last are received.
+        /// </summary>
+        public event EventHandler<HistoricalTicksLastEventArgs> HistoricalTicksLastEvent;
+
+        /// <summary>
+        /// The event that is fired when market data types are received.
+        /// </summary>
+        public event EventHandler<MarketDataTypeEventArgs> MarketDataTypeEvent;
+
+        /// <summary>
+        /// The event that is fired when an order bind has been received.
+        /// </summary>
+        public event EventHandler<OrderBoundEventArgs> OrderBoundEvent;
+
+        /// <summary>
+        /// The event that is fired when a portfolio's open position is received.
+        /// </summary>
+        public event EventHandler<PositionMultiEventArgs> PositionMultiEvent;
+
+        /// <summary>
+        /// The event that is fired when all portfolio's open positions are received.
+        /// </summary>
+        public event EventHandler<RequestEndEventArgs> RequestPositionsMultiEndEvent;
+
+        /// <summary>
+        /// The event that is fired when a portfolio has been updated.
+        /// </summary>
+        public event EventHandler<UpdatePortfolioEventArgs> UpdatePortfolioEvent;
+
+
+
         /// <inheritdoc/>
         public void accountDownloadEnd(string account)
         {
             var eventArgs = new AccountDownloadEndEventArgs(account);
-            this.AccountDownloadEndEvent.Invoke(this, eventArgs);
+            this.AccountDownloadEndEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>
         public void accountSummary(int reqId, string account, string tag, string value, string currency)
         {
-            throw new NotImplementedException();
+            var eventArgs = new AccountSummaryEventArgs(reqId, account, tag, value, currency);
+            this.AccountSummaryEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>
         public void accountSummaryEnd(int reqId)
         {
-            throw new NotImplementedException();
+            this.AccountSummaryEndEvent?.Invoke(this, new RequestEndEventArgs(reqId));
         }
 
         /// <inheritdoc/>
         public void accountUpdateMulti(int requestId, string account, string modelCode, string key, string value, string currency)
         {
-            throw new NotImplementedException();
+            var eventArgs = new AccountUpdateMultiEventArgs(requestId, account, modelCode, key, value, currency);
+            this.AccountUpdateMultiEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>
         public void accountUpdateMultiEnd(int requestId)
         {
-            throw new NotImplementedException();
+            this.AccountUpdateMultiEndEvent?.Invoke(this, new RequestEndEventArgs(requestId));
         }
 
         /// <inheritdoc/>
         public void bondContractDetails(int reqId, ContractDetails contract)
         {
-            throw new NotImplementedException();
+            var eventArgs = new BondContractDetailsEventArgs(reqId, contract);
+            this.BondContractDetailsEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>
         public void commissionReport(CommissionReport commissionReport)
         {
-            // Unimplemented because we don't care
+            this.CommissionReportEvent?.Invoke(this, new CommissionReportEventArgs(commissionReport));
         }
 
         /// <inheritdoc/>
         public void completedOrder(Contract contract, Order order, OrderState orderState)
         {
-            throw new NotImplementedException();
+            var eventArgs = new CompletedOrderEventArgs(contract, order, orderState);
+            this.CompletedOrderEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>
         public void completedOrdersEnd()
         {
-            throw new NotImplementedException();
+            this.CompletedOrdersEndEvent?.Invoke(this, EventArgs.Empty);
         }
 
         /// <inheritdoc/>
         public void connectAck()
         {
-            this.ConnectionAcknowledgementEvent.Invoke(this, null);
+            this.ConnectionAcknowledgementEvent?.Invoke(this, EventArgs.Empty);
         }
 
         /// <inheritdoc/>
         public void connectionClosed()
         {
-            this.ConnectionClosedEvent.Invoke(this, null);
+            this.ConnectionClosedEvent?.Invoke(this, EventArgs.Empty);
         }
 
         /// <inheritdoc/>
@@ -206,7 +302,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         {
             // Raise an event here which can be listened throughout the application
             var eventArgs = new ContractDetailsEventArgs(reqId, contractDetails);
-            this.ContractDetailsEvent.Invoke(this, eventArgs);
+            this.ContractDetailsEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>
@@ -214,7 +310,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         {
             // Raise an event which can be listened throughout the application
             var eventArgs = new ContractDetailsEndEventArgs(reqId);
-            this.ContractDetailsEndEvent.Invoke(this, eventArgs);
+            this.ContractDetailsEndEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>
@@ -250,7 +346,8 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <inheritdoc/>
         public void error(string str)
         {
-            throw new NotImplementedException();
+            var eventArgs = new ErrorEventArgs(-1, -1, str);
+            this.ErrorEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>
@@ -296,27 +393,28 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <inheritdoc/>
         public void histogramData(int reqId, HistogramEntry[] data)
         {
-            throw new NotImplementedException();
+            var eventArgs = new HistogramDataEventArgs(reqId, data);
+            this.HistogramDataEvent?.Invoke(this, eventArgs);
         }
 
         /// <summary>
         /// A callback for historical data, fixing a breaking change by the IB API to keep this signature
         /// </summary>
-        /// <param name="reqId">The req id</param>
-        /// <param name="date">The date</param>
-        /// <param name="open">The open</param>
-        /// <param name="high">The high</param>
-        /// <param name="low">The low</param>
-        /// <param name="close">The close</param>
-        /// <param name="volume">The volume</param>
-        /// <param name="count">The count</param>
-        /// <param name="WAP">The WAP</param>
-        /// <param name="hasGaps">Whether the data has gaps</param>
+        /// <param name="reqId">The req id.</param>
+        /// <param name="date">The date.</param>
+        /// <param name="open">The open.</param>
+        /// <param name="high">The high.</param>
+        /// <param name="low">The low.</param>
+        /// <param name="close">The close.</param>
+        /// <param name="volume">The volume.</param>
+        /// <param name="count">The count.</param>
+        /// <param name="WAP">The WAP.</param>
+        /// <param name="hasGaps">Whether the data has gaps.</param>
         public void historicalData(int reqId, string date, double open, double high, double low, double close, int volume, int count, double WAP, bool hasGaps)
         {
             // Raise an event which can be listened throughout the application
             var eventArgs = new HistoricalDataEventArgs(reqId, date, open, high, low, close, volume, count, WAP, hasGaps);
-            this.HistoricalDataEvent.Invoke(this, eventArgs);
+            this.HistoricalDataEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>
@@ -338,7 +436,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         {
             // Raise an event which can be listened throughout the application
             var eventArgs = new HistoricalDataEventArgs(reqId, bar.Time, bar.Open, bar.High, bar.Low, bar.Close, (int)bar.Volume, bar.Count, bar.WAP, false);
-            HistoricalDataUpdateEvent.Invoke(this, eventArgs);
+            this.HistoricalDataUpdateEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>
@@ -356,19 +454,22 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <inheritdoc/>
         public void historicalTicks(int reqId, HistoricalTick[] ticks, bool done)
         {
-            throw new NotImplementedException();
+            var eventArgs = new HistoricalTicksEventArgs(reqId, ticks, done);
+            this.HistoricalTicksEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>
         public void historicalTicksBidAsk(int reqId, HistoricalTickBidAsk[] ticks, bool done)
         {
-            throw new NotImplementedException();
+            var eventArgs = new HistoricalTicksBidAskEventArgs(reqId, ticks, done);
+            this.HistoricalTicksBidAskEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>
         public void historicalTicksLast(int reqId, HistoricalTickLast[] ticks, bool done)
         {
-            throw new NotImplementedException();
+            var eventArgs = new HistoricalTicksLastEventArgs(reqId, ticks, done);
+            this.HistoricalTicksLastEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>
@@ -379,13 +480,15 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <inheritdoc/>
         public void marketDataType(int reqId, int marketDataType)
         {
-            throw new NotImplementedException();
+            var eventArgs = new MarketDataTypeEventArgs(reqId, marketDataType);
+            this.MarketDataTypeEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>
         public void marketRule(int marketRuleId, PriceIncrement[] priceIncrements)
         {
-            throw new NotImplementedException();
+            var eventArgs = new MarketRuleEventArgs(marketRuleId, priceIncrements);
+            this.MarketRuleEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>
@@ -431,7 +534,8 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <inheritdoc/>
         public void orderBound(long orderId, int apiClientId, int apiOrderId)
         {
-            throw new NotImplementedException();
+            var eventArgs = new OrderBoundEventArgs(orderId, apiClientId, apiOrderId);
+            this.OrderBoundEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>
@@ -470,13 +574,14 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <inheritdoc/>
         public void positionMulti(int requestId, string account, string modelCode, Contract contract, double pos, double avgCost)
         {
-            throw new NotImplementedException();
+            var eventArgs = new PositionMultiEventArgs(requestId, account, modelCode, contract, pos, avgCost);
+            this.PositionMultiEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>
         public void positionMultiEnd(int requestId)
         {
-            throw new NotImplementedException();
+            this.RequestPositionsMultiEndEvent?.Invoke(this, new RequestEndEventArgs(requestId));
         }
 
         /// <inheritdoc/>
@@ -641,7 +746,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         public void updateAccountValue(string key, string value, string currency, string accountName)
         {
             var eventArgs = new UpdateAccountValueEventArgs(key, value, currency, accountName);
-            this.UpdateAccountValueEvent.Invoke(this, eventArgs);
+            this.UpdateAccountValueEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>
@@ -671,6 +776,10 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <inheritdoc/>
         public void updatePortfolio(Contract contract, double position, double marketPrice, double marketValue, double averageCost, double unrealisedPNL, double realisedPNL, string accountName)
         {
+            var eventArgs = new UpdatePortfolioEventArgs(
+                contract, position, marketPrice, marketValue, averageCost,
+                unrealisedPNL, realisedPNL, accountName);
+            this.UpdatePortfolioEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>

@@ -13,7 +13,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
     /// </summary>
     public interface ITwsCallbackHandler
     {
-        /// <summary>
+          /// <summary>
         /// The event that is fired when AccountDownloadEnd is called by TWS
         /// </summary>
         event EventHandler<AccountDownloadEndEventArgs> AccountDownloadEndEvent;
@@ -99,17 +99,17 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         event EventHandler<RequestPositionsEndEventArgs> RequestPositionsEndEvent;
 
         /// <summary>
-        /// The event that is fired when ExecDetails is called by TWS
+        /// The event that is fired when Executions
         /// </summary>
         event EventHandler<ExecutionDetailsEventArgs> ExecutionDetailsEvent;
 
         /// <summary>
-        /// The event that is fired when ExecDetailsEnd is called by TWS
+        /// The event that is fired when Executions end
         /// </summary>
         event EventHandler<ExecutionDetailsEndEventArgs> ExecutionDetailsEndEvent;
 
         /// <summary>
-        /// The event that is fired on a news event
+        /// The event that is fired on a tick news event
         /// </summary>
         event EventHandler<TickNewsEventArgs> TickNewsEvent;
 
@@ -119,14 +119,106 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         event EventHandler<NewsProviderEventArgs> NewsProviderEvent;
 
         /// <summary>
-        /// The event that is fired when TWS sends a security definition event
+        /// The event that is fired when option security definitions are requested
         /// </summary>
         event EventHandler<SecurityDefinitionOptionParameterEventArgs> SecurityDefinitionOptionParameterEvent;
 
         /// <summary>
-        /// The event that is fired at the end of security definition requests
+        /// The event that is fired at the end of the option security definition request
         /// </summary>
         event EventHandler SecurityDefinitionOptionParameterEndEvent;
+
+        /// <summary>
+        /// The event that is fired when the account summary is received.
+        /// </summary>
+        event EventHandler<AccountSummaryEventArgs> AccountSummaryEvent;
+
+        /// <summary>
+        /// The event that is fired when the account summary request is completed.
+        /// </summary>
+        event EventHandler<RequestEndEventArgs> AccountSummaryEndEvent;
+
+        /// <summary>
+        /// The event that is fired when the account updates are received.
+        /// </summary>
+        event EventHandler<AccountUpdateMultiEventArgs> AccountUpdateMultiEvent;
+
+        /// <summary>
+        /// The event that is fired when the account updates are completely received.
+        /// </summary>
+        event EventHandler<RequestEndEventArgs> AccountUpdateMultiEndEvent;
+
+        /// <summary>
+        /// The event that is fired when the minimum price increments are returned for a market rule.
+        /// </summary>
+        event EventHandler<MarketRuleEventArgs> MarketRuleEvent;
+
+        /// <summary>
+        /// The event that is fired when the commission report of an execution is received.
+        /// </summary>
+        event EventHandler<CommissionReportEventArgs> CommissionReportEvent;
+
+        /// <summary>
+        /// The event that is fired when a completed order is received.
+        /// </summary>
+        event EventHandler<CompletedOrderEventArgs> CompletedOrderEvent;
+
+        /// <summary>
+        /// The event that is fired when all completed orders are fetched.
+        /// </summary>
+        event EventHandler CompletedOrdersEndEvent;
+
+        /// <summary>
+        /// The event that is fired when a bond contract data is  received.
+        /// </summary>
+        event EventHandler<BondContractDetailsEventArgs> BondContractDetailsEvent;
+
+        /// <summary>
+        /// The event that is fired when histogram data is received.
+        /// </summary>
+        event EventHandler<HistogramDataEventArgs> HistogramDataEvent;
+
+        /// <summary>
+        /// When historical ticks event are received.
+        /// </summary>
+        event EventHandler<HistoricalTicksEventArgs> HistoricalTicksEvent;
+
+        /// <summary>
+        /// The event that is fired when historical ticks bid ask data is received.
+        /// </summary>
+        event EventHandler<HistoricalTicksBidAskEventArgs> HistoricalTicksBidAskEvent;
+
+        /// <summary>
+        /// The event that is fired when historical ticks last are received.
+        /// </summary>
+        event EventHandler<HistoricalTicksLastEventArgs> HistoricalTicksLastEvent;
+
+        /// <summary>
+        /// The event that is fired when market data types are received.
+        /// </summary>
+        event EventHandler<MarketDataTypeEventArgs> MarketDataTypeEvent;
+
+        /// <summary>
+        /// The event that is fired when an order bind has been received.
+        /// </summary>
+        event EventHandler<OrderBoundEventArgs> OrderBoundEvent;
+
+        /// <summary>
+        /// The event that is fired when a portfolio's open position is received.
+        /// </summary>
+        event EventHandler<PositionMultiEventArgs> PositionMultiEvent;
+
+        /// <summary>
+        /// The event that is fired when all portfolio's open positions are received.
+        /// </summary>
+        event EventHandler<RequestEndEventArgs> RequestPositionsMultiEndEvent;
+
+        /// <summary>
+        /// The event that is fired when a portfolio has been updated.
+        /// </summary>
+        event EventHandler<UpdatePortfolioEventArgs> UpdatePortfolioEvent;
+
+
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 #pragma warning disable SA1600 // Elements must be documented
