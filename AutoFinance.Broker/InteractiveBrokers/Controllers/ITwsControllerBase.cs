@@ -42,6 +42,13 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <returns>The next valid order Id</returns>
         Task<int> GetNextValidIdAsync(CancellationToken cancellationToken);
 
+
+        /// <summary>
+        /// Gets the next request id.
+        /// </summary>
+        /// <returns>The next request id</returns>
+        int GetNextRequestId();
+
         /// <summary>
         /// Requests open orders
         /// </summary>
