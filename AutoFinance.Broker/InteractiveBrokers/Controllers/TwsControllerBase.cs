@@ -284,6 +284,20 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public Task<List<HistoricalDataEventArgs>> GetHistoricalDataAsync(Contract contract, DateTime endDateTime, TwsDuration duration, TwsBarSizeSetting barSizeSetting, TwsHistoricalDataRequestType whatToShow)
         {
+            return this.GetHistoricalDataAsync(contract, endDateTime, duration.ToTwsParameter(), barSizeSetting.ToTwsParameter(), whatToShow.ToTwsParameter());
+        }
+
+        /// <summary>
+        /// Gets historical data from TWS.
+        /// </summary>
+        /// <param name="contract">The contract type</param>
+        /// <param name="endDateTime">The end date of the request</param>
+        /// <param name="duration">The duration of the request</param>
+        /// <param name="barSizeSetting">The bar size to request</param>
+        /// <param name="whatToShow">The historical data request type</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public Task<List<HistoricalDataEventArgs>> GetHistoricalDataAsync(Contract contract, DateTime endDateTime, string duration, string barSizeSetting, string whatToShow)
+        {
             int requestId = this.twsRequestIdGenerator.GetNextRequestId();
             int useRth = 1;
             int formatDate = 1;
@@ -339,7 +353,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             this.twsCallbackHandler.HistoricalDataEndEvent += historicalDataEndEventHandler;
             this.twsCallbackHandler.ErrorEvent += errorEventHandler;
 
-            this.clientSocket.ReqHistoricalData(requestId, contract, endDateTime.ToString("yyyyMMdd HH:mm:ss"), duration.ToTwsParameter(), barSizeSetting.ToTwsParameter(), whatToShow.ToTwsParameter(), useRth, formatDate, chartOptions);
+            this.clientSocket.ReqHistoricalData(requestId, contract, endDateTime.ToString("yyyyMMdd HH:mm:ss"), duration, barSizeSetting, whatToShow, useRth, formatDate, chartOptions);
             return taskSource.Task;
         }
 
