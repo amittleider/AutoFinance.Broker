@@ -431,6 +431,15 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         }
 
         /// <summary>
+        /// Gets the next request id
+        /// </summary>
+        /// <returns>The next request id</returns>
+        public int GetNextRequestId()
+        {
+            return this.twsRequestIdGenerator.GetNextRequestId();
+        }
+
+        /// <summary>
         /// Get a list of all the executions from TWS
         /// </summary>
         /// <returns>A list of execution details events from TWS.</returns>

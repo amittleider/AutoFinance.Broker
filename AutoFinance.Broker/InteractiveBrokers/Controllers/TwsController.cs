@@ -313,6 +313,11 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             return await this.twsControllerBase.GetNextValidIdAsync(cancellationToken);
         }
 
+        public int GetNextRequestId()
+        {
+            return this.twsControllerBase.GetNextRequestId();
+        }
+
         public async Task<List<OpenOrderEventArgs>> RequestOpenOrders()
         {
             return await this.twsControllerBase.RequestOpenOrders();
