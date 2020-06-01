@@ -13,7 +13,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
     /// </summary>
     public interface ITwsCallbackHandler
     {
-          /// <summary>
+        /// <summary>
         /// The event that is fired when AccountDownloadEnd is called by TWS
         /// </summary>
         event EventHandler<AccountDownloadEndEventArgs> AccountDownloadEndEvent;
