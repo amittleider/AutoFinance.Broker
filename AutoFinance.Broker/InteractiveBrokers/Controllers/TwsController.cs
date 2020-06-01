@@ -368,6 +368,11 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             return await this.twsControllerBase.GetHistoricalDataAsync(contract, endDateTime, duration, barSizeSetting, whatToShow);
         }
 
+        public async Task<List<HistoricalDataEventArgs>> GetHistoricalDataAsync(Contract contract, DateTime endDateTime, string duration, string barSizeSetting, string whatToShow)
+        {
+            return await this.twsControllerBase.GetHistoricalDataAsync(contract, endDateTime, duration, barSizeSetting, whatToShow);
+        }
+
         public async Task<NewsProviderEventArgs> GetNewsProviders()
         {
             return await this.twsControllerBase.GetNewsProviders();
