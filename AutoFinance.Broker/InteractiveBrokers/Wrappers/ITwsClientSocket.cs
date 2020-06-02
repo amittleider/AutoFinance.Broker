@@ -34,6 +34,12 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         void Disconnect();
 
         /// <summary>
+        /// Check connection status
+        /// </summary>
+        /// <returns>Connection status</returns>
+        bool IsConnected();
+
+        /// <summary>
         /// Sends an order to TWS through the socket
         /// </summary>
         /// <param name="id">The order Id</param>
@@ -129,5 +135,11 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <param name="underlyingSecType">The underlying security type</param>
         /// <param name="underlyingConId">The underlying contract id</param>
         void RequestSecurityDefinitionOptionParameters(int reqId, string underlyingSymbol, string futFopExchange, string underlyingSecType, int underlyingConId);
+
+        /// <summary>
+        /// Modify market data type
+        /// </summary>
+        /// <param name="marketDataTypeId">The market data type (1, 2, 3 or 4)</param>
+        void RequestMarketDataType(int marketDataTypeId);
     }
 }

@@ -23,6 +23,8 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         Task EnsureConnectedAsync();
 
+        bool IsConnected();
+
         /// <summary>
         /// Disconnects the session
         /// </summary>
@@ -173,5 +175,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             string exchange,
             string underlyingSecType,
             int underlyingConId);
+
+        void RequestMarketDataType(int marketDataType);
     }
 }

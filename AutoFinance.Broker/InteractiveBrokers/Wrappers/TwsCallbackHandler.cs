@@ -78,7 +78,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// The event that is fired when continuous HistoricalDataUpdateEvent is called by TWS
         /// </summary>
         public event EventHandler<HistoricalDataEventArgs> HistoricalDataUpdateEvent;
-        
+
         /// <summary>
         /// The event that is fired when HistoricalDataEnd is called by TWS
         /// </summary>
@@ -338,7 +338,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         {
             // Raise an event which can be listened throughout the application
             var eventArgs = new HistoricalDataEventArgs(reqId, bar.Time, bar.Open, bar.High, bar.Low, bar.Close, (int)bar.Volume, bar.Count, bar.WAP, false);
-            HistoricalDataUpdateEvent.Invoke(this, eventArgs);
+            this.HistoricalDataUpdateEvent.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>

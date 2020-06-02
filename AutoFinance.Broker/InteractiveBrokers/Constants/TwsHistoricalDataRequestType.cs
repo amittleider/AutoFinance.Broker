@@ -28,6 +28,11 @@ namespace AutoFinance.Broker.InteractiveBrokers.Constants
         private static TwsHistoricalDataRequestType trades = new TwsHistoricalDataRequestType("TRADES");
 
         /// <summary>
+        /// Implied volatility
+        /// </summary>
+        private static TwsHistoricalDataRequestType iv = new TwsHistoricalDataRequestType("OPTION_IMPLIED_VOLATILITY");
+
+        /// <summary>
         /// The underlying string
         /// </summary>
         private readonly string type;
@@ -60,6 +65,11 @@ namespace AutoFinance.Broker.InteractiveBrokers.Constants
         /// Gets trade
         /// </summary>
         public static TwsHistoricalDataRequestType Trades { get => trades; }
+
+        /// <summary>
+        /// Gets trade
+        /// </summary>
+        public static TwsHistoricalDataRequestType Iv { get => iv; }
 
         /// <summary>
         /// The string version of the parameter when sending to the TWS API

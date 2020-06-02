@@ -48,6 +48,15 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         }
 
         /// <summary>
+        /// Check connection status
+        /// </summary>
+        /// <returns>Connection status</returns>
+        public bool IsConnected()
+        {
+            return this.EClientSocket.IsConnected();
+        }
+
+        /// <summary>
         /// Send an order to TWS
         /// </summary>
         /// <param name="orderId">The order Id</param>
@@ -178,6 +187,15 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         public void RequestSecurityDefinitionOptionParameters(int reqId, string underlyingSymbol, string futFopExchange, string underlyingSecType, int underlyingConId)
         {
             this.EClientSocket.reqSecDefOptParams(reqId, underlyingSymbol, futFopExchange, underlyingSecType, underlyingConId);
+        }
+
+        /// <summary>
+        /// Modify market data type
+        /// </summary>
+        /// <param name="marketDataTypeId">The market data type (1, 2, 3 or 4)</param>
+        public void RequestMarketDataType(int marketDataTypeId)
+        {
+            this.EClientSocket.reqMarketDataType(marketDataTypeId);
         }
     }
 }

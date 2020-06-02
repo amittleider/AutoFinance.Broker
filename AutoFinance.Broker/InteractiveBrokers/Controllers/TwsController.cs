@@ -298,6 +298,11 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             await this.twsControllerBase.EnsureConnectedAsync();
         }
 
+        public bool IsConnected()
+        {
+            return this.twsControllerBase.IsConnected();
+        }
+
         public async Task DisconnectAsync()
         {
             await this.twsControllerBase.DisconnectAsync();
@@ -391,6 +396,11 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         public async Task<List<SecurityDefinitionOptionParameterEventArgs>> RequestSecurityDefinitionOptionParameters(string underlyingSymbol, string exchange, string underlyingSecType, int underlyingConId)
         {
             return await this.twsControllerBase.RequestSecurityDefinitionOptionParameters(underlyingSymbol, exchange, underlyingSecType, underlyingConId);
+        }
+
+        public void RequestMarketDataType(int marketDataType)
+        {
+            this.twsControllerBase.RequestMarketDataType(marketDataType);
         }
 #pragma warning restore SA1600 // Elements should be documented
     }

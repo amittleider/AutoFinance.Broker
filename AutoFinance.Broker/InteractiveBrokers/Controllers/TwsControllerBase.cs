@@ -112,8 +112,13 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                 // And the socket will get really fucked up any commands come in during that time
                 // Just wait 5 seconds for it to finish
                 await Task.Delay(5000);
-                this.connected = true;
+                this.connected = this.clientSocket.IsConnected();
             }
+        }
+
+        public bool IsConnected()
+        {
+            return this.clientSocket.IsConnected();
         }
 
         /// <summary>
@@ -138,6 +143,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             });
 
             this.clientSocket.Disconnect();
+            this.connected = false;
             return taskSource.Task;
         }
 
@@ -819,6 +825,11 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             {
                 return eventArgs.Value; // Always take the most recent result
             });
+        }
+
+        public void RequestMarketDataType(int marketDataType)
+        {
+            this.clientSocket.RequestMarketDataType(marketDataType);
         }
     }
 }
