@@ -34,9 +34,9 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         void Disconnect();
 
         /// <summary>
-        /// Check connection status
+        /// Gets a value indicating whether is the client connected to tws
         /// </summary>
-        /// <returns>Connection status</returns>
+        /// <returns>Socket connection status</returns>
         bool IsConnected();
 
         /// <summary>
@@ -137,9 +137,9 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         void RequestSecurityDefinitionOptionParameters(int reqId, string underlyingSymbol, string futFopExchange, string underlyingSecType, int underlyingConId);
 
         /// <summary>
-        /// Modify market data type
+        /// Set the type for the market data feed
         /// </summary>
-        /// <param name="marketDataTypeId">The market data type (1, 2, 3 or 4)</param>
+        /// <param name="marketDataTypeId">The feed level</param>
         void RequestMarketDataType(int marketDataTypeId);
     }
 }

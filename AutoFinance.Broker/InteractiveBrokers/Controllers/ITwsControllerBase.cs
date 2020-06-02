@@ -18,12 +18,18 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
     public interface ITwsControllerBase
     {
         /// <summary>
+        /// Gets a value indicating whether is the client connected to tws
+        /// </summary>
+        bool Connected
+        {
+            get;
+        }
+
+        /// <summary>
         /// Ensures the connection is made
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         Task EnsureConnectedAsync();
-
-        bool IsConnected();
 
         /// <summary>
         /// Disconnects the session
@@ -43,7 +49,6 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
         /// <returns>The next valid order Id</returns>
         Task<int> GetNextValidIdAsync(CancellationToken cancellationToken);
-
 
         /// <summary>
         /// Gets the next request id.
@@ -148,7 +153,6 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         Task<List<HistoricalDataEventArgs>> GetHistoricalDataAsync(Contract contract, DateTime endDateTime, string duration, string barSizeSetting, string whatToShow);
 
-
         /// <summary>
         /// Gets news providers from TWS
         /// </summary>
@@ -176,6 +180,10 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             string underlyingSecType,
             int underlyingConId);
 
-        void RequestMarketDataType(int marketDataType);
+        /// <summary>
+        /// Set the type for the market data feed
+        /// </summary>
+        /// <param name="marketDataTypeId">The feed level</param>
+        void RequestMarketDataType(int marketDataTypeId);
     }
 }

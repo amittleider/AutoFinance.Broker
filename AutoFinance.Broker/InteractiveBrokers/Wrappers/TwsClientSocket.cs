@@ -48,9 +48,9 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         }
 
         /// <summary>
-        /// Check connection status
+        /// Gets a value indicating whether is the client connected to tws
         /// </summary>
-        /// <returns>Connection status</returns>
+        /// <returns>Socket connection status</returns>
         public bool IsConnected()
         {
             return this.EClientSocket.IsConnected();

@@ -31,6 +31,11 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         }
 
         /// <summary>
+        /// Gets a value indicating whether is the client connected to tws
+        /// </summary>
+        public bool Connected => this.twsControllerBase.Connected;
+
+        /// <summary>
         /// Place a bracket order on TWS.
         /// The entry is a REL order (Market Peg), exits are stop loss and limit orders at the specified prices.
         /// </summary>
@@ -296,11 +301,6 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         public async Task EnsureConnectedAsync()
         {
             await this.twsControllerBase.EnsureConnectedAsync();
-        }
-
-        public bool IsConnected()
-        {
-            return this.twsControllerBase.IsConnected();
         }
 
         public async Task DisconnectAsync()

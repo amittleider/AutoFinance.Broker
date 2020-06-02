@@ -64,11 +64,6 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         private int clientId;
 
         /// <summary>
-        /// If the client is connected to tws
-        /// </summary>
-        private bool connected;
-
-        /// <summary>
         /// The background thread that will await the signal and send events to the callback handler
         /// </summary>
         private Thread readerThread;
@@ -99,12 +94,17 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         }
 
         /// <summary>
+        /// Gets a value indicating whether is the client connected to tws
+        /// </summary>
+        public bool Connected => this.clientSocket == null ? false : this.clientSocket.IsConnected();
+
+        /// <summary>
         /// Ensures the connection is active
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task EnsureConnectedAsync()
         {
-            if (!this.connected)
+            if (!this.Connected)
             {
                 await this.ConnectAsync();
 
@@ -112,13 +112,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                 // And the socket will get really fucked up any commands come in during that time
                 // Just wait 5 seconds for it to finish
                 await Task.Delay(5000);
-                this.connected = this.clientSocket.IsConnected();
             }
-        }
-
-        public bool IsConnected()
-        {
-            return this.clientSocket.IsConnected();
         }
 
         /// <summary>
@@ -143,7 +137,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             });
 
             this.clientSocket.Disconnect();
-            this.connected = false;
+
             return taskSource.Task;
         }
 
@@ -755,6 +749,15 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         }
 
         /// <summary>
+        /// Set the type for the market data feed
+        /// </summary>
+        /// <param name="marketDataTypeId">The feed level</param>
+        public void RequestMarketDataType(int marketDataTypeId)
+        {
+            this.clientSocket.RequestMarketDataType(marketDataTypeId);
+        }
+
+        /// <summary>
         /// This event is set during the initialization of the object.
         /// This event handler should be called only once during the startup of Tws.
         /// </summary>
@@ -825,11 +828,6 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             {
                 return eventArgs.Value; // Always take the most recent result
             });
-        }
-
-        public void RequestMarketDataType(int marketDataType)
-        {
-            this.clientSocket.RequestMarketDataType(marketDataType);
         }
     }
 }
