@@ -146,6 +146,14 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         }
 
         /// <summary>
+        /// Sends a message to TWS telling it to stop sending position information through the socket.
+        /// </summary>
+        public void CancelPositions()
+        {
+            this.EClientSocket.cancelPositions();
+        }
+
+        /// <summary>
         /// Sends a message to TWS telling it to send execution information through the socket.
         /// </summary>
         /// <param name="requestId">The request Id</param>
@@ -196,6 +204,47 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         public void RequestMarketDataType(int marketDataTypeId)
         {
             this.EClientSocket.reqMarketDataType(marketDataTypeId);
+        }
+
+        /// <summary>
+        /// Request account Pnl
+        /// </summary>
+        /// <param name="reqId">The request Id</param>
+        /// <param name="accountCode">The account of the details requested</param>
+        /// <param name="modelCode">specify to request PnL updates for a specific model</param>
+        public void RequestPnL(int reqId, string accountCode, string modelCode)
+        {
+            this.EClientSocket.reqPnL(reqId, accountCode, modelCode);
+        }
+
+        /// <summary>
+        /// Request PnL update cancelation
+        /// </summary>
+        /// <param name="reqId">The request Id</param>
+        public void CancelPnL(int reqId)
+        {
+            this.EClientSocket.cancelPnL(reqId);
+        }
+
+        /// <summary>
+        /// Request single position Pnl
+        /// </summary>
+        /// <param name="reqId">The request Id</param>
+        /// <param name="accountCode">The account of the details requested</param>
+        /// <param name="modelCode">specify to request PnL updates for a specific model</param>
+        /// <param name="conId">contract ID (conId) of contract to receive daily PnL updates for. Note: does not return message if invalid conId is entered</param>
+        public void RequestPnLSingle(int reqId, string accountCode, string modelCode, int conId)
+        {
+            this.EClientSocket.reqPnLSingle(reqId, accountCode, modelCode, conId);
+        }
+
+        /// <summary>
+        /// Request PnL update cancelation
+        /// </summary>
+        /// <param name="reqId">The request Id</param>
+        public void CancelPnLSingle(int reqId)
+        {
+            this.EClientSocket.cancelPnLSingle(reqId);
         }
     }
 }

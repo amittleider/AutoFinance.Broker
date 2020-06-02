@@ -104,6 +104,12 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         Task<bool> PlaceOrderAsync(int orderId, Contract contract, Order order, CancellationToken cancellationToken);
 
         /// <summary>
+        /// Cancel account detail update
+        /// </summary>
+        /// <param name="accountId">The account Id</param>
+        void CancelAccountDetails(string accountId);
+
+        /// <summary>
         /// Get an account detail
         /// </summary>
         /// <param name="accountId">The account Id</param>
@@ -166,6 +172,11 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         Task<List<PositionStatusEventArgs>> RequestPositions();
 
         /// <summary>
+        /// Sends a message to TWS telling it to stop sending position information through the socket.
+        /// </summary>
+        void CancelPositions();
+
+        /// <summary>
         /// Request security definition parameters.
         /// This is mainly used for finding strikes, multipliers, exchanges, and expirations for options contracts.
         /// </summary>
@@ -185,5 +196,39 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// </summary>
         /// <param name="marketDataTypeId">The feed level</param>
         void RequestMarketDataType(int marketDataTypeId);
+
+        /// <summary>
+        /// Get the PnL of the account.
+        /// </summary>
+        /// <param name="accountCode">The account code</param>
+        /// <param name="modelCode">The model code</param>
+        /// <returns>The PnL account update event from TWS.</returns>
+        Task<PnLEventArgs> RequestPnL(
+            string accountCode,
+            string modelCode);
+
+        /// <summary>
+        /// Request PnL update cancelation
+        /// </summary>
+        /// <param name="reqId">The request Id</param>
+        void CancelPnL(int reqId);
+
+        /// <summary>
+        /// Get the PnL of the account.
+        /// </summary>
+        /// <param name="accountCode">The account code</param>
+        /// <param name="modelCode">The model code</param>
+        /// <param name="conId">The contract Id</param>
+        /// <returns>The single position PnL update event from TWS.</returns>
+        Task<PnLSingleEventArgs> RequestPnLSingle(
+            string accountCode,
+            string modelCode,
+            int conId);
+
+        /// <summary>
+        /// Request PnL update cancelation
+        /// </summary>
+        /// <param name="reqId">The request Id</param>
+        void CancelPnLSingle(int reqId);
     }
 }

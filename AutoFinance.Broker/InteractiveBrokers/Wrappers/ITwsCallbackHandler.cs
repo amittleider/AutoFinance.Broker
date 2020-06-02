@@ -128,6 +128,16 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// </summary>
         event EventHandler SecurityDefinitionOptionParameterEndEvent;
 
+        /// <summary>
+        /// The event that is fired at the end of the account PnL request
+        /// </summary>
+        event EventHandler<PnLEventArgs> PnLEvent;
+
+        /// <summary>
+        /// The event that is fired at the end of the single position PnL request
+        /// </summary>
+        event EventHandler<PnLSingleEventArgs> PnLSingleEvent;
+
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 #pragma warning disable SA1600 // Elements must be documented
 #pragma warning disable SA1300 // Element must begin with upper-case letter
@@ -291,6 +301,26 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         void historicalData(int reqId, string date, double open, double high, double low, double close, int volume, int count, double WAP, bool hasGaps);
 
         void historicalDataEnd(int reqId, string start, string end);
+
+        /// <summary>
+        /// The account PnL request data callback from TWS
+        /// </summary>
+        /// <param name="reqId">The request Id</param>
+        /// <param name="dailyPnL">The daily PnL</param>
+        /// <param name="unrealizedPnL">The unrealized PnL</param>
+        /// <param name="realizedPnL">The realized PnL</param>
+        void pnl(int reqId, double dailyPnL, double unrealizedPnL, double realizedPnL);
+
+        /// <summary>
+        /// The single position PnL data callback from TWS
+        /// </summary>
+        /// <param name="reqId">The request Id</param>
+        /// <param name="pos">The position</param>
+        /// <param name="dailyPnL">The daily PnL</param>
+        /// <param name="unrealizedPnL">The unrealized PnL</param>
+        /// <param name="realizedPnL">The realized PnL</param>
+        /// <param name="value">The position value</param>
+        void pnlSingle(int reqId, int pos, double dailyPnL, double unrealizedPnL, double realizedPnL, double value);
 
         void managedAccounts(string accountsList);
 

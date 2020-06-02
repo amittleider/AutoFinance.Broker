@@ -402,6 +402,16 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         {
             this.twsControllerBase.RequestMarketDataType(marketDataType);
         }
+
+        public async Task<PnLEventArgs> RequestPnL(string accountCode, string modelCode)
+        {
+            return await this.twsControllerBase.RequestPnL(accountCode, modelCode);
+        }
+
+        public async Task<PnLSingleEventArgs> RequestPnLSingle(string accountCode, string modelCode, int conId)
+        {
+            return await this.twsControllerBase.RequestPnLSingle(accountCode, modelCode, conId);
+        }
 #pragma warning restore SA1600 // Elements should be documented
     }
 }

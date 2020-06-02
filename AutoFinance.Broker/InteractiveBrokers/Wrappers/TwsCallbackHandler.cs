@@ -134,6 +134,16 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// </summary>
         public event EventHandler SecurityDefinitionOptionParameterEndEvent;
 
+        /// <summary>
+        /// The event that is fired at the end of the account PnL request
+        /// </summary>
+        public event EventHandler<PnLEventArgs> PnLEvent;
+
+        /// <summary>
+        /// The event that is fired at the end of the single position PnL request
+        /// </summary>
+        public event EventHandler<PnLSingleEventArgs> PnLSingleEvent;
+
         /// <inheritdoc/>
         public void accountDownloadEnd(string account)
         {
@@ -444,13 +454,15 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <inheritdoc/>
         public void pnl(int reqId, double dailyPnL, double unrealizedPnL, double realizedPnL)
         {
-            throw new NotImplementedException();
+            var eventArgs = new PnLEventArgs(reqId, dailyPnL, unrealizedPnL, realizedPnL);
+            this.PnLEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>
         public void pnlSingle(int reqId, int pos, double dailyPnL, double unrealizedPnL, double realizedPnL, double value)
         {
-            throw new NotImplementedException();
+            var eventArgs = new PnLSingleEventArgs(reqId, pos, dailyPnL, unrealizedPnL, realizedPnL, value);
+            this.PnLSingleEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>

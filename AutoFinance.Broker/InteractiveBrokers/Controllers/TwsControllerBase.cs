@@ -180,6 +180,15 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         }
 
         /// <summary>
+        /// Cancel account detail update
+        /// </summary>
+        /// <param name="accountId">The account Id</param>
+        public void CancelAccountDetails(string accountId)
+        {
+            this.clientSocket.ReqAccountDetails(false, accountId);
+        }
+
+        /// <summary>
         /// Gets a contract by request.
         /// </summary>
         /// <param name="contract">The requested contract.</param>
@@ -641,6 +650,14 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         }
 
         /// <summary>
+        /// Sends a message to TWS telling it to stop sending position information through the socket.
+        /// </summary>
+        public void CancelPositions()
+        {
+            this.clientSocket.CancelPositions();
+        }
+
+        /// <summary>
         /// Get a list of all the positions in TWS.
         /// </summary>
         /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
@@ -755,6 +772,128 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         public void RequestMarketDataType(int marketDataTypeId)
         {
             this.clientSocket.RequestMarketDataType(marketDataTypeId);
+        }
+
+        /// <summary>
+        /// Get the PnL of the account.
+        /// </summary>
+        /// <param name="accountCode">The account code</param>
+        /// <param name="modelCode">The model code</param>
+        /// <returns>The PnL account update event from TWS.</returns>
+        public Task<PnLEventArgs> RequestPnL(
+            string accountCode,
+            string modelCode)
+        {
+            // Set the operation to cancel after 5 seconds
+            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
+            return this.RequestPnL(accountCode, modelCode, tokenSource.Token);
+        }
+
+        /// <summary>
+        /// Get the PnL of the account.
+        /// </summary>
+        /// <param name="accountCode">The account code</param>
+        /// <param name="modelCode">The model code</param>
+        /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
+        /// <returns>The PnL account update event from TWS.</returns>
+        public Task<PnLEventArgs> RequestPnL(
+            string accountCode,
+            string modelCode,
+            CancellationToken cancellationToken)
+        {
+            PnLEventArgs pnlUpdateEvent = null;
+            var taskSource = new TaskCompletionSource<PnLEventArgs>();
+            EventHandler<PnLEventArgs> pnlUpdateEventHandler = null;
+
+            pnlUpdateEventHandler = (sender, args) =>
+            {
+                pnlUpdateEvent = args;
+                taskSource.TrySetResult(pnlUpdateEvent);
+            };
+
+            this.twsCallbackHandler.PnLEvent += pnlUpdateEventHandler;
+
+            cancellationToken.Register(() =>
+            {
+                taskSource.TrySetCanceled();
+            });
+
+            int requestId = this.twsRequestIdGenerator.GetNextRequestId();
+            this.clientSocket.RequestPnL(requestId, accountCode, modelCode);
+
+            return taskSource.Task;
+        }
+
+        /// <summary>
+        /// Request PnL update cancelation
+        /// </summary>
+        /// <param name="reqId">The request Id</param>
+        public void CancelPnL(int reqId)
+        {
+            this.clientSocket.CancelPnL(reqId);
+        }
+
+        /// <summary>
+        /// Get the PnL of the account.
+        /// </summary>
+        /// <param name="accountCode">The account code</param>
+        /// <param name="modelCode">The model code</param>
+        /// <param name="conId">The contract Id</param>
+        /// <returns>The single position PnL update event from TWS.</returns>
+        public Task<PnLSingleEventArgs> RequestPnLSingle(
+            string accountCode,
+            string modelCode,
+            int conId)
+        {
+            // Set the operation to cancel after 5 seconds
+            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
+            return this.RequestPnLSingle(accountCode, modelCode, conId, tokenSource.Token);
+        }
+
+        /// <summary>
+        /// Get the PnL of the account.
+        /// </summary>
+        /// <param name="accountCode">The account code</param>
+        /// <param name="modelCode">The model code</param>
+        /// <param name="conId">The contract Id</param>
+        /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
+        /// <returns>The single position PnL update event from TWS.</returns>
+        public Task<PnLSingleEventArgs> RequestPnLSingle(
+            string accountCode,
+            string modelCode,
+            int conId,
+            CancellationToken cancellationToken)
+        {
+            PnLSingleEventArgs pnlSingleEvent = null;
+            var taskSource = new TaskCompletionSource<PnLSingleEventArgs>();
+            EventHandler<PnLSingleEventArgs> pnlSingleEventHandler = null;
+
+            pnlSingleEventHandler = (sender, args) =>
+            {
+                pnlSingleEvent = args;
+                taskSource.TrySetResult(pnlSingleEvent);
+            };
+
+            this.twsCallbackHandler.PnLSingleEvent += pnlSingleEventHandler;
+
+            cancellationToken.Register(() =>
+            {
+                taskSource.TrySetCanceled();
+            });
+
+            int requestId = this.twsRequestIdGenerator.GetNextRequestId();
+            this.clientSocket.RequestPnLSingle(requestId, accountCode, modelCode, conId);
+
+            return taskSource.Task;
+        }
+
+        /// <summary>
+        /// Request PnL update cancelation
+        /// </summary>
+        /// <param name="reqId">The request Id</param>
+        public void CancelPnLSingle(int reqId)
+        {
+            this.clientSocket.CancelPnLSingle(reqId);
         }
 
         /// <summary>

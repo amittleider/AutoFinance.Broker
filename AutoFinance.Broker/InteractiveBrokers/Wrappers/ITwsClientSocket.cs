@@ -110,6 +110,11 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         void RequestPositions();
 
         /// <summary>
+        /// Sends a message to TWS telling it to stop sending position information through the socket.
+        /// </summary>
+        void CancelPositions();
+
+        /// <summary>
         /// Sends a message to TWS telling it to send execution information through the socket.
         /// </summary>
         /// <param name="requestId">The request Id</param>
@@ -141,5 +146,34 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// </summary>
         /// <param name="marketDataTypeId">The feed level</param>
         void RequestMarketDataType(int marketDataTypeId);
+
+        /// <summary>
+        /// Request account Pnl
+        /// </summary>
+        /// <param name="reqId">The request Id</param>
+        /// <param name="accountCode">The account of the details requested</param>
+        /// <param name="modelCode">specify to request PnL updates for a specific model</param>
+        void RequestPnL(int reqId, string accountCode, string modelCode);
+
+        /// <summary>
+        /// Request PnL update cancelation
+        /// </summary>
+        /// <param name="reqId">The request Id</param>
+        void CancelPnL(int reqId);
+
+        /// <summary>
+        /// Request single position Pnl
+        /// </summary>
+        /// <param name="reqId">The request Id</param>
+        /// <param name="accountCode">The account of the details requested</param>
+        /// <param name="modelCode">specify to request PnL updates for a specific model</param>
+        /// <param name="conId">contract ID (conId) of contract to receive daily PnL updates for. Note: does not return message if invalid conId is entered</param>
+        void RequestPnLSingle(int reqId, string accountCode, string modelCode, int conId);
+
+        /// <summary>
+        /// Request PnL update cancelation
+        /// </summary>
+        /// <param name="reqId">The request Id</param>
+        void CancelPnLSingle(int reqId);
     }
 }
