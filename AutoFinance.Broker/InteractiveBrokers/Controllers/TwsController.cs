@@ -378,11 +378,6 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             return await this.twsControllerBase.GetHistoricalDataAsync(contract, endDateTime, duration, barSizeSetting, whatToShow);
         }
 
-        public async Task<List<HistoricalDataEventArgs>> GetHistoricalDataAsync(Contract contract, DateTime endDateTime, string duration, string barSizeSetting, string whatToShow)
-        {
-            return await this.twsControllerBase.GetHistoricalDataAsync(contract, endDateTime, duration, barSizeSetting, whatToShow);
-        }
-
         public async Task<NewsProviderEventArgs> GetNewsProviders()
         {
             return await this.twsControllerBase.GetNewsProviders();
@@ -411,6 +406,26 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         public async Task<PnLSingleEventArgs> RequestPnLSingle(string accountCode, string modelCode, int conId)
         {
             return await this.twsControllerBase.RequestPnLSingle(accountCode, modelCode, conId);
+        }
+
+        public void CancelAccountDetails(string accountId)
+        {
+            this.twsControllerBase.CancelAccountDetails(accountId);
+        }
+
+        public void CancelPositions()
+        {
+            this.twsControllerBase.CancelPositions();
+        }
+
+        public void CancelPnL(int reqId)
+        {
+            this.twsControllerBase.CancelPnL(reqId);
+        }
+
+        public void CancelPnLSingle(int reqId)
+        {
+            this.twsControllerBase.CancelPnLSingle(reqId);
         }
 #pragma warning restore SA1600 // Elements should be documented
     }

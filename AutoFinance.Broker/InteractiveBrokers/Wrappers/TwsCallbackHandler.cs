@@ -132,7 +132,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <summary>
         /// The event that is fired at the end of the option security definition request
         /// </summary>
-        public event EventHandler SecurityDefinitionOptionParameterEndEvent;
+        public event EventHandler<RequestIdEventArgs> SecurityDefinitionOptionParameterEndEvent;
 
         /// <summary>
         /// The event that is fired at the end of the account PnL request
@@ -544,7 +544,8 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <inheritdoc/>
         public void securityDefinitionOptionParameterEnd(int reqId)
         {
-            this.SecurityDefinitionOptionParameterEndEvent?.Invoke(this, EventArgs.Empty);
+            var eventArgs = new RequestIdEventArgs(reqId);
+            this.SecurityDefinitionOptionParameterEndEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>

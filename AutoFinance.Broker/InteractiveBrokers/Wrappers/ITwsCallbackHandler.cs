@@ -126,7 +126,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <summary>
         /// The event that is fired at the end of security definition requests
         /// </summary>
-        event EventHandler SecurityDefinitionOptionParameterEndEvent;
+        event EventHandler<RequestIdEventArgs> SecurityDefinitionOptionParameterEndEvent;
 
         /// <summary>
         /// The event that is fired at the end of the account PnL request
