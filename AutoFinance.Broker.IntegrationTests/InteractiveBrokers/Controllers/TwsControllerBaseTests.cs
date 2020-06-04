@@ -661,5 +661,22 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
             ////var queryTime = DateTime.Now;
             ////List<HistoricalDataEventArgs> historicalDataEvents = await twsHistoricalDataController.GetHistoricalDataAsync(option, queryTime, TwsDuration.OneMonth, TwsBarSizeSetting.OneMinute, TwsHistoricalDataRequestType.Trades);
         }
+
+        /// <summary>
+        /// Test that market data type events come back from TWS properly
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task PositionsController_Should_ReturnMarketDataType()
+        {
+            TwsObjectFactory twsObjectFactory = new TwsObjectFactory("localhost", 7497, 1);
+            ITwsControllerBase twsController = twsObjectFactory.TwsControllerBase;
+
+            await twsController.EnsureConnectedAsync();
+
+            var marketDataType = await twsController.RequestMarketDataTypeAsync(2);
+
+            marketDataType.Should().Be(3);
+        }
     }
 }
