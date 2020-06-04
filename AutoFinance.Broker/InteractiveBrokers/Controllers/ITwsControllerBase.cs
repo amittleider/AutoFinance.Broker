@@ -149,6 +149,12 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         Task<List<HistoricalDataEventArgs>> GetHistoricalDataAsync(Contract contract, DateTime endDateTime, TwsDuration duration, TwsBarSizeSetting barSizeSetting, TwsHistoricalDataRequestType whatToShow);
 
         /// <summary>
+        /// Request Historical Data cancelation
+        /// </summary>
+        /// <param name="requestId">The request Id</param>
+        void CancelHistoricalData(int requestId);
+
+        /// <summary>
         /// Gets news providers from TWS
         /// </summary>
         /// <returns>News providers</returns>
@@ -184,7 +190,8 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// Set the type for the market data feed
         /// </summary>
         /// <param name="marketDataTypeId">The feed level</param>
-        void RequestMarketDataType(int marketDataTypeId);
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        Task RequestMarketDataTypeAsync(int marketDataTypeId);
 
         /// <summary>
         /// Get the PnL of the account.
@@ -199,8 +206,8 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <summary>
         /// Request PnL update cancelation
         /// </summary>
-        /// <param name="reqId">The request Id</param>
-        void CancelPnL(int reqId);
+        /// <param name="requestId">The request Id</param>
+        void CancelPnL(int requestId);
 
         /// <summary>
         /// Get the PnL of the account.
@@ -217,7 +224,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <summary>
         /// Request PnL update cancelation
         /// </summary>
-        /// <param name="reqId">The request Id</param>
-        void CancelPnLSingle(int reqId);
+        /// <param name="requestId">The request Id</param>
+        void CancelPnLSingle(int requestId);
     }
 }

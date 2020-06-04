@@ -88,6 +88,12 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         void ReqHistoricalData(int requestId, Contract contract, string endDateTime, string durationString, string barSizeSetting, string whatToShow, int useRTH, int formatDate, List<TagValue> chartOptions, bool keepUpToDate = false);
 
         /// <summary>
+        /// Request Historical Data cancelation
+        /// </summary>
+        /// <param name="requestId">The request Id</param>
+        void CancelHistoricalData(int requestId);
+
+        /// <summary>
         /// Request realtime data from TWS
         /// </summary>
         /// <param name="requestId">The request Id. IB messed up the naming convention and sometimes calls this "tickerId".</param>

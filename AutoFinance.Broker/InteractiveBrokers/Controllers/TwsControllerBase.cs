@@ -488,6 +488,15 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         }
 
         /// <summary>
+        /// Request Historical Data cancelation
+        /// </summary>
+        /// <param name="requestId">The request Id</param>
+        public void CancelHistoricalData(int requestId)
+        {
+            this.clientSocket.CancelHistoricalData(requestId);
+        }
+
+        /// <summary>
         /// Gets news providers from TWS
         /// </summary>
         /// <returns>News providers</returns>
@@ -849,9 +858,37 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// Set the type for the market data feed
         /// </summary>
         /// <param name="marketDataTypeId">The feed level</param>
-        public void RequestMarketDataType(int marketDataTypeId)
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public Task RequestMarketDataTypeAsync(int marketDataTypeId)
         {
+            // Set the operation to cancel after 5 seconds
+            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
+            return this.RequestMarketDataTypeAsync(marketDataTypeId, tokenSource.Token);
+        }
+
+        /// <summary>
+        /// Set the type for the market data feed
+        /// </summary>
+        /// <param name="marketDataTypeId">The feed level</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public Task RequestMarketDataTypeAsync(int marketDataTypeId, CancellationToken cancellationToken)
+        {
+            string value = string.Empty;
+
+            var taskSource = new TaskCompletionSource<bool>();
+            this.twsCallbackHandler.MarketDataTypeEvent += (sender, args) =>
+            {
+                taskSource.TrySetResult(true);
+            };
+
+            cancellationToken.Register(() =>
+            {
+                taskSource.TrySetCanceled();
+            });
+
             this.clientSocket.RequestMarketDataType(marketDataTypeId);
+
+            return taskSource.Task;
         }
 
         /// <summary>
@@ -864,39 +901,16 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             string accountCode,
             string modelCode)
         {
-            // Set the operation to cancel after 5 seconds
-            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
-            return this.RequestPnL(accountCode, modelCode, tokenSource.Token);
-        }
-
-        /// <summary>
-        /// Get the PnL of the account.
-        /// </summary>
-        /// <param name="accountCode">The account code</param>
-        /// <param name="modelCode">The model code</param>
-        /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
-        /// <returns>The PnL account update event from TWS.</returns>
-        public Task<PnLEventArgs> RequestPnL(
-            string accountCode,
-            string modelCode,
-            CancellationToken cancellationToken)
-        {
-            PnLEventArgs pnlUpdateEvent = null;
+            PnLEventArgs pnlUpdateEvents = null;
             var taskSource = new TaskCompletionSource<PnLEventArgs>();
             EventHandler<PnLEventArgs> pnlUpdateEventHandler = null;
 
             pnlUpdateEventHandler = (sender, args) =>
             {
-                pnlUpdateEvent = args;
-                taskSource.TrySetResult(pnlUpdateEvent);
+                pnlUpdateEvents = args;
             };
 
             this.twsCallbackHandler.PnLEvent += pnlUpdateEventHandler;
-
-            cancellationToken.Register(() =>
-            {
-                taskSource.TrySetCanceled();
-            });
 
             int requestId = this.twsRequestIdGenerator.GetNextRequestId();
             this.clientSocket.RequestPnL(requestId, accountCode, modelCode);
@@ -907,10 +921,10 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <summary>
         /// Request PnL update cancelation
         /// </summary>
-        /// <param name="reqId">The request Id</param>
-        public void CancelPnL(int reqId)
+        /// <param name="requestId">The request Id</param>
+        public void CancelPnL(int requestId)
         {
-            this.clientSocket.CancelPnL(reqId);
+            this.clientSocket.CancelPnL(requestId);
         }
 
         /// <summary>
@@ -925,25 +939,6 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             string modelCode,
             int conId)
         {
-            // Set the operation to cancel after 5 seconds
-            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
-            return this.RequestPnLSingle(accountCode, modelCode, conId, tokenSource.Token);
-        }
-
-        /// <summary>
-        /// Get the PnL of the account.
-        /// </summary>
-        /// <param name="accountCode">The account code</param>
-        /// <param name="modelCode">The model code</param>
-        /// <param name="conId">The contract Id</param>
-        /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
-        /// <returns>The single position PnL update event from TWS.</returns>
-        public Task<PnLSingleEventArgs> RequestPnLSingle(
-            string accountCode,
-            string modelCode,
-            int conId,
-            CancellationToken cancellationToken)
-        {
             PnLSingleEventArgs pnlSingleEvent = null;
             var taskSource = new TaskCompletionSource<PnLSingleEventArgs>();
             EventHandler<PnLSingleEventArgs> pnlSingleEventHandler = null;
@@ -951,15 +946,9 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             pnlSingleEventHandler = (sender, args) =>
             {
                 pnlSingleEvent = args;
-                taskSource.TrySetResult(pnlSingleEvent);
             };
 
             this.twsCallbackHandler.PnLSingleEvent += pnlSingleEventHandler;
-
-            cancellationToken.Register(() =>
-            {
-                taskSource.TrySetCanceled();
-            });
 
             int requestId = this.twsRequestIdGenerator.GetNextRequestId();
             this.clientSocket.RequestPnLSingle(requestId, accountCode, modelCode, conId);
@@ -970,10 +959,10 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <summary>
         /// Request PnL update cancelation
         /// </summary>
-        /// <param name="reqId">The request Id</param>
-        public void CancelPnLSingle(int reqId)
+        /// <param name="requestId">The request Id</param>
+        public void CancelPnLSingle(int requestId)
         {
-            this.clientSocket.CancelPnLSingle(reqId);
+            this.clientSocket.CancelPnLSingle(requestId);
         }
 
         /// <summary>

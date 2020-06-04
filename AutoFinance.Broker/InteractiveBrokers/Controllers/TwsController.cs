@@ -378,6 +378,11 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             return await this.twsControllerBase.GetHistoricalDataAsync(contract, endDateTime, duration, barSizeSetting, whatToShow);
         }
 
+        public void CancelHistoricalData(int requestId)
+        {
+            this.twsControllerBase.CancelHistoricalData(requestId);
+        }
+
         public async Task<NewsProviderEventArgs> GetNewsProviders()
         {
             return await this.twsControllerBase.GetNewsProviders();
@@ -393,9 +398,9 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             return await this.twsControllerBase.RequestSecurityDefinitionOptionParameters(underlyingSymbol, exchange, underlyingSecType, underlyingConId);
         }
 
-        public void RequestMarketDataType(int marketDataType)
+        public async Task RequestMarketDataTypeAsync(int marketDataType)
         {
-            this.twsControllerBase.RequestMarketDataType(marketDataType);
+            await this.twsControllerBase.RequestMarketDataTypeAsync(marketDataType);
         }
 
         public async Task<PnLEventArgs> RequestPnL(string accountCode, string modelCode)

@@ -115,6 +115,15 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         }
 
         /// <summary>
+        /// Request Historical Data cancelation
+        /// </summary>
+        /// <param name="requestId">The request Id</param>
+        public void CancelHistoricalData(int requestId)
+        {
+            this.EClientSocket.cancelHistoricalData(requestId);
+        }
+
+        /// <summary>
         /// Request realtime data from TWS
         /// </summary>
         /// <param name="tickerId">The request Id</param>
