@@ -69,7 +69,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Constants
         /// <summary>
         /// Gets trade
         /// </summary>
-        public static TwsHistoricalDataRequestType Iv { get => iv; }
+        public static TwsHistoricalDataRequestType ImpliedVolatility { get => impliedVolatility; }
 
         /// <summary>
         /// The string version of the parameter when sending to the TWS API
