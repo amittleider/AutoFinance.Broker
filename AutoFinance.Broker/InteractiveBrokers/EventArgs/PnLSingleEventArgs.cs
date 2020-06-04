@@ -4,6 +4,9 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
 {
     using IBApi;
 
+    /// <summary>
+    /// The event arguments for PnL Single position events sent from TWS.
+    /// </summary>
     public class PnLSingleEventArgs
     {
         /// <summary>

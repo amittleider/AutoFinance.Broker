@@ -858,8 +858,8 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// Set the type for the market data feed
         /// </summary>
         /// <param name="marketDataTypeId">The feed level</param>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public Task RequestMarketDataTypeAsync(int marketDataTypeId)
+        /// <returns>The market data type</returns>
+        public Task<MarketDataTypeEventArgs> RequestMarketDataTypeAsync(int marketDataTypeId)
         {
             // Set the operation to cancel after 5 seconds
             CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
@@ -870,15 +870,16 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// Set the type for the market data feed
         /// </summary>
         /// <param name="marketDataTypeId">The feed level</param>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public Task RequestMarketDataTypeAsync(int marketDataTypeId, CancellationToken cancellationToken)
+        /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
+        /// <returns>The market data type</returns>
+        public Task<MarketDataTypeEventArgs> RequestMarketDataTypeAsync(int marketDataTypeId, CancellationToken cancellationToken)
         {
             string value = string.Empty;
 
-            var taskSource = new TaskCompletionSource<bool>();
+            var taskSource = new TaskCompletionSource<MarketDataTypeEventArgs>();
             this.twsCallbackHandler.MarketDataTypeEvent += (sender, args) =>
             {
-                taskSource.TrySetResult(true);
+                taskSource.TrySetResult(args);
             };
 
             cancellationToken.Register(() =>

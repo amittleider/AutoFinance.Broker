@@ -4,7 +4,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
 {
     using System;
     using System.Collections.Generic;
-    using EventArgs;
+    using AutoFinance.Broker.InteractiveBrokers.EventArgs;
     using IBApi;
 
     /// <summary>
@@ -788,8 +788,15 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         public void updatePortfolio(Contract contract, double position, double marketPrice, double marketValue, double averageCost, double unrealisedPNL, double realisedPNL, string accountName)
         {
             var eventArgs = new UpdatePortfolioEventArgs(
-                contract, position, marketPrice, marketValue, averageCost,
-                unrealisedPNL, realisedPNL, accountName);
+                contract,
+                position,
+                marketPrice,
+                marketValue,
+                averageCost,
+                unrealisedPNL,
+                realisedPNL,
+                accountName);
+
             this.UpdatePortfolioEvent?.Invoke(this, eventArgs);
         }
 

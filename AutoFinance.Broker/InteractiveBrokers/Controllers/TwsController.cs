@@ -398,9 +398,9 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             return await this.twsControllerBase.RequestSecurityDefinitionOptionParameters(underlyingSymbol, exchange, underlyingSecType, underlyingConId);
         }
 
-        public async Task RequestMarketDataTypeAsync(int marketDataType)
+        public async Task<MarketDataTypeEventArgs> RequestMarketDataTypeAsync(int marketDataType)
         {
-            await this.twsControllerBase.RequestMarketDataTypeAsync(marketDataType);
+            return await this.twsControllerBase.RequestMarketDataTypeAsync(marketDataType);
         }
 
         public async Task<PnLEventArgs> RequestPnL(string accountCode, string modelCode)

@@ -190,8 +190,8 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// Set the type for the market data feed
         /// </summary>
         /// <param name="marketDataTypeId">The feed level</param>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        Task RequestMarketDataTypeAsync(int marketDataTypeId);
+        /// <returns>The market data type</returns>
+        Task<MarketDataTypeEventArgs> RequestMarketDataTypeAsync(int marketDataTypeId);
 
         /// <summary>
         /// Get the PnL of the account.
