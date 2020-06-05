@@ -239,6 +239,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <param name="twsRequestIdGenerator">The request Id generator</param>
         /// <param name="twsCallbackHandler">The callback handler</param>
         /// <param name="twsClientSocket">The client socket</param>
+        /// <param name="cancelAction">The cancellation delegate</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public static Task<List<HistoricalDataEventArgs>> GetHistoricalDataAsync(
             Contract contract,
@@ -248,7 +249,8 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             string whatToShow,
             ITwsRequestIdGenerator twsRequestIdGenerator,
             ITwsCallbackHandler twsCallbackHandler,
-            ITwsClientSocket twsClientSocket)
+            ITwsClientSocket twsClientSocket,
+            Action<int> cancelAction)
         {
             int requestId = twsRequestIdGenerator.GetNextRequestId();
             int useRth = 1;
@@ -288,6 +290,8 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             {
                 if (args.Id == requestId)
                 {
+                    cancelAction(requestId);
+
                     // The error is associated with this request
                     twsCallbackHandler.HistoricalDataEvent -= historicalDataEventHandler;
                     twsCallbackHandler.HistoricalDataEndEvent -= historicalDataEndEventHandler;
@@ -300,6 +304,8 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             CancellationTokenSource tokenSource = new CancellationTokenSource(60 * 1000);
             tokenSource.Token.Register(() =>
             {
+                cancelAction(requestId);
+
                 twsCallbackHandler.HistoricalDataEvent -= historicalDataEventHandler;
                 twsCallbackHandler.HistoricalDataEndEvent -= historicalDataEndEventHandler;
                 twsCallbackHandler.ErrorEvent -= errorEventHandler;
@@ -484,7 +490,8 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                 whatToShow.ToTwsParameter(),
                 this.twsRequestIdGenerator,
                 this.twsCallbackHandler,
-                this.clientSocket);
+                this.clientSocket,
+                this.CancelHistoricalData);
         }
 
         /// <summary>
@@ -877,10 +884,12 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             string value = string.Empty;
 
             var taskSource = new TaskCompletionSource<MarketDataTypeEventArgs>();
-            this.twsCallbackHandler.MarketDataTypeEvent += (sender, args) =>
-            {
-                taskSource.TrySetResult(args);
-            };
+            //this.twsCallbackHandler.MarketDataTypeEvent += (sender, args) =>
+            //{
+            //    taskSource.TrySetResult(args);
+            //};
+
+            taskSource.TrySetResult(new MarketDataTypeEventArgs(0, marketDataTypeId));
 
             cancellationToken.Register(() =>
             {
