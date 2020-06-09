@@ -236,6 +236,8 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <param name="duration">The duration of the request</param>
         /// <param name="barSizeSetting">The bar size to request</param>
         /// <param name="whatToShow">The historical data request type</param>
+        /// <param name="useRth">Whether to use regular trading hours</param>
+        /// <param name="formatDate">Whether to format date</param>
         /// <param name="twsRequestIdGenerator">The request Id generator</param>
         /// <param name="twsCallbackHandler">The callback handler</param>
         /// <param name="twsClientSocket">The client socket</param>
@@ -247,14 +249,16 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             string duration,
             string barSizeSetting,
             string whatToShow,
+            bool useRth,
+            bool formatDate,
             ITwsRequestIdGenerator twsRequestIdGenerator,
             ITwsCallbackHandler twsCallbackHandler,
             ITwsClientSocket twsClientSocket,
             Action<int> cancelAction)
         {
             int requestId = twsRequestIdGenerator.GetNextRequestId();
-            int useRth = 1;
-            int formatDate = 1;
+            var useRthToInt = useRth ? 1 : 0;
+            var formatDateToInt = formatDate ? 1 : 0;
             List<TagValue> chartOptions = null;
 
             string value = string.Empty;
@@ -324,8 +328,8 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                 duration,
                 barSizeSetting,
                 whatToShow,
-                useRth,
-                formatDate,
+                useRthToInt,
+                formatDateToInt,
                 chartOptions);
 
             return taskSource.Task;
@@ -760,7 +764,14 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <param name="barSizeSetting">The bar size to request</param>
         /// <param name="whatToShow">The historical data request type</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public Task<List<HistoricalDataEventArgs>> GetHistoricalDataAsync(Contract contract, DateTime endDateTime, TwsDuration duration, TwsBarSizeSetting barSizeSetting, TwsHistoricalDataRequestType whatToShow)
+        public Task<List<HistoricalDataEventArgs>> GetHistoricalDataAsync(
+            Contract contract,
+            DateTime endDateTime,
+            TwsDuration duration,
+            TwsBarSizeSetting barSizeSetting,
+            TwsHistoricalDataRequestType whatToShow,
+            bool useRth = true,
+            bool formatDate = true)
         {
             return GetHistoricalDataAsync(
                 contract,
@@ -768,6 +779,8 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                 duration.ToTwsParameter(),
                 barSizeSetting.ToTwsParameter(),
                 whatToShow.ToTwsParameter(),
+                useRth,
+                formatDate,
                 this.twsRequestIdGenerator,
                 this.twsCallbackHandler,
                 this.clientSocket,
