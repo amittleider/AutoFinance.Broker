@@ -13,7 +13,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// Initializes a new instance of the <see cref="PnLSingleEventArgs"/> class.
         /// </summary>
         /// <param name="requestId">The request Id</param>
-        /// <param name="position">The position</param>
+        /// <param name="position">The position size</param>
         /// <param name="dailyPnL">The daily PnL</param>
         /// <param name="unrealizedPnL">The unrealized PnL</param>
         /// <param name="realizedPnL">The realized PnL</param>
@@ -38,7 +38,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         }
 
         /// <summary>
-        /// Gets the position
+        /// Gets the position size
         /// </summary>
         public int Position
         {

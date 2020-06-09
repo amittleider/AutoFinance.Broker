@@ -4,6 +4,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using AutoFinance.Broker.InteractiveBrokers.EventArgs;
     using IBApi;
 
@@ -112,6 +113,41 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// The event that is fired on a tick news event
         /// </summary>
         event EventHandler<TickNewsEventArgs> TickNewsEvent;
+
+        /// <summary>
+        /// The event that is fired on a tick EFP event
+        /// </summary>
+        event EventHandler<TickEFPEventArgs> TickEFPEvent;
+
+        /// <summary>
+        /// The event that is fired on a tick generic event
+        /// </summary>
+        event EventHandler<TickGenericEventArgs> TickGenericEvent;
+
+        /// <summary>
+        /// The event that is fired on a tick option computation event
+        /// </summary>
+        event EventHandler<TickOptionComputationEventArgs> TickOptionComputationEvent;
+
+        /// <summary>
+        /// The event that is fired on a tick price event
+        /// </summary>
+        event EventHandler<TickPriceEventArgs> TickPriceEvent;
+
+        /// <summary>
+        /// The event that is fired on a tick size event
+        /// </summary>
+        event EventHandler<TickSizeEventArgs> TickSizeEvent;
+
+        /// <summary>
+        /// The event that is fired on a tick snapshot end event
+        /// </summary>
+        event EventHandler<TickSnapshotEndEventArgs> TickSnapshotEndEvent;
+
+        /// <summary>
+        /// The event that is fired on a tick string event
+        /// </summary>
+        event EventHandler<TickStringEventArgs> TickStringEvent;
 
         /// <summary>
         /// The event that is fired on news provider events

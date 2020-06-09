@@ -30,7 +30,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Constants
         /// <summary>
         /// Implied volatility
         /// </summary>
-                private static TwsHistoricalDataRequestType impliedVolatility = new TwsHistoricalDataRequestType("OPTION_IMPLIED_VOLATILITY");
+        private static TwsHistoricalDataRequestType impliedVolatility = new TwsHistoricalDataRequestType("OPTION_IMPLIED_VOLATILITY");
 
         /// <summary>
         /// The underlying string

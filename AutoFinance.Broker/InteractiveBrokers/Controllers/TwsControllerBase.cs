@@ -332,6 +332,286 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         }
 
         /// <summary>
+        /// Request market data from TWS.
+        /// </summary>
+        /// <param name="contract">The contract type</param>
+        /// <param name="genericTickList">The generic tick list</param>
+        /// <param name="snapshot">The snapshot flag</param>
+        /// <param name="regulatorySnapshot">The regulatory snapshot flag</param>
+        /// <param name="mktDataOptions">The market data options</param>
+        /// <param name="twsRequestIdGenerator">The request Id generator</param>
+        /// <param name="twsCallbackHandler">The callback handler</param>
+        /// <param name="twsClientSocket">The client socket</param>
+        /// <param name="cancelAction">The cancellation delegate</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public static Task<TickSnapshotEndEventArgs> RequestMarketDataAsync(
+            Contract contract,
+            string genericTickList,
+            bool snapshot,
+            bool regulatorySnapshot,
+            List<TagValue> mktDataOptions,
+            ITwsRequestIdGenerator twsRequestIdGenerator,
+            ITwsCallbackHandler twsCallbackHandler,
+            ITwsClientSocket twsClientSocket,
+            Action<int> cancelAction)
+        {
+            int tickerId = twsRequestIdGenerator.GetNextRequestId();
+
+            string value = string.Empty;
+
+            var taskSource = new TaskCompletionSource<TickSnapshotEndEventArgs>();
+
+            EventHandler<TickPriceEventArgs> tickPriceEventHandler = null;
+            EventHandler<TickSizeEventArgs> tickSizeEventHandler = null;
+            EventHandler<TickStringEventArgs> tickStringEventHandler = null;
+            EventHandler<TickGenericEventArgs> tickGenericEventHandler = null;
+            EventHandler<TickOptionComputationEventArgs> tickOptionComputationEventHandler = null;
+            EventHandler<TickSnapshotEndEventArgs> tickSnapshotEndEventHandler = null;
+            EventHandler<TickEFPEventArgs> tickEFPEventHandler = null;
+            EventHandler<ErrorEventArgs> errorEventHandler = null;
+
+            List<RealtimeBarEventArgs> realtimeBarList = new List<RealtimeBarEventArgs>();
+
+            tickPriceEventHandler = (sender, args) =>
+            {
+                if (args.TickerId == tickerId)
+                {
+                    twsCallbackHandler.TickPriceEvent -= tickPriceEventHandler;
+                    twsCallbackHandler.TickSizeEvent -= tickSizeEventHandler;
+                    twsCallbackHandler.TickStringEvent -= tickStringEventHandler;
+                    twsCallbackHandler.TickGenericEvent -= tickGenericEventHandler;
+                    twsCallbackHandler.TickOptionComputationEvent -= tickOptionComputationEventHandler;
+                    twsCallbackHandler.TickSnapshotEndEvent -= tickSnapshotEndEventHandler;
+                    twsCallbackHandler.TickEFPEvent -= tickEFPEventHandler;
+                    twsCallbackHandler.ErrorEvent -= errorEventHandler;
+                    taskSource.TrySetResult(new TickSnapshotEndEventArgs(args.TickerId));
+                }
+            };
+
+            tickSizeEventHandler = (sender, args) =>
+            {
+                if (args.TickerId == tickerId)
+                {
+                    twsCallbackHandler.TickPriceEvent -= tickPriceEventHandler;
+                    twsCallbackHandler.TickSizeEvent -= tickSizeEventHandler;
+                    twsCallbackHandler.TickStringEvent -= tickStringEventHandler;
+                    twsCallbackHandler.TickGenericEvent -= tickGenericEventHandler;
+                    twsCallbackHandler.TickOptionComputationEvent -= tickOptionComputationEventHandler;
+                    twsCallbackHandler.TickSnapshotEndEvent -= tickSnapshotEndEventHandler;
+                    twsCallbackHandler.TickEFPEvent -= tickEFPEventHandler;
+                    twsCallbackHandler.ErrorEvent -= errorEventHandler;
+                    taskSource.TrySetResult(new TickSnapshotEndEventArgs(args.TickerId));
+                }
+            };
+
+            tickStringEventHandler = (sender, args) =>
+            {
+                if (args.TickerId == tickerId)
+                {
+                    twsCallbackHandler.TickPriceEvent -= tickPriceEventHandler;
+                    twsCallbackHandler.TickSizeEvent -= tickSizeEventHandler;
+                    twsCallbackHandler.TickStringEvent -= tickStringEventHandler;
+                    twsCallbackHandler.TickGenericEvent -= tickGenericEventHandler;
+                    twsCallbackHandler.TickOptionComputationEvent -= tickOptionComputationEventHandler;
+                    twsCallbackHandler.TickSnapshotEndEvent -= tickSnapshotEndEventHandler;
+                    twsCallbackHandler.TickEFPEvent -= tickEFPEventHandler;
+                    twsCallbackHandler.ErrorEvent -= errorEventHandler;
+                    taskSource.TrySetResult(new TickSnapshotEndEventArgs(args.TickerId));
+                }
+            };
+
+            tickGenericEventHandler = (sender, args) =>
+            {
+                if (args.TickerId == tickerId)
+                {
+                    twsCallbackHandler.TickPriceEvent -= tickPriceEventHandler;
+                    twsCallbackHandler.TickSizeEvent -= tickSizeEventHandler;
+                    twsCallbackHandler.TickStringEvent -= tickStringEventHandler;
+                    twsCallbackHandler.TickGenericEvent -= tickGenericEventHandler;
+                    twsCallbackHandler.TickOptionComputationEvent -= tickOptionComputationEventHandler;
+                    twsCallbackHandler.TickSnapshotEndEvent -= tickSnapshotEndEventHandler;
+                    twsCallbackHandler.TickEFPEvent -= tickEFPEventHandler;
+                    twsCallbackHandler.ErrorEvent -= errorEventHandler;
+                    taskSource.TrySetResult(new TickSnapshotEndEventArgs(args.TickerId));
+                }
+            };
+
+            tickOptionComputationEventHandler = (sender, args) =>
+            {
+                if (args.TickerId == tickerId)
+                {
+                    twsCallbackHandler.TickPriceEvent -= tickPriceEventHandler;
+                    twsCallbackHandler.TickSizeEvent -= tickSizeEventHandler;
+                    twsCallbackHandler.TickStringEvent -= tickStringEventHandler;
+                    twsCallbackHandler.TickGenericEvent -= tickGenericEventHandler;
+                    twsCallbackHandler.TickOptionComputationEvent -= tickOptionComputationEventHandler;
+                    twsCallbackHandler.TickSnapshotEndEvent -= tickSnapshotEndEventHandler;
+                    twsCallbackHandler.TickEFPEvent -= tickEFPEventHandler;
+                    twsCallbackHandler.ErrorEvent -= errorEventHandler;
+                    taskSource.TrySetResult(new TickSnapshotEndEventArgs(args.TickerId));
+                }
+            };
+
+            tickSnapshotEndEventHandler = (sender, args) =>
+            {
+                if (args.TickerId == tickerId)
+                {
+                    twsCallbackHandler.TickPriceEvent -= tickPriceEventHandler;
+                    twsCallbackHandler.TickSizeEvent -= tickSizeEventHandler;
+                    twsCallbackHandler.TickStringEvent -= tickStringEventHandler;
+                    twsCallbackHandler.TickGenericEvent -= tickGenericEventHandler;
+                    twsCallbackHandler.TickOptionComputationEvent -= tickOptionComputationEventHandler;
+                    twsCallbackHandler.TickSnapshotEndEvent -= tickSnapshotEndEventHandler;
+                    twsCallbackHandler.TickEFPEvent -= tickEFPEventHandler;
+                    twsCallbackHandler.ErrorEvent -= errorEventHandler;
+                    taskSource.TrySetResult(new TickSnapshotEndEventArgs(args.TickerId));
+                }
+            };
+
+            tickEFPEventHandler = (sender, args) =>
+            {
+                if (args.TickerId == tickerId)
+                {
+                    twsCallbackHandler.TickPriceEvent -= tickPriceEventHandler;
+                    twsCallbackHandler.TickSizeEvent -= tickSizeEventHandler;
+                    twsCallbackHandler.TickStringEvent -= tickStringEventHandler;
+                    twsCallbackHandler.TickGenericEvent -= tickGenericEventHandler;
+                    twsCallbackHandler.TickOptionComputationEvent -= tickOptionComputationEventHandler;
+                    twsCallbackHandler.TickSnapshotEndEvent -= tickSnapshotEndEventHandler;
+                    twsCallbackHandler.TickEFPEvent -= tickEFPEventHandler;
+                    twsCallbackHandler.ErrorEvent -= errorEventHandler;
+                    taskSource.TrySetResult(new TickSnapshotEndEventArgs(args.TickerId));
+                }
+            };
+
+            errorEventHandler = (sender, args) =>
+            {
+                if (args.Id == tickerId)
+                {
+                    cancelAction(tickerId);
+
+                    // The error is associated with this request
+                    twsCallbackHandler.TickPriceEvent -= tickPriceEventHandler;
+                    twsCallbackHandler.TickSizeEvent -= tickSizeEventHandler;
+                    twsCallbackHandler.TickStringEvent -= tickStringEventHandler;
+                    twsCallbackHandler.TickGenericEvent -= tickGenericEventHandler;
+                    twsCallbackHandler.TickOptionComputationEvent -= tickOptionComputationEventHandler;
+                    twsCallbackHandler.TickSnapshotEndEvent -= tickSnapshotEndEventHandler;
+                    twsCallbackHandler.TickEFPEvent -= tickEFPEventHandler;
+                    twsCallbackHandler.ErrorEvent -= errorEventHandler;
+                    taskSource.TrySetException(new TwsException(args.ErrorMessage));
+                }
+            };
+
+            // Set the operation to cancel after 1 minute
+            CancellationTokenSource tokenSource = new CancellationTokenSource(60 * 1000);
+            tokenSource.Token.Register(() =>
+            {
+                cancelAction(tickerId);
+
+                twsCallbackHandler.TickPriceEvent -= tickPriceEventHandler;
+                twsCallbackHandler.TickSizeEvent -= tickSizeEventHandler;
+                twsCallbackHandler.TickStringEvent -= tickStringEventHandler;
+                twsCallbackHandler.TickGenericEvent -= tickGenericEventHandler;
+                twsCallbackHandler.TickOptionComputationEvent -= tickOptionComputationEventHandler;
+                twsCallbackHandler.TickSnapshotEndEvent -= tickSnapshotEndEventHandler;
+                twsCallbackHandler.TickEFPEvent -= tickEFPEventHandler;
+                twsCallbackHandler.ErrorEvent -= errorEventHandler;
+
+                taskSource.TrySetCanceled();
+            });
+
+            twsCallbackHandler.TickPriceEvent += tickPriceEventHandler;
+            twsCallbackHandler.TickSizeEvent += tickSizeEventHandler;
+            twsCallbackHandler.TickStringEvent += tickStringEventHandler;
+            twsCallbackHandler.TickGenericEvent += tickGenericEventHandler;
+            twsCallbackHandler.TickOptionComputationEvent += tickOptionComputationEventHandler;
+            twsCallbackHandler.TickSnapshotEndEvent += tickSnapshotEndEventHandler;
+            twsCallbackHandler.TickEFPEvent += tickEFPEventHandler;
+            twsCallbackHandler.ErrorEvent += errorEventHandler;
+
+            twsClientSocket.RequestMarketData(
+                tickerId,
+                contract,
+                genericTickList,
+                snapshot,
+                regulatorySnapshot,
+                mktDataOptions);
+
+            return taskSource.Task;
+        }
+
+        /// <summary>
+        /// Request real time bars data from TWS.
+        /// </summary>
+        /// <param name="contract">The contract type</param>
+        /// <param name="barSize">The bar size (currently being ignored by TWS API)</param>
+        /// <param name="whatToShow">The whatToShow parameters</param>
+        /// <param name="useRTH">The regular time flag</param>
+        /// <param name="realTimeBarsOptions">The real time bars options</param>
+        /// <param name="twsRequestIdGenerator">The request Id generator</param>
+        /// <param name="twsCallbackHandler">The callback handler</param>
+        /// <param name="twsClientSocket">The client socket</param>
+        /// <param name="cancelAction">The cancellation delegate</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public static Task<RealtimeBarEventArgs> RequestRealtimeBarAsync(
+            Contract contract,
+            int barSize,
+            string whatToShow,
+            bool useRTH,
+            List<TagValue> realTimeBarsOptions,
+            ITwsRequestIdGenerator twsRequestIdGenerator,
+            ITwsCallbackHandler twsCallbackHandler,
+            ITwsClientSocket twsClientSocket,
+            Action<int> cancelAction)
+        {
+            int requestId = twsRequestIdGenerator.GetNextRequestId();
+
+            string value = string.Empty;
+
+            var taskSource = new TaskCompletionSource<RealtimeBarEventArgs>();
+
+            EventHandler<RealtimeBarEventArgs> realtimeBarEventHandler = null;
+            EventHandler<ErrorEventArgs> errorEventHandler = null;
+
+            realtimeBarEventHandler = (sender, args) =>
+            {
+                if (args.RequestId == requestId)
+                {
+                    twsCallbackHandler.RealtimeBarEvent -= realtimeBarEventHandler;
+                    twsCallbackHandler.ErrorEvent -= errorEventHandler;
+                    taskSource.TrySetResult(args);
+                }
+            };
+
+            errorEventHandler = (sender, args) =>
+            {
+                if (args.Id == requestId)
+                {
+                    cancelAction(requestId);
+
+                    // The error is associated with this request
+                    twsCallbackHandler.RealtimeBarEvent -= realtimeBarEventHandler;
+                    twsCallbackHandler.ErrorEvent -= errorEventHandler;
+                    taskSource.TrySetException(new TwsException(args.ErrorMessage));
+                }
+            };
+
+            twsCallbackHandler.RealtimeBarEvent += realtimeBarEventHandler;
+            twsCallbackHandler.ErrorEvent += errorEventHandler;
+
+            twsClientSocket.ReqRealtimeBars(
+                requestId,
+                contract,
+                barSize,
+                whatToShow,
+                useRTH,
+                realTimeBarsOptions);
+
+            return taskSource.Task;
+        }
+
+        /// <summary>
         /// Ensures the connection is active
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
@@ -862,6 +1142,80 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         }
 
         /// <summary>
+        /// Request market data from TWS.
+        /// </summary>
+        /// <param name="contract">The contract type</param>
+        /// <param name="genericTickList">The generic tick list</param>
+        /// <param name="snapshot">The snapshot flag</param>
+        /// <param name="regulatorySnapshot">The regulatory snapshot flag</param>
+        /// <param name="mktDataOptions">The market data options</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public Task<TickSnapshotEndEventArgs> RequestMarketDataAsync(
+            Contract contract,
+            string genericTickList,
+            bool snapshot,
+            bool regulatorySnapshot,
+            List<TagValue> mktDataOptions)
+        {
+            return RequestMarketDataAsync(
+                contract,
+                genericTickList,
+                snapshot,
+                regulatorySnapshot,
+                mktDataOptions,
+                this.twsRequestIdGenerator,
+                this.twsCallbackHandler,
+                this.clientSocket,
+                this.CancelMarketData);
+        }
+
+        /// <summary>
+        /// Cancel market data
+        /// </summary>
+        /// <param name="requestId">The request to cancel</param>
+        public void CancelMarketData(int requestId)
+        {
+            this.clientSocket.CancelMarketData(requestId);
+        }
+
+        /// <summary>
+        /// Request real time bars data from TWS.
+        /// </summary>
+        /// <param name="contract">The contract type</param>
+        /// <param name="barSize">The bar size (currently being ignored by TWS API)</param>
+        /// <param name="whatToShow">The whatToShow parameters</param>
+        /// <param name="useRTH">The regular time flag</param>
+        /// <param name="realTimeBarsOptions">The real time bars options</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public Task<RealtimeBarEventArgs> RequestRealtimeBarAsync(
+            Contract contract,
+            int barSize,
+            string whatToShow,
+            bool useRTH,
+            List<TagValue> realTimeBarsOptions)
+        {
+            return RequestRealtimeBarAsync(
+                contract,
+                barSize,
+                whatToShow,
+                useRTH,
+                realTimeBarsOptions,
+                this.twsRequestIdGenerator,
+                this.twsCallbackHandler,
+                this.clientSocket,
+                this.CancelRealtimeBars);
+        }
+
+        /// <summary>
+        /// Cancel real time bars data
+        /// </summary>
+        /// <param name="requestId">The request to cancel</param>
+        public void CancelRealtimeBars(int requestId)
+        {
+            this.clientSocket.CancelRealtimeBars(requestId);
+        }
+
+        /// <summary>
         /// Set the type for the market data feed
         /// </summary>
         /// <param name="marketDataTypeId">The feed level</param>
@@ -911,13 +1265,12 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             string accountCode,
             string modelCode)
         {
-            PnLEventArgs pnlUpdateEvents = null;
             var taskSource = new TaskCompletionSource<PnLEventArgs>();
             EventHandler<PnLEventArgs> pnlUpdateEventHandler = null;
 
             pnlUpdateEventHandler = (sender, args) =>
             {
-                pnlUpdateEvents = args;
+                taskSource.TrySetResult(args);
             };
 
             this.twsCallbackHandler.PnLEvent += pnlUpdateEventHandler;
@@ -949,18 +1302,20 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             string modelCode,
             int conId)
         {
-            PnLSingleEventArgs pnlSingleEvent = null;
             var taskSource = new TaskCompletionSource<PnLSingleEventArgs>();
             EventHandler<PnLSingleEventArgs> pnlSingleEventHandler = null;
+            int requestId = this.twsRequestIdGenerator.GetNextRequestId();
 
             pnlSingleEventHandler = (sender, args) =>
             {
-                pnlSingleEvent = args;
+                if (requestId == args.RequestId)
+                {
+                    taskSource.TrySetResult(args);
+                }
             };
 
             this.twsCallbackHandler.PnLSingleEvent += pnlSingleEventHandler;
 
-            int requestId = this.twsRequestIdGenerator.GetNextRequestId();
             this.clientSocket.RequestPnLSingle(requestId, accountCode, modelCode, conId);
 
             return taskSource.Task;

@@ -187,6 +187,50 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             int underlyingConId);
 
         /// <summary>
+        /// Request market data from TWS.
+        /// </summary>
+        /// <param name="contract">The contract type</param>
+        /// <param name="genericTickList">The generic tick list</param>
+        /// <param name="snapshot">The snapshot flag</param>
+        /// <param name="regulatorySnapshot">The regulatory snapshot flag</param>
+        /// <param name="mktDataOptions">The market data options</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        Task<TickSnapshotEndEventArgs> RequestMarketDataAsync(
+            Contract contract,
+            string genericTickList,
+            bool snapshot,
+            bool regulatorySnapshot,
+            List<TagValue> mktDataOptions);
+
+        /// <summary>
+        /// Cancel market data
+        /// </summary>
+        /// <param name="requestId">The request to cancel</param>
+        void CancelMarketData(int requestId);
+
+        /// <summary>
+        /// Request real time bars data from TWS.
+        /// </summary>
+        /// <param name="contract">The contract type</param>
+        /// <param name="barSize">The bar size</param>
+        /// <param name="whatToShow">The whatToShow parameters</param>
+        /// <param name="useRTH">The regular time flag</param>
+        /// <param name="realTimeBarsOptions">The real time bars options</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        Task<RealtimeBarEventArgs> RequestRealtimeBarAsync(
+            Contract contract,
+            int barSize,
+            string whatToShow,
+            bool useRTH,
+            List<TagValue> realTimeBarsOptions);
+
+        /// <summary>
+        /// Cancel real time bars data
+        /// </summary>
+        /// <param name="requestId">The request to cancel</param>
+        void CancelRealtimeBars(int requestId);
+
+        /// <summary>
         /// Set the type for the market data feed
         /// </summary>
         /// <param name="marketDataTypeId">The feed level</param>

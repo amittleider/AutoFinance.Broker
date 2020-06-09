@@ -129,13 +129,19 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <summary>
         /// Request market data (for news as well)
         /// </summary>
-        /// <param name="requestId">The request</param>
+        /// <param name="tickerId">The request</param>
         /// <param name="contract">The contract</param>
         /// <param name="genericTickList">The generic tick list</param>
         /// <param name="snapshot">The snapshot</param>
         /// <param name="regulatorySnaphsot">The regulatory snapshot</param>
         /// <param name="marketDataOptions">The market data options</param>
-        void RequestMarketData(int requestId, Contract contract, string genericTickList, bool snapshot, bool regulatorySnaphsot, List<TagValue> marketDataOptions);
+        void RequestMarketData(int tickerId, Contract contract, string genericTickList, bool snapshot, bool regulatorySnaphsot, List<TagValue> marketDataOptions);
+
+        /// <summary>
+        /// Cancel market data
+        /// </summary>
+        /// <param name="requestId">The request to cancel</param>
+        void CancelMarketData(int requestId);
 
         /// <summary>
         /// Request option chain details

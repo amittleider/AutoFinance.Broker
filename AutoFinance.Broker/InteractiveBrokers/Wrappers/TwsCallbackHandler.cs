@@ -120,6 +120,46 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         public event EventHandler<TickNewsEventArgs> TickNewsEvent;
 
         /// <summary>
+        /// The event that is fired on a tick price event
+        /// </summary>
+        public event EventHandler<TickPriceEventArgs> TickPriceEvent;
+
+        /// <summary>
+        /// The event that is fired on a tick EFP event
+        /// </summary>
+        public event EventHandler<TickEFPEventArgs> TickEFPEvent;
+
+        /// <summary>
+        /// The event that is fired on a tick size event
+        /// </summary>
+        public event EventHandler<TickSizeEventArgs> TickSizeEvent;
+
+        /// <summary>
+        /// The event that is fired on a tick string event
+        /// </summary>
+        public event EventHandler<TickStringEventArgs> TickStringEvent;
+
+        /// <summary>
+        /// The event that is fired on a tick generic event
+        /// </summary>
+        public event EventHandler<TickGenericEventArgs> TickGenericEvent;
+
+        /// <summary>
+        /// The event that is fired on a tick option computation event
+        /// </summary>
+        public event EventHandler<TickOptionComputationEventArgs> TickOptionComputationEvent;
+
+        /// <summary>
+        /// The event that is fired on a tick snapshot end event
+        /// </summary>
+        public event EventHandler<TickSnapshotEndEventArgs> TickSnapshotEndEvent;
+
+        /// <summary>
+        /// The event that is fired on a tick req params event
+        /// </summary>
+        public event EventHandler<TickReqParamsEventArgs> TickReqParamsEvent;
+
+        /// <summary>
         /// The event that is fired on news provider events
         /// </summary>
         public event EventHandler<NewsProviderEventArgs> NewsProviderEvent;
@@ -690,13 +730,16 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <inheritdoc/>
         public void tickEFP(int tickerId, int tickType, double basisPoints, string formattedBasisPoints, double impliedFuture, int holdDays, string futureLastTradeDate, double dividendImpact, double dividendsToLastTradeDate)
         {
-            throw new NotImplementedException();
+            var eventArgs = new TickEFPEventArgs(tickerId, tickType, basisPoints, formattedBasisPoints, impliedFuture, holdDays,
+                futureLastTradeDate, dividendImpact, dividendsToLastTradeDate);
+            this.TickEFPEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>
         public void tickGeneric(int tickerId, int field, double value)
         {
-            throw new NotImplementedException();
+            var eventArgs = new TickGenericEventArgs(tickerId, field, value);
+            this.TickGenericEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>
@@ -721,31 +764,36 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <inheritdoc/>
         public void tickPrice(int tickerId, int field, double price, TickAttrib attribs)
         {
-            throw new NotImplementedException();
+            var eventArgs = new TickPriceEventArgs(tickerId, field, price, attribs);
+            this.TickPriceEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>
         public void tickReqParams(int tickerId, double minTick, string bboExchange, int snapshotPermissions)
         {
-            throw new NotImplementedException();
+            var eventArgs = new TickReqParamsEventArgs(tickerId, minTick, bboExchange, snapshotPermissions);
+            this.TickReqParamsEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>
         public void tickSize(int tickerId, int field, int size)
         {
-            throw new NotImplementedException();
+            var eventArgs = new TickSizeEventArgs(tickerId, field, size);
+            this.TickSizeEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>
         public void tickSnapshotEnd(int tickerId)
         {
-            throw new NotImplementedException();
+            var eventArgs = new TickSnapshotEndEventArgs(tickerId);
+            this.TickSnapshotEndEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>
         public void tickString(int tickerId, int field, string value)
         {
-            throw new NotImplementedException();
+            var eventArgs = new TickStringEventArgs(tickerId, field, value);
+            this.TickStringEvent?.Invoke(this, eventArgs);
         }
 
         /// <inheritdoc/>

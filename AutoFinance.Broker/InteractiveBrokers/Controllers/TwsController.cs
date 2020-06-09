@@ -398,9 +398,39 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             return await this.twsControllerBase.RequestSecurityDefinitionOptionParameters(underlyingSymbol, exchange, underlyingSecType, underlyingConId);
         }
 
+        public async Task<TickSnapshotEndEventArgs> RequestMarketDataAsync(
+            Contract contract,
+            string genericTickList,
+            bool snapshot,
+            bool regulatorySnapshot,
+            List<TagValue> mktDataOptions)
+        {
+            return await this.twsControllerBase.RequestMarketDataAsync(contract, genericTickList, snapshot, regulatorySnapshot, mktDataOptions);
+        }
+
+        public void CancelMarketData(int requestId)
+        {
+            this.twsControllerBase.CancelMarketData(requestId);
+        }
+
         public async Task<MarketDataTypeEventArgs> RequestMarketDataTypeAsync(int marketDataType)
         {
             return await this.twsControllerBase.RequestMarketDataTypeAsync(marketDataType);
+        }
+
+        public async Task<RealtimeBarEventArgs> RequestRealtimeBarAsync(
+            Contract contract,
+            int barSize,
+            string whatToShow,
+            bool useRTH,
+            List<TagValue> realTimeBarsOptions)
+        {
+            return await this.twsControllerBase.RequestRealtimeBarAsync(contract, barSize, whatToShow, useRTH, realTimeBarsOptions);
+        }
+
+        public void CancelRealtimeBars(int requestId)
+        {
+            this.twsControllerBase.CancelRealtimeBars(requestId);
         }
 
         public async Task<PnLEventArgs> RequestPnL(string accountCode, string modelCode)
@@ -423,14 +453,14 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             this.twsControllerBase.CancelPositions();
         }
 
-        public void CancelPnL(int reqId)
+        public void CancelPnL(int requestId)
         {
-            this.twsControllerBase.CancelPnL(reqId);
+            this.twsControllerBase.CancelPnL(requestId);
         }
 
-        public void CancelPnLSingle(int reqId)
+        public void CancelPnLSingle(int requestId)
         {
-            this.twsControllerBase.CancelPnLSingle(reqId);
+            this.twsControllerBase.CancelPnLSingle(requestId);
         }
 #pragma warning restore SA1600 // Elements should be documented
     }

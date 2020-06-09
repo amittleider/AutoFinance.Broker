@@ -2,7 +2,6 @@
 
 namespace AutoFinance.Broker.InteractiveBrokers
 {
-    using System.Threading;
     using AutoFinance.Broker.InteractiveBrokers.Controllers;
     using AutoFinance.Broker.InteractiveBrokers.Wrappers;
     using IBApi;

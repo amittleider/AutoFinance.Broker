@@ -131,10 +131,10 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <param name="barSize">The bar size</param>
         /// <param name="whatToShow">The things to show. "BID", "ASK", or "MIDPOINT"</param>
         /// <param name="useRTH">Whether to use regular trading hours</param>
-        /// <param name="realtimeBarOptions">The realtime bar options</param>
-        public void ReqRealtimeBars(int tickerId, Contract contract, int barSize, string whatToShow, bool useRTH, List<TagValue> realtimeBarOptions)
+        /// <param name="realtimeBarsOptions">The realtime bar options</param>
+        public void ReqRealtimeBars(int tickerId, Contract contract, int barSize, string whatToShow, bool useRTH, List<TagValue> realtimeBarsOptions)
         {
-            this.EClientSocket.reqRealTimeBars(tickerId, contract, barSize, whatToShow, useRTH, realtimeBarOptions);
+            this.EClientSocket.reqRealTimeBars(tickerId, contract, barSize, whatToShow, useRTH, realtimeBarsOptions);
         }
 
         /// <summary>
@@ -182,15 +182,24 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <summary>
         /// Request market data (for news as well)
         /// </summary>
-        /// <param name="requestId">The request</param>
+        /// <param name="tickerId">The request</param>
         /// <param name="contract">The contract</param>
         /// <param name="genericTickList">The generic tick list</param>
         /// <param name="snapshot">The snapshot</param>
         /// <param name="regulatorySnaphsot">The regulatory snapshot</param>
         /// <param name="marketDataOptions">The market data options</param>
-        public void RequestMarketData(int requestId, Contract contract, string genericTickList, bool snapshot, bool regulatorySnaphsot, List<TagValue> marketDataOptions)
+        public void RequestMarketData(int tickerId, Contract contract, string genericTickList, bool snapshot, bool regulatorySnaphsot, List<TagValue> marketDataOptions)
         {
-            this.EClientSocket.reqMktData(requestId, contract, genericTickList, snapshot, regulatorySnaphsot, marketDataOptions);
+            this.EClientSocket.reqMktData(tickerId, contract, genericTickList, snapshot, regulatorySnaphsot, marketDataOptions);
+        }
+
+        /// <summary>
+        /// Cancel market data
+        /// </summary>
+        /// <param name="requestId">The request to cancel</param>
+        public void CancelMarketData(int requestId)
+        {
+            this.EClientSocket.cancelMktData(requestId);
         }
 
         /// <summary>
