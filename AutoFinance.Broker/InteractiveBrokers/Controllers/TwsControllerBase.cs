@@ -1219,40 +1219,9 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// Set the type for the market data feed
         /// </summary>
         /// <param name="marketDataTypeId">The feed level</param>
-        /// <returns>The market data type</returns>
-        public Task<MarketDataTypeEventArgs> RequestMarketDataTypeAsync(int marketDataTypeId)
+        public void RequestMarketDataType(int marketDataTypeId)
         {
-            // Set the operation to cancel after 5 seconds
-            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
-            return this.RequestMarketDataTypeAsync(marketDataTypeId, tokenSource.Token);
-        }
-
-        /// <summary>
-        /// Set the type for the market data feed
-        /// </summary>
-        /// <param name="marketDataTypeId">The feed level</param>
-        /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
-        /// <returns>The market data type</returns>
-        public Task<MarketDataTypeEventArgs> RequestMarketDataTypeAsync(int marketDataTypeId, CancellationToken cancellationToken)
-        {
-            string value = string.Empty;
-
-            var taskSource = new TaskCompletionSource<MarketDataTypeEventArgs>();
-            //this.twsCallbackHandler.MarketDataTypeEvent += (sender, args) =>
-            //{
-            //    taskSource.TrySetResult(args);
-            //};
-
-            taskSource.TrySetResult(new MarketDataTypeEventArgs(0, marketDataTypeId));
-
-            cancellationToken.Register(() =>
-            {
-                taskSource.TrySetCanceled();
-            });
-
             this.clientSocket.RequestMarketDataType(marketDataTypeId);
-
-            return taskSource.Task;
         }
 
         /// <summary>
@@ -1277,6 +1246,13 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
 
             int requestId = this.twsRequestIdGenerator.GetNextRequestId();
             this.clientSocket.RequestPnL(requestId, accountCode, modelCode);
+
+            // Set the operation to cancel after 5 seconds
+            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
+            tokenSource.Token.Register(() =>
+            {
+                taskSource.TrySetCanceled();
+            });
 
             return taskSource.Task;
         }
@@ -1317,6 +1293,13 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             this.twsCallbackHandler.PnLSingleEvent += pnlSingleEventHandler;
 
             this.clientSocket.RequestPnLSingle(requestId, accountCode, modelCode, conId);
+
+            // Set the operation to cancel after 5 seconds
+            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
+            tokenSource.Token.Register(() =>
+            {
+                taskSource.TrySetCanceled();
+            });
 
             return taskSource.Task;
         }

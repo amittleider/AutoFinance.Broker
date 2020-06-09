@@ -36,5 +36,10 @@ namespace AutoFinance.Broker.InteractiveBrokers.Constants
         /// NYSE
         /// </summary>
         public const string Nyse = "NYSE";
+
+        /// <summary>
+        /// IDEALPRO
+        /// </summary>
+        public const string Idealpro = "IDEALPRO";
     }
 }

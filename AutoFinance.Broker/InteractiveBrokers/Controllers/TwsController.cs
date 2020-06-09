@@ -413,9 +413,9 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             this.twsControllerBase.CancelMarketData(requestId);
         }
 
-        public async Task<MarketDataTypeEventArgs> RequestMarketDataTypeAsync(int marketDataType)
+        public void RequestMarketDataType(int marketDataType)
         {
-            return await this.twsControllerBase.RequestMarketDataTypeAsync(marketDataType);
+            this.twsControllerBase.RequestMarketDataType(marketDataType);
         }
 
         public async Task<RealtimeBarEventArgs> RequestRealtimeBarAsync(
