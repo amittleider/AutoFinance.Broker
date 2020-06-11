@@ -4,12 +4,12 @@ using AutoFinance.Broker.InteractiveBrokers.Controllers;
 using AutoFinance.Broker.InteractiveBrokers.EventArgs;
 using AutoFinance.Broker.InteractiveBrokers.Wrappers;
 using FluentAssertions;
+using FluentAssertions.Common;
 using IBApi;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -661,6 +661,253 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
             ////var optionContractDetails = await twsContractDetailsController.GetContractAsync(option);
             ////var queryTime = DateTime.Now;
             ////List<HistoricalDataEventArgs> historicalDataEvents = await twsHistoricalDataController.GetHistoricalDataAsync(option, queryTime, TwsDuration.OneMonth, TwsBarSizeSetting.OneMinute, TwsHistoricalDataRequestType.Trades);
+        }
+
+        /// <summary>
+        /// Test that market data type events come back from TWS properly
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task MarketDataController_Should_ReturnMarketDataType()
+        {
+            TwsObjectFactory twsObjectFactory = new TwsObjectFactory("localhost", 7497, 1);
+            ITwsControllerBase twsController = twsObjectFactory.TwsControllerBase;
+
+            await twsController.EnsureConnectedAsync();
+
+            MarketDataTypeEventArgs marketDataTypeEventArgs = null;
+            TickPriceEventArgs tickPriceEventArgs = null;
+            twsObjectFactory.TwsCallbackHandler.MarketDataTypeEvent +=
+                (sender, args) => { marketDataTypeEventArgs = args; };
+            twsObjectFactory.TwsCallbackHandler.TickPriceEvent +=
+                (sender, args) => { tickPriceEventArgs = args; };
+
+            // Only real-time data provided for this contract
+            var contract = new Contract()
+            {
+                Symbol = TwsCurrency.Eur,
+                Exchange = TwsExchange.Idealpro,
+                SecType = TwsContractSecType.Cash,
+                Currency = TwsCurrency.Usd
+            };
+
+            var marketDataResult = await twsObjectFactory.TwsControllerBase.RequestMarketDataAsync(contract, "233", false, false, null);
+
+            marketDataResult.Should().NotBeNull();
+            tickPriceEventArgs.Should().NotBeNull();
+            tickPriceEventArgs.TickerId.Should().IsSameOrEqualTo(marketDataResult.TickerId);
+
+            marketDataTypeEventArgs.Should().NotBeNull();
+            marketDataTypeEventArgs.MarketDataType.Should().Be(1);
+        }
+
+        /// <summary>
+        /// Test that market data type events come back from TWS properly
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task MarketDataTypeController_Should_ReturnMarketDataType()
+        {
+            TwsObjectFactory twsObjectFactory = new TwsObjectFactory("localhost", 7497, 1);
+            ITwsControllerBase twsController = twsObjectFactory.TwsControllerBase;
+
+            await twsController.EnsureConnectedAsync();
+
+            MarketDataTypeEventArgs marketDataTypeEventArgs = null;
+            TickPriceEventArgs tickPriceEventArgs = null;
+            twsObjectFactory.TwsCallbackHandler.MarketDataTypeEvent +=
+                (sender, args) => { marketDataTypeEventArgs = args; };
+            twsObjectFactory.TwsCallbackHandler.TickPriceEvent +=
+                (sender, args) => { tickPriceEventArgs = args; };
+
+            // This contract provide delayed data when requested
+            Contract contract = new Contract
+            {
+                SecType = TwsContractSecType.Stock,
+                Symbol = "MSFT",
+                Exchange = TwsExchange.Smart,
+                PrimaryExch = TwsExchange.Island,
+            };
+
+            // Request delayed data feed
+            twsObjectFactory.TwsControllerBase.RequestMarketDataType(3);
+            var marketDataResult = await twsObjectFactory.TwsControllerBase.RequestMarketDataAsync(contract, "233", false, false, null);
+
+            marketDataResult.Should().NotBeNull();
+            tickPriceEventArgs.Should().NotBeNull();
+            tickPriceEventArgs.TickerId.Should().IsSameOrEqualTo(marketDataResult.TickerId);
+
+            marketDataTypeEventArgs.Should().NotBeNull();
+            marketDataTypeEventArgs.MarketDataType.Should().Be(3);
+        }
+
+        /// <summary>
+        /// Test that pnl type events come back from TWS properly
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task PnLController_Should_ReturnPnL()
+        {
+            TwsObjectFactory twsObjectFactory = new TwsObjectFactory("localhost", 7497, 1);
+            ITwsControllerBase twsController = twsObjectFactory.TwsControllerBase;
+
+            await twsController.EnsureConnectedAsync();
+
+            PnLEventArgs pnlEventArgs = null;
+            twsObjectFactory.TwsCallbackHandler.PnLEvent +=
+                (sender, args) => { pnlEventArgs = args; };
+
+            var pnlResult = await twsObjectFactory.TwsControllerBase.RequestPnL("DU1052488", "");
+
+            pnlEventArgs.Should().NotBeNull();
+            pnlResult.Should().NotBeNull();
+            pnlEventArgs.RequestId.Should().IsSameOrEqualTo(pnlResult.RequestId);
+        }
+
+        /// <summary>
+        /// Test that cancel pnl controller stops pnl event from TWS properly
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task CancelPnLController_Should_StopPnLEvent()
+        {
+            int waitDelayInMs = 5000;
+
+            TwsObjectFactory twsObjectFactory = new TwsObjectFactory("localhost", 7497, 1);
+            ITwsControllerBase twsController = twsObjectFactory.TwsControllerBase;
+
+            await twsController.EnsureConnectedAsync();
+
+            PnLEventArgs pnlEventArgs = null;
+            DateTime pnlEventTriggerDateTime = DateTime.MaxValue;
+            twsObjectFactory.TwsCallbackHandler.PnLEvent +=
+                (sender, args) => { pnlEventArgs = args; pnlEventTriggerDateTime = DateTime.Now; };
+
+            var pnlResult = await twsObjectFactory.TwsControllerBase.RequestPnL("DU1052488", "");
+
+            pnlEventArgs.Should().NotBeNull();
+            pnlResult.Should().NotBeNull();
+            pnlEventArgs.RequestId.Should().IsSameOrEqualTo(pnlResult.RequestId);
+
+            twsObjectFactory.TwsControllerBase.CancelPnL(pnlResult.RequestId);
+
+            await Task.Delay(waitDelayInMs);
+
+            pnlEventTriggerDateTime.Ticks.Should().BeLessThan(DateTime.Now.AddMilliseconds(-waitDelayInMs).Ticks);
+        }
+
+        /// <summary>
+        /// Test that pnl single type events come back from TWS properly
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task PnLSingleController_Should_ReturnPnLSingle()
+        {
+            TwsObjectFactory twsObjectFactory = new TwsObjectFactory("localhost", 7497, 1);
+            ITwsControllerBase twsController = twsObjectFactory.TwsControllerBase;
+
+            await twsController.EnsureConnectedAsync();
+
+            PnLSingleEventArgs pnlSingleEventArgs = null;
+            twsObjectFactory.TwsCallbackHandler.PnLSingleEvent +=
+                (sender, args) => { pnlSingleEventArgs = args; };
+
+            // Create a position
+            Contract contract = new Contract
+            {
+                SecType = TwsContractSecType.Stock,
+                Symbol = "MSFT",
+                Exchange = TwsExchange.Smart,
+                PrimaryExch = TwsExchange.Island,
+            };
+
+            Order order = new Order
+            {
+                Action = "BUY",
+                OrderType = "MKT",
+                TotalQuantity = 1,               
+            };
+
+            int orderId = await twsController.GetNextValidIdAsync();
+            bool successfullyPlaced = await twsController.PlaceOrderAsync(orderId, contract, order);
+            Thread.Sleep(1000); // TWS takes some time to put the order in the portfolio. Wait for it.
+
+            // Call
+            List<ExecutionDetailsEventArgs> executionDetailEvents = await twsController.RequestExecutions();
+
+            // Assert
+            executionDetailEvents.Count.Should().BeGreaterOrEqualTo(0);
+
+            var pnlSingleResult = await twsObjectFactory.TwsControllerBase.RequestPnLSingle(
+                "DU1052488",
+                "",
+                executionDetailEvents.First().Contract.ConId);
+
+            pnlSingleEventArgs.Should().NotBeNull();
+            pnlSingleResult.Should().NotBeNull();
+            pnlSingleEventArgs.RequestId.Should().IsSameOrEqualTo(pnlSingleResult.RequestId);
+        }
+
+        /// <summary>
+        /// Test that cancel pnl single controller stops pnl single event from TWS properly
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task CancelPnLSingleController_Should_StopPnLEventSingle()
+        {
+            int waitDelayInMs = 5000;
+
+            TwsObjectFactory twsObjectFactory = new TwsObjectFactory("localhost", 7497, 1);
+            ITwsControllerBase twsController = twsObjectFactory.TwsControllerBase;
+
+            await twsController.EnsureConnectedAsync();
+
+
+            PnLSingleEventArgs pnlSingleEventArgs = null;
+            DateTime pnlEventTriggerDateTime = DateTime.MaxValue;
+            twsObjectFactory.TwsCallbackHandler.PnLSingleEvent +=
+                (sender, args) => { pnlSingleEventArgs = args; pnlEventTriggerDateTime = DateTime.Now; };
+
+            // Create a position
+            Contract contract = new Contract
+            {
+                SecType = TwsContractSecType.Stock,
+                Symbol = "MSFT",
+                Exchange = TwsExchange.Smart,
+                PrimaryExch = TwsExchange.Island,
+            };
+
+            Order order = new Order
+            {
+                Action = "BUY",
+                OrderType = "MKT",
+                TotalQuantity = 1,
+            };
+
+            int orderId = await twsController.GetNextValidIdAsync();
+            bool successfullyPlaced = await twsController.PlaceOrderAsync(orderId, contract, order);
+            Thread.Sleep(1000); // TWS takes some time to put the order in the portfolio. Wait for it.
+
+            // Call
+            List<ExecutionDetailsEventArgs> executionDetailEvents = await twsController.RequestExecutions();
+
+            // Assert
+            executionDetailEvents.Count.Should().BeGreaterOrEqualTo(0);
+
+            var pnlSingleResult = await twsObjectFactory.TwsControllerBase.RequestPnLSingle(
+                "DU1052488",
+                "",
+                executionDetailEvents.First().Contract.ConId);
+
+            pnlSingleEventArgs.Should().NotBeNull();
+            pnlSingleResult.Should().NotBeNull();
+            pnlSingleEventArgs.RequestId.Should().IsSameOrEqualTo(pnlSingleResult.RequestId);
+
+            twsObjectFactory.TwsControllerBase.CancelPnLSingle(pnlSingleResult.RequestId);
+
+            await Task.Delay(waitDelayInMs);
+
+            pnlEventTriggerDateTime.Ticks.Should().BeLessThan(DateTime.Now.AddMilliseconds(-waitDelayInMs).Ticks);
         }
     }
 }

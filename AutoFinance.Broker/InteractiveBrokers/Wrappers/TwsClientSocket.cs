@@ -48,6 +48,15 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         }
 
         /// <summary>
+        /// Gets a value indicating whether is the client connected to tws
+        /// </summary>
+        /// <returns>Socket connection status</returns>
+        public bool IsConnected()
+        {
+            return this.EClientSocket.IsConnected();
+        }
+
+        /// <summary>
         /// Send an order to TWS
         /// </summary>
         /// <param name="orderId">The order Id</param>
@@ -106,6 +115,15 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         }
 
         /// <summary>
+        /// Request Historical Data cancelation
+        /// </summary>
+        /// <param name="requestId">The request Id</param>
+        public void CancelHistoricalData(int requestId)
+        {
+            this.EClientSocket.cancelHistoricalData(requestId);
+        }
+
+        /// <summary>
         /// Request realtime data from TWS
         /// </summary>
         /// <param name="tickerId">The request Id</param>
@@ -113,10 +131,10 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <param name="barSize">The bar size</param>
         /// <param name="whatToShow">The things to show. "BID", "ASK", or "MIDPOINT"</param>
         /// <param name="useRTH">Whether to use regular trading hours</param>
-        /// <param name="realtimeBarOptions">The realtime bar options</param>
-        public void ReqRealtimeBars(int tickerId, Contract contract, int barSize, string whatToShow, bool useRTH, List<TagValue> realtimeBarOptions)
+        /// <param name="realtimeBarsOptions">The realtime bar options</param>
+        public void ReqRealtimeBars(int tickerId, Contract contract, int barSize, string whatToShow, bool useRTH, List<TagValue> realtimeBarsOptions)
         {
-            this.EClientSocket.reqRealTimeBars(tickerId, contract, barSize, whatToShow, useRTH, realtimeBarOptions);
+            this.EClientSocket.reqRealTimeBars(tickerId, contract, barSize, whatToShow, useRTH, realtimeBarsOptions);
         }
 
         /// <summary>
@@ -134,6 +152,14 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         public void RequestPositions()
         {
             this.EClientSocket.reqPositions();
+        }
+
+        /// <summary>
+        /// Sends a message to TWS telling it to stop sending position information through the socket.
+        /// </summary>
+        public void CancelPositions()
+        {
+            this.EClientSocket.cancelPositions();
         }
 
         /// <summary>
@@ -156,15 +182,24 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <summary>
         /// Request market data (for news as well)
         /// </summary>
-        /// <param name="requestId">The request</param>
+        /// <param name="tickerId">The request</param>
         /// <param name="contract">The contract</param>
         /// <param name="genericTickList">The generic tick list</param>
         /// <param name="snapshot">The snapshot</param>
         /// <param name="regulatorySnaphsot">The regulatory snapshot</param>
         /// <param name="marketDataOptions">The market data options</param>
-        public void RequestMarketData(int requestId, Contract contract, string genericTickList, bool snapshot, bool regulatorySnaphsot, List<TagValue> marketDataOptions)
+        public void RequestMarketData(int tickerId, Contract contract, string genericTickList, bool snapshot, bool regulatorySnaphsot, List<TagValue> marketDataOptions)
         {
-            this.EClientSocket.reqMktData(requestId, contract, genericTickList, snapshot, regulatorySnaphsot, marketDataOptions);
+            this.EClientSocket.reqMktData(tickerId, contract, genericTickList, snapshot, regulatorySnaphsot, marketDataOptions);
+        }
+
+        /// <summary>
+        /// Cancel market data
+        /// </summary>
+        /// <param name="requestId">The request to cancel</param>
+        public void CancelMarketData(int requestId)
+        {
+            this.EClientSocket.cancelMktData(requestId);
         }
 
         /// <summary>
@@ -178,6 +213,56 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         public void RequestSecurityDefinitionOptionParameters(int reqId, string underlyingSymbol, string futFopExchange, string underlyingSecType, int underlyingConId)
         {
             this.EClientSocket.reqSecDefOptParams(reqId, underlyingSymbol, futFopExchange, underlyingSecType, underlyingConId);
+        }
+
+        /// <summary>
+        /// Modify market data type
+        /// </summary>
+        /// <param name="marketDataTypeId">The market data type (1, 2, 3 or 4)</param>
+        public void RequestMarketDataType(int marketDataTypeId)
+        {
+            this.EClientSocket.reqMarketDataType(marketDataTypeId);
+        }
+
+        /// <summary>
+        /// Request account Pnl
+        /// </summary>
+        /// <param name="reqId">The request Id</param>
+        /// <param name="accountCode">The account of the details requested</param>
+        /// <param name="modelCode">specify to request PnL updates for a specific model</param>
+        public void RequestPnL(int reqId, string accountCode, string modelCode)
+        {
+            this.EClientSocket.reqPnL(reqId, accountCode, modelCode);
+        }
+
+        /// <summary>
+        /// Request PnL update cancelation
+        /// </summary>
+        /// <param name="reqId">The request Id</param>
+        public void CancelPnL(int reqId)
+        {
+            this.EClientSocket.cancelPnL(reqId);
+        }
+
+        /// <summary>
+        /// Request single position Pnl
+        /// </summary>
+        /// <param name="reqId">The request Id</param>
+        /// <param name="accountCode">The account of the details requested</param>
+        /// <param name="modelCode">specify to request PnL updates for a specific model</param>
+        /// <param name="conId">contract ID (conId) of contract to receive daily PnL updates for. Note: does not return message if invalid conId is entered</param>
+        public void RequestPnLSingle(int reqId, string accountCode, string modelCode, int conId)
+        {
+            this.EClientSocket.reqPnLSingle(reqId, accountCode, modelCode, conId);
+        }
+
+        /// <summary>
+        /// Request PnL update cancelation
+        /// </summary>
+        /// <param name="reqId">The request Id</param>
+        public void CancelPnLSingle(int reqId)
+        {
+            this.EClientSocket.cancelPnLSingle(reqId);
         }
     }
 }

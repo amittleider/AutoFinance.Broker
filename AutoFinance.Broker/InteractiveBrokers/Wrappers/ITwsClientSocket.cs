@@ -34,6 +34,12 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         void Disconnect();
 
         /// <summary>
+        /// Gets a value indicating whether is the client connected to tws
+        /// </summary>
+        /// <returns>Socket connection status</returns>
+        bool IsConnected();
+
+        /// <summary>
         /// Sends an order to TWS through the socket
         /// </summary>
         /// <param name="id">The order Id</param>
@@ -82,6 +88,12 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         void ReqHistoricalData(int requestId, Contract contract, string endDateTime, string durationString, string barSizeSetting, string whatToShow, int useRTH, int formatDate, List<TagValue> chartOptions, bool keepUpToDate = false);
 
         /// <summary>
+        /// Request Historical Data cancelation
+        /// </summary>
+        /// <param name="requestId">The request Id</param>
+        void CancelHistoricalData(int requestId);
+
+        /// <summary>
         /// Request realtime data from TWS
         /// </summary>
         /// <param name="requestId">The request Id. IB messed up the naming convention and sometimes calls this "tickerId".</param>
@@ -104,6 +116,11 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         void RequestPositions();
 
         /// <summary>
+        /// Sends a message to TWS telling it to stop sending position information through the socket.
+        /// </summary>
+        void CancelPositions();
+
+        /// <summary>
         /// Sends a message to TWS telling it to send execution information through the socket.
         /// </summary>
         /// <param name="requestId">The request Id</param>
@@ -112,13 +129,19 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <summary>
         /// Request market data (for news as well)
         /// </summary>
-        /// <param name="requestId">The request</param>
+        /// <param name="tickerId">The request</param>
         /// <param name="contract">The contract</param>
         /// <param name="genericTickList">The generic tick list</param>
         /// <param name="snapshot">The snapshot</param>
         /// <param name="regulatorySnaphsot">The regulatory snapshot</param>
         /// <param name="marketDataOptions">The market data options</param>
-        void RequestMarketData(int requestId, Contract contract, string genericTickList, bool snapshot, bool regulatorySnaphsot, List<TagValue> marketDataOptions);
+        void RequestMarketData(int tickerId, Contract contract, string genericTickList, bool snapshot, bool regulatorySnaphsot, List<TagValue> marketDataOptions);
+
+        /// <summary>
+        /// Cancel market data
+        /// </summary>
+        /// <param name="requestId">The request to cancel</param>
+        void CancelMarketData(int requestId);
 
         /// <summary>
         /// Request option chain details
@@ -129,5 +152,40 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <param name="underlyingSecType">The underlying security type</param>
         /// <param name="underlyingConId">The underlying contract id</param>
         void RequestSecurityDefinitionOptionParameters(int reqId, string underlyingSymbol, string futFopExchange, string underlyingSecType, int underlyingConId);
+
+        /// <summary>
+        /// Set the type for the market data feed
+        /// </summary>
+        /// <param name="marketDataTypeId">The feed level</param>
+        void RequestMarketDataType(int marketDataTypeId);
+
+        /// <summary>
+        /// Request account Pnl
+        /// </summary>
+        /// <param name="reqId">The request Id</param>
+        /// <param name="accountCode">The account of the details requested</param>
+        /// <param name="modelCode">specify to request PnL updates for a specific model</param>
+        void RequestPnL(int reqId, string accountCode, string modelCode);
+
+        /// <summary>
+        /// Request PnL update cancelation
+        /// </summary>
+        /// <param name="reqId">The request Id</param>
+        void CancelPnL(int reqId);
+
+        /// <summary>
+        /// Request single position Pnl
+        /// </summary>
+        /// <param name="reqId">The request Id</param>
+        /// <param name="accountCode">The account of the details requested</param>
+        /// <param name="modelCode">specify to request PnL updates for a specific model</param>
+        /// <param name="conId">contract ID (conId) of contract to receive daily PnL updates for. Note: does not return message if invalid conId is entered</param>
+        void RequestPnLSingle(int reqId, string accountCode, string modelCode, int conId);
+
+        /// <summary>
+        /// Request PnL update cancelation
+        /// </summary>
+        /// <param name="reqId">The request Id</param>
+        void CancelPnLSingle(int reqId);
     }
 }

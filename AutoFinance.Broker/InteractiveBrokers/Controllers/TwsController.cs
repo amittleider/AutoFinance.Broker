@@ -31,6 +31,11 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         }
 
         /// <summary>
+        /// Gets a value indicating whether is the client connected to tws
+        /// </summary>
+        public bool Connected => this.twsControllerBase.Connected;
+
+        /// <summary>
         /// Place a bracket order on TWS.
         /// The entry is a REL order (Market Peg), exits are stop loss and limit orders at the specified prices.
         /// </summary>
@@ -378,6 +383,11 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             return await this.twsControllerBase.GetHistoricalDataAsync(contract, endDateTime, duration, barSizeSetting, whatToShow, useRth, formatDate);
         }
 
+        public void CancelHistoricalData(int requestId)
+        {
+            this.twsControllerBase.CancelHistoricalData(requestId);
+        }
+
         public async Task<NewsProviderEventArgs> GetNewsProviders()
         {
             return await this.twsControllerBase.GetNewsProviders();
@@ -391,6 +401,71 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         public async Task<List<SecurityDefinitionOptionParameterEventArgs>> RequestSecurityDefinitionOptionParameters(string underlyingSymbol, string exchange, string underlyingSecType, int underlyingConId)
         {
             return await this.twsControllerBase.RequestSecurityDefinitionOptionParameters(underlyingSymbol, exchange, underlyingSecType, underlyingConId);
+        }
+
+        public async Task<TickSnapshotEndEventArgs> RequestMarketDataAsync(
+            Contract contract,
+            string genericTickList,
+            bool snapshot,
+            bool regulatorySnapshot,
+            List<TagValue> mktDataOptions)
+        {
+            return await this.twsControllerBase.RequestMarketDataAsync(contract, genericTickList, snapshot, regulatorySnapshot, mktDataOptions);
+        }
+
+        public void CancelMarketData(int requestId)
+        {
+            this.twsControllerBase.CancelMarketData(requestId);
+        }
+
+        public void RequestMarketDataType(int marketDataType)
+        {
+            this.twsControllerBase.RequestMarketDataType(marketDataType);
+        }
+
+        public async Task<RealtimeBarEventArgs> RequestRealtimeBarAsync(
+            Contract contract,
+            int barSize,
+            string whatToShow,
+            bool useRTH,
+            List<TagValue> realTimeBarsOptions)
+        {
+            return await this.twsControllerBase.RequestRealtimeBarAsync(contract, barSize, whatToShow, useRTH, realTimeBarsOptions);
+        }
+
+        public void CancelRealtimeBars(int requestId)
+        {
+            this.twsControllerBase.CancelRealtimeBars(requestId);
+        }
+
+        public async Task<PnLEventArgs> RequestPnL(string accountCode, string modelCode)
+        {
+            return await this.twsControllerBase.RequestPnL(accountCode, modelCode);
+        }
+
+        public async Task<PnLSingleEventArgs> RequestPnLSingle(string accountCode, string modelCode, int conId)
+        {
+            return await this.twsControllerBase.RequestPnLSingle(accountCode, modelCode, conId);
+        }
+
+        public void CancelAccountDetails(string accountId)
+        {
+            this.twsControllerBase.CancelAccountDetails(accountId);
+        }
+
+        public void CancelPositions()
+        {
+            this.twsControllerBase.CancelPositions();
+        }
+
+        public void CancelPnL(int requestId)
+        {
+            this.twsControllerBase.CancelPnL(requestId);
+        }
+
+        public void CancelPnLSingle(int requestId)
+        {
+            this.twsControllerBase.CancelPnLSingle(requestId);
         }
 #pragma warning restore SA1600 // Elements should be documented
     }

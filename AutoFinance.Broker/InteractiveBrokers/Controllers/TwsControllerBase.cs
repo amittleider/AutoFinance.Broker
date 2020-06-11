@@ -64,11 +64,6 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         private int clientId;
 
         /// <summary>
-        /// If the client is connected to tws
-        /// </summary>
-        private bool connected;
-
-        /// <summary>
         /// The background thread that will await the signal and send events to the callback handler
         /// </summary>
         private Thread readerThread;
@@ -99,12 +94,17 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         }
 
         /// <summary>
+        /// Gets a value indicating whether is the client connected to tws
+        /// </summary>
+        public bool Connected => this.clientSocket == null ? false : this.clientSocket.IsConnected();
+
+        /// <summary>
         /// Ensures the connection is active
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task EnsureConnectedAsync()
         {
-            if (!this.connected)
+            if (!this.Connected)
             {
                 await this.ConnectAsync();
 
@@ -112,7 +112,6 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                 // And the socket will get really fucked up any commands come in during that time
                 // Just wait 5 seconds for it to finish
                 await Task.Delay(5000);
-                this.connected = true;
             }
         }
 
@@ -138,6 +137,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             });
 
             this.clientSocket.Disconnect();
+
             return taskSource.Task;
         }
 
@@ -180,6 +180,15 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         }
 
         /// <summary>
+        /// Cancel account detail update
+        /// </summary>
+        /// <param name="accountId">The account Id</param>
+        public void CancelAccountDetails(string accountId)
+        {
+            this.clientSocket.ReqAccountDetails(false, accountId);
+        }
+
+        /// <summary>
         /// Gets a contract by request.
         /// </summary>
         /// <param name="contract">The requested contract.</param>
@@ -197,13 +206,19 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
 
             contractDetailsEventHandler += (sender, args) =>
             {
-                // When the contract details end event is fired, check if it's for this request ID and return it.
-                contractDetailsList.Add(args.ContractDetails);
+                if (args.RequestId == requestId)
+                {
+                    // When the contract details end event is fired, check if it's for this request ID and return it.
+                    contractDetailsList.Add(args.ContractDetails);
+                }
             };
 
             contractDetailsEndEventHandler += (sender, args) =>
             {
-                taskSource.TrySetResult(contractDetailsList);
+                if (args.RequestId == requestId)
+                {
+                    taskSource.TrySetResult(contractDetailsList);
+                }
             };
 
             errorEventHandler = (sender, args) =>
@@ -288,7 +303,14 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         {
             var useRthToInt = useRth ? 1 : 0;
             var formatDateToInt = formatDate ? 1 : 0;
-            return this.GetHistoricalDataAsync(contract, endDateTime, duration.ToTwsParameter(), barSizeSetting.ToTwsParameter(), whatToShow.ToTwsParameter(), useRthToInt, formatDateToInt);
+            return this.GetHistoricalDataAsync(
+                contract,
+                endDateTime,
+                duration.ToTwsParameter(),
+                barSizeSetting.ToTwsParameter(),
+                whatToShow.ToTwsParameter(),
+                useRthToInt,
+                formatDateToInt);
         }
 
         /// <summary>
@@ -302,7 +324,14 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <param name="useRth">Whether to use regular trading hours</param>
         /// <param name="formatDate">Whether to format date</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public Task<List<HistoricalDataEventArgs>> GetHistoricalDataAsync(Contract contract, DateTime endDateTime, string duration, string barSizeSetting, string whatToShow, int useRth, int formatDate)
+        public Task<List<HistoricalDataEventArgs>> GetHistoricalDataAsync(
+            Contract contract,
+            DateTime endDateTime,
+            string duration,
+            string barSizeSetting,
+            string whatToShow,
+            int useRth,
+            int formatDate)
         {
             int requestId = this.twsRequestIdGenerator.GetNextRequestId();
             List<TagValue> chartOptions = null;
@@ -319,21 +348,29 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
 
             historicalDataEventHandler = (sender, args) =>
             {
-                historicalDataList.Add(args);
+                if (args.RequestId == requestId)
+                {
+                    historicalDataList.Add(args);
+                }
             };
 
             historicalDataEndEventHandler = (sender, args) =>
             {
-                this.twsCallbackHandler.HistoricalDataEvent -= historicalDataEventHandler;
-                this.twsCallbackHandler.HistoricalDataEndEvent -= historicalDataEndEventHandler;
-                this.twsCallbackHandler.ErrorEvent -= errorEventHandler;
-                taskSource.TrySetResult(historicalDataList);
+                if (args.RequestId == requestId)
+                {
+                    this.twsCallbackHandler.HistoricalDataEvent -= historicalDataEventHandler;
+                    this.twsCallbackHandler.HistoricalDataEndEvent -= historicalDataEndEventHandler;
+                    this.twsCallbackHandler.ErrorEvent -= errorEventHandler;
+                    taskSource.TrySetResult(historicalDataList);
+                }
             };
 
             errorEventHandler = (sender, args) =>
             {
                 if (args.Id == requestId)
                 {
+                    this.CancelHistoricalData(requestId);
+
                     // The error is associated with this request
                     this.twsCallbackHandler.HistoricalDataEvent -= historicalDataEventHandler;
                     this.twsCallbackHandler.HistoricalDataEndEvent -= historicalDataEndEventHandler;
@@ -346,6 +383,8 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             CancellationTokenSource tokenSource = new CancellationTokenSource(60 * 1000);
             tokenSource.Token.Register(() =>
             {
+                this.CancelHistoricalData(requestId);
+
                 this.twsCallbackHandler.HistoricalDataEvent -= historicalDataEventHandler;
                 this.twsCallbackHandler.HistoricalDataEndEvent -= historicalDataEndEventHandler;
                 this.twsCallbackHandler.ErrorEvent -= errorEventHandler;
@@ -357,8 +396,27 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             this.twsCallbackHandler.HistoricalDataEndEvent += historicalDataEndEventHandler;
             this.twsCallbackHandler.ErrorEvent += errorEventHandler;
 
-            this.clientSocket.ReqHistoricalData(requestId, contract, endDateTime.ToString("yyyyMMdd HH:mm:ss"), duration, barSizeSetting, whatToShow, useRth, formatDate, chartOptions);
+            this.clientSocket.ReqHistoricalData(
+                requestId,
+                contract,
+                endDateTime.ToString("yyyyMMdd HH:mm:ss"),
+                duration,
+                barSizeSetting,
+                whatToShow,
+                useRth,
+                formatDate,
+                chartOptions);
+
             return taskSource.Task;
+        }
+
+        /// <summary>
+        /// Request Historical Data cancelation
+        /// </summary>
+        /// <param name="requestId">The request Id</param>
+        public void CancelHistoricalData(int requestId)
+        {
+            this.clientSocket.CancelHistoricalData(requestId);
         }
 
         /// <summary>
@@ -645,6 +703,14 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         }
 
         /// <summary>
+        /// Sends a message to TWS telling it to stop sending position information through the socket.
+        /// </summary>
+        public void CancelPositions()
+        {
+            this.clientSocket.CancelPositions();
+        }
+
+        /// <summary>
         /// Get a list of all the positions in TWS.
         /// </summary>
         /// <param name="cancellationToken">The cancellation token used to cancel the request</param>
@@ -700,7 +766,12 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         {
             // Set the operation to cancel after 10 seconds
             CancellationTokenSource tokenSource = new CancellationTokenSource(10000);
-            return this.RequestSecurityDefinitionOptionParameters(underlyingSymbol, exchange, underlyingSecType, underlyingConId, tokenSource.Token);
+            return this.RequestSecurityDefinitionOptionParameters(
+                underlyingSymbol,
+                exchange,
+                underlyingSecType,
+                underlyingConId,
+                tokenSource.Token);
         }
 
         /// <summary>
@@ -720,23 +791,31 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             int underlyingConId,
             CancellationToken cancellationToken)
         {
+            int requestId = this.twsRequestIdGenerator.GetNextRequestId();
+
             var taskSource = new TaskCompletionSource<List<SecurityDefinitionOptionParameterEventArgs>>();
 
             List<SecurityDefinitionOptionParameterEventArgs> securityDefinitionEvents = new List<SecurityDefinitionOptionParameterEventArgs>();
 
             EventHandler<SecurityDefinitionOptionParameterEventArgs> securityDefinitionEventHandler = null;
-            EventHandler securityDefintionEndEventHandler = null;
+            EventHandler<RequestIdEventArgs> securityDefintionEndEventHandler = null;
 
             securityDefinitionEventHandler = (sender, args) =>
             {
-                securityDefinitionEvents.Add(args);
+                if (args.RequestId == requestId)
+                {
+                    securityDefinitionEvents.Add(args);
+                }
             };
 
             securityDefintionEndEventHandler = (sender, args) =>
             {
-                this.twsCallbackHandler.SecurityDefinitionOptionParameterEvent -= securityDefinitionEventHandler;
-                this.twsCallbackHandler.SecurityDefinitionOptionParameterEndEvent -= securityDefintionEndEventHandler;
-                taskSource.TrySetResult(securityDefinitionEvents);
+                if (args.RequestId == requestId)
+                {
+                    this.twsCallbackHandler.SecurityDefinitionOptionParameterEvent -= securityDefinitionEventHandler;
+                    this.twsCallbackHandler.SecurityDefinitionOptionParameterEndEvent -= securityDefintionEndEventHandler;
+                    taskSource.TrySetResult(securityDefinitionEvents);
+                }
             };
 
             cancellationToken.Register(() =>
@@ -747,9 +826,388 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             this.twsCallbackHandler.SecurityDefinitionOptionParameterEvent += securityDefinitionEventHandler;
             this.twsCallbackHandler.SecurityDefinitionOptionParameterEndEvent += securityDefintionEndEventHandler;
 
-            int requestId = this.twsRequestIdGenerator.GetNextRequestId();
             this.clientSocket.RequestSecurityDefinitionOptionParameters(requestId, underlyingSymbol, exchange, underlyingSecType, underlyingConId);
             return taskSource.Task;
+        }
+
+        /// <summary>
+        /// Request market data from TWS.
+        /// </summary>
+        /// <param name="contract">The contract type</param>
+        /// <param name="genericTickList">The generic tick list</param>
+        /// <param name="snapshot">The snapshot flag</param>
+        /// <param name="regulatorySnapshot">The regulatory snapshot flag</param>
+        /// <param name="mktDataOptions">The market data options</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public Task<TickSnapshotEndEventArgs> RequestMarketDataAsync(
+            Contract contract,
+            string genericTickList,
+            bool snapshot,
+            bool regulatorySnapshot,
+            List<TagValue> mktDataOptions)
+        {
+            int tickerId = this.twsRequestIdGenerator.GetNextRequestId();
+
+            string value = string.Empty;
+
+            var taskSource = new TaskCompletionSource<TickSnapshotEndEventArgs>();
+
+            EventHandler<TickPriceEventArgs> tickPriceEventHandler = null;
+            EventHandler<TickSizeEventArgs> tickSizeEventHandler = null;
+            EventHandler<TickStringEventArgs> tickStringEventHandler = null;
+            EventHandler<TickGenericEventArgs> tickGenericEventHandler = null;
+            EventHandler<TickOptionComputationEventArgs> tickOptionComputationEventHandler = null;
+            EventHandler<TickSnapshotEndEventArgs> tickSnapshotEndEventHandler = null;
+            EventHandler<TickEFPEventArgs> tickEFPEventHandler = null;
+            EventHandler<ErrorEventArgs> errorEventHandler = null;
+
+            List<RealtimeBarEventArgs> realtimeBarList = new List<RealtimeBarEventArgs>();
+
+            tickPriceEventHandler = (sender, args) =>
+            {
+                if (args.TickerId == tickerId)
+                {
+                    this.twsCallbackHandler.TickPriceEvent -= tickPriceEventHandler;
+                    this.twsCallbackHandler.TickSizeEvent -= tickSizeEventHandler;
+                    this.twsCallbackHandler.TickStringEvent -= tickStringEventHandler;
+                    this.twsCallbackHandler.TickGenericEvent -= tickGenericEventHandler;
+                    this.twsCallbackHandler.TickOptionComputationEvent -= tickOptionComputationEventHandler;
+                    this.twsCallbackHandler.TickSnapshotEndEvent -= tickSnapshotEndEventHandler;
+                    this.twsCallbackHandler.TickEFPEvent -= tickEFPEventHandler;
+                    this.twsCallbackHandler.ErrorEvent -= errorEventHandler;
+                    taskSource.TrySetResult(new TickSnapshotEndEventArgs(args.TickerId));
+                }
+            };
+
+            tickSizeEventHandler = (sender, args) =>
+            {
+                if (args.TickerId == tickerId)
+                {
+                    this.twsCallbackHandler.TickPriceEvent -= tickPriceEventHandler;
+                    this.twsCallbackHandler.TickSizeEvent -= tickSizeEventHandler;
+                    this.twsCallbackHandler.TickStringEvent -= tickStringEventHandler;
+                    this.twsCallbackHandler.TickGenericEvent -= tickGenericEventHandler;
+                    this.twsCallbackHandler.TickOptionComputationEvent -= tickOptionComputationEventHandler;
+                    this.twsCallbackHandler.TickSnapshotEndEvent -= tickSnapshotEndEventHandler;
+                    this.twsCallbackHandler.TickEFPEvent -= tickEFPEventHandler;
+                    this.twsCallbackHandler.ErrorEvent -= errorEventHandler;
+                    taskSource.TrySetResult(new TickSnapshotEndEventArgs(args.TickerId));
+                }
+            };
+
+            tickStringEventHandler = (sender, args) =>
+            {
+                if (args.TickerId == tickerId)
+                {
+                    this.twsCallbackHandler.TickPriceEvent -= tickPriceEventHandler;
+                    this.twsCallbackHandler.TickSizeEvent -= tickSizeEventHandler;
+                    this.twsCallbackHandler.TickStringEvent -= tickStringEventHandler;
+                    this.twsCallbackHandler.TickGenericEvent -= tickGenericEventHandler;
+                    this.twsCallbackHandler.TickOptionComputationEvent -= tickOptionComputationEventHandler;
+                    this.twsCallbackHandler.TickSnapshotEndEvent -= tickSnapshotEndEventHandler;
+                    this.twsCallbackHandler.TickEFPEvent -= tickEFPEventHandler;
+                    this.twsCallbackHandler.ErrorEvent -= errorEventHandler;
+                    taskSource.TrySetResult(new TickSnapshotEndEventArgs(args.TickerId));
+                }
+            };
+
+            tickGenericEventHandler = (sender, args) =>
+            {
+                if (args.TickerId == tickerId)
+                {
+                    this.twsCallbackHandler.TickPriceEvent -= tickPriceEventHandler;
+                    this.twsCallbackHandler.TickSizeEvent -= tickSizeEventHandler;
+                    this.twsCallbackHandler.TickStringEvent -= tickStringEventHandler;
+                    this.twsCallbackHandler.TickGenericEvent -= tickGenericEventHandler;
+                    this.twsCallbackHandler.TickOptionComputationEvent -= tickOptionComputationEventHandler;
+                    this.twsCallbackHandler.TickSnapshotEndEvent -= tickSnapshotEndEventHandler;
+                    this.twsCallbackHandler.TickEFPEvent -= tickEFPEventHandler;
+                    this.twsCallbackHandler.ErrorEvent -= errorEventHandler;
+                    taskSource.TrySetResult(new TickSnapshotEndEventArgs(args.TickerId));
+                }
+            };
+
+            tickOptionComputationEventHandler = (sender, args) =>
+            {
+                if (args.TickerId == tickerId)
+                {
+                    this.twsCallbackHandler.TickPriceEvent -= tickPriceEventHandler;
+                    this.twsCallbackHandler.TickSizeEvent -= tickSizeEventHandler;
+                    this.twsCallbackHandler.TickStringEvent -= tickStringEventHandler;
+                    this.twsCallbackHandler.TickGenericEvent -= tickGenericEventHandler;
+                    this.twsCallbackHandler.TickOptionComputationEvent -= tickOptionComputationEventHandler;
+                    this.twsCallbackHandler.TickSnapshotEndEvent -= tickSnapshotEndEventHandler;
+                    this.twsCallbackHandler.TickEFPEvent -= tickEFPEventHandler;
+                    this.twsCallbackHandler.ErrorEvent -= errorEventHandler;
+                    taskSource.TrySetResult(new TickSnapshotEndEventArgs(args.TickerId));
+                }
+            };
+
+            tickSnapshotEndEventHandler = (sender, args) =>
+            {
+                if (args.TickerId == tickerId)
+                {
+                    this.twsCallbackHandler.TickPriceEvent -= tickPriceEventHandler;
+                    this.twsCallbackHandler.TickSizeEvent -= tickSizeEventHandler;
+                    this.twsCallbackHandler.TickStringEvent -= tickStringEventHandler;
+                    this.twsCallbackHandler.TickGenericEvent -= tickGenericEventHandler;
+                    this.twsCallbackHandler.TickOptionComputationEvent -= tickOptionComputationEventHandler;
+                    this.twsCallbackHandler.TickSnapshotEndEvent -= tickSnapshotEndEventHandler;
+                    this.twsCallbackHandler.TickEFPEvent -= tickEFPEventHandler;
+                    this.twsCallbackHandler.ErrorEvent -= errorEventHandler;
+                    taskSource.TrySetResult(new TickSnapshotEndEventArgs(args.TickerId));
+                }
+            };
+
+            tickEFPEventHandler = (sender, args) =>
+            {
+                if (args.TickerId == tickerId)
+                {
+                    this.twsCallbackHandler.TickPriceEvent -= tickPriceEventHandler;
+                    this.twsCallbackHandler.TickSizeEvent -= tickSizeEventHandler;
+                    this.twsCallbackHandler.TickStringEvent -= tickStringEventHandler;
+                    this.twsCallbackHandler.TickGenericEvent -= tickGenericEventHandler;
+                    this.twsCallbackHandler.TickOptionComputationEvent -= tickOptionComputationEventHandler;
+                    this.twsCallbackHandler.TickSnapshotEndEvent -= tickSnapshotEndEventHandler;
+                    this.twsCallbackHandler.TickEFPEvent -= tickEFPEventHandler;
+                    this.twsCallbackHandler.ErrorEvent -= errorEventHandler;
+                    taskSource.TrySetResult(new TickSnapshotEndEventArgs(args.TickerId));
+                }
+            };
+
+            errorEventHandler = (sender, args) =>
+            {
+                if (args.Id == tickerId)
+                {
+                    this.CancelMarketData(tickerId);
+
+                    // The error is associated with this request
+                    this.twsCallbackHandler.TickPriceEvent -= tickPriceEventHandler;
+                    this.twsCallbackHandler.TickSizeEvent -= tickSizeEventHandler;
+                    this.twsCallbackHandler.TickStringEvent -= tickStringEventHandler;
+                    this.twsCallbackHandler.TickGenericEvent -= tickGenericEventHandler;
+                    this.twsCallbackHandler.TickOptionComputationEvent -= tickOptionComputationEventHandler;
+                    this.twsCallbackHandler.TickSnapshotEndEvent -= tickSnapshotEndEventHandler;
+                    this.twsCallbackHandler.TickEFPEvent -= tickEFPEventHandler;
+                    this.twsCallbackHandler.ErrorEvent -= errorEventHandler;
+                    taskSource.TrySetException(new TwsException(args.ErrorMessage));
+                }
+            };
+
+            // Set the operation to cancel after 1 minute
+            CancellationTokenSource tokenSource = new CancellationTokenSource(60 * 1000);
+            tokenSource.Token.Register(() =>
+            {
+                this.CancelMarketData(tickerId);
+
+                this.twsCallbackHandler.TickPriceEvent -= tickPriceEventHandler;
+                this.twsCallbackHandler.TickSizeEvent -= tickSizeEventHandler;
+                this.twsCallbackHandler.TickStringEvent -= tickStringEventHandler;
+                this.twsCallbackHandler.TickGenericEvent -= tickGenericEventHandler;
+                this.twsCallbackHandler.TickOptionComputationEvent -= tickOptionComputationEventHandler;
+                this.twsCallbackHandler.TickSnapshotEndEvent -= tickSnapshotEndEventHandler;
+                this.twsCallbackHandler.TickEFPEvent -= tickEFPEventHandler;
+                this.twsCallbackHandler.ErrorEvent -= errorEventHandler;
+
+                taskSource.TrySetCanceled();
+            });
+
+            this.twsCallbackHandler.TickPriceEvent += tickPriceEventHandler;
+            this.twsCallbackHandler.TickSizeEvent += tickSizeEventHandler;
+            this.twsCallbackHandler.TickStringEvent += tickStringEventHandler;
+            this.twsCallbackHandler.TickGenericEvent += tickGenericEventHandler;
+            this.twsCallbackHandler.TickOptionComputationEvent += tickOptionComputationEventHandler;
+            this.twsCallbackHandler.TickSnapshotEndEvent += tickSnapshotEndEventHandler;
+            this.twsCallbackHandler.TickEFPEvent += tickEFPEventHandler;
+            this.twsCallbackHandler.ErrorEvent += errorEventHandler;
+
+            this.clientSocket.RequestMarketData(
+                tickerId,
+                contract,
+                genericTickList,
+                snapshot,
+                regulatorySnapshot,
+                mktDataOptions);
+
+            return taskSource.Task;
+        }
+
+        /// <summary>
+        /// Cancel market data
+        /// </summary>
+        /// <param name="requestId">The request to cancel</param>
+        public void CancelMarketData(int requestId)
+        {
+            this.clientSocket.CancelMarketData(requestId);
+        }
+
+        /// <summary>
+        /// Request real time bars data from TWS.
+        /// </summary>
+        /// <param name="contract">The contract type</param>
+        /// <param name="barSize">The bar size (currently being ignored by TWS API)</param>
+        /// <param name="whatToShow">The whatToShow parameters</param>
+        /// <param name="useRTH">The regular time flag</param>
+        /// <param name="realTimeBarsOptions">The real time bars options</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public Task<RealtimeBarEventArgs> RequestRealtimeBarAsync(
+            Contract contract,
+            int barSize,
+            string whatToShow,
+            bool useRTH,
+            List<TagValue> realTimeBarsOptions)
+        {
+            int requestId = this.twsRequestIdGenerator.GetNextRequestId();
+
+            string value = string.Empty;
+
+            var taskSource = new TaskCompletionSource<RealtimeBarEventArgs>();
+
+            EventHandler<RealtimeBarEventArgs> realtimeBarEventHandler = null;
+            EventHandler<ErrorEventArgs> errorEventHandler = null;
+
+            realtimeBarEventHandler = (sender, args) =>
+            {
+                if (args.RequestId == requestId)
+                {
+                    this.twsCallbackHandler.RealtimeBarEvent -= realtimeBarEventHandler;
+                    this.twsCallbackHandler.ErrorEvent -= errorEventHandler;
+                    taskSource.TrySetResult(args);
+                }
+            };
+
+            errorEventHandler = (sender, args) =>
+            {
+                if (args.Id == requestId)
+                {
+                    this.CancelRealtimeBars(requestId);
+
+                    // The error is associated with this request
+                    this.twsCallbackHandler.RealtimeBarEvent -= realtimeBarEventHandler;
+                    this.twsCallbackHandler.ErrorEvent -= errorEventHandler;
+                    taskSource.TrySetException(new TwsException(args.ErrorMessage));
+                }
+            };
+
+            this.twsCallbackHandler.RealtimeBarEvent += realtimeBarEventHandler;
+            this.twsCallbackHandler.ErrorEvent += errorEventHandler;
+
+            this.clientSocket.ReqRealtimeBars(
+                requestId,
+                contract,
+                barSize,
+                whatToShow,
+                useRTH,
+                realTimeBarsOptions);
+
+            return taskSource.Task;
+        }
+
+        /// <summary>
+        /// Cancel real time bars data
+        /// </summary>
+        /// <param name="requestId">The request to cancel</param>
+        public void CancelRealtimeBars(int requestId)
+        {
+            this.clientSocket.CancelRealtimeBars(requestId);
+        }
+
+        /// <summary>
+        /// Set the type for the market data feed
+        /// </summary>
+        /// <param name="marketDataTypeId">The feed level</param>
+        public void RequestMarketDataType(int marketDataTypeId)
+        {
+            this.clientSocket.RequestMarketDataType(marketDataTypeId);
+        }
+
+        /// <summary>
+        /// Get the PnL of the account.
+        /// </summary>
+        /// <param name="accountCode">The account code</param>
+        /// <param name="modelCode">The model code</param>
+        /// <returns>The PnL account update event from TWS.</returns>
+        public Task<PnLEventArgs> RequestPnL(
+            string accountCode,
+            string modelCode)
+        {
+            var taskSource = new TaskCompletionSource<PnLEventArgs>();
+            EventHandler<PnLEventArgs> pnlUpdateEventHandler = null;
+
+            pnlUpdateEventHandler = (sender, args) =>
+            {
+                taskSource.TrySetResult(args);
+            };
+
+            this.twsCallbackHandler.PnLEvent += pnlUpdateEventHandler;
+
+            int requestId = this.twsRequestIdGenerator.GetNextRequestId();
+            this.clientSocket.RequestPnL(requestId, accountCode, modelCode);
+
+            // Set the operation to cancel after 5 seconds
+            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
+            tokenSource.Token.Register(() =>
+            {
+                taskSource.TrySetCanceled();
+            });
+
+            return taskSource.Task;
+        }
+
+        /// <summary>
+        /// Request PnL update cancelation
+        /// </summary>
+        /// <param name="requestId">The request Id</param>
+        public void CancelPnL(int requestId)
+        {
+            this.clientSocket.CancelPnL(requestId);
+        }
+
+        /// <summary>
+        /// Get the PnL of the account.
+        /// </summary>
+        /// <param name="accountCode">The account code</param>
+        /// <param name="modelCode">The model code</param>
+        /// <param name="conId">The contract Id</param>
+        /// <returns>The single position PnL update event from TWS.</returns>
+        public Task<PnLSingleEventArgs> RequestPnLSingle(
+            string accountCode,
+            string modelCode,
+            int conId)
+        {
+            var taskSource = new TaskCompletionSource<PnLSingleEventArgs>();
+            EventHandler<PnLSingleEventArgs> pnlSingleEventHandler = null;
+            int requestId = this.twsRequestIdGenerator.GetNextRequestId();
+
+            pnlSingleEventHandler = (sender, args) =>
+            {
+                if (requestId == args.RequestId)
+                {
+                    taskSource.TrySetResult(args);
+                }
+            };
+
+            this.twsCallbackHandler.PnLSingleEvent += pnlSingleEventHandler;
+
+            this.clientSocket.RequestPnLSingle(requestId, accountCode, modelCode, conId);
+
+            // Set the operation to cancel after 5 seconds
+            CancellationTokenSource tokenSource = new CancellationTokenSource(5000);
+            tokenSource.Token.Register(() =>
+            {
+                taskSource.TrySetCanceled();
+            });
+
+            return taskSource.Task;
+        }
+
+        /// <summary>
+        /// Request PnL update cancelation
+        /// </summary>
+        /// <param name="requestId">The request Id</param>
+        public void CancelPnLSingle(int requestId)
+        {
+            this.clientSocket.CancelPnLSingle(requestId);
         }
 
         /// <summary>

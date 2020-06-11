@@ -4,6 +4,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using AutoFinance.Broker.InteractiveBrokers.EventArgs;
     using IBApi;
 
@@ -114,6 +115,41 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         event EventHandler<TickNewsEventArgs> TickNewsEvent;
 
         /// <summary>
+        /// The event that is fired on a tick EFP event
+        /// </summary>
+        event EventHandler<TickEFPEventArgs> TickEFPEvent;
+
+        /// <summary>
+        /// The event that is fired on a tick generic event
+        /// </summary>
+        event EventHandler<TickGenericEventArgs> TickGenericEvent;
+
+        /// <summary>
+        /// The event that is fired on a tick option computation event
+        /// </summary>
+        event EventHandler<TickOptionComputationEventArgs> TickOptionComputationEvent;
+
+        /// <summary>
+        /// The event that is fired on a tick price event
+        /// </summary>
+        event EventHandler<TickPriceEventArgs> TickPriceEvent;
+
+        /// <summary>
+        /// The event that is fired on a tick size event
+        /// </summary>
+        event EventHandler<TickSizeEventArgs> TickSizeEvent;
+
+        /// <summary>
+        /// The event that is fired on a tick snapshot end event
+        /// </summary>
+        event EventHandler<TickSnapshotEndEventArgs> TickSnapshotEndEvent;
+
+        /// <summary>
+        /// The event that is fired on a tick string event
+        /// </summary>
+        event EventHandler<TickStringEventArgs> TickStringEvent;
+
+        /// <summary>
         /// The event that is fired on news provider events
         /// </summary>
         event EventHandler<NewsProviderEventArgs> NewsProviderEvent;
@@ -126,7 +162,17 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <summary>
         /// The event that is fired at the end of the option security definition request
         /// </summary>
-        event EventHandler SecurityDefinitionOptionParameterEndEvent;
+        event EventHandler<RequestIdEventArgs> SecurityDefinitionOptionParameterEndEvent;
+
+        /// <summary>
+        /// The event that is fired at the end of the account PnL request
+        /// </summary>
+        event EventHandler<PnLEventArgs> PnLEvent;
+
+        /// <summary>
+        /// The event that is fired at the end of the single position PnL request
+        /// </summary>
+        event EventHandler<PnLSingleEventArgs> PnLSingleEvent;
 
         /// <summary>
         /// The event that is fired when the account summary is received.
@@ -217,8 +263,6 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// The event that is fired when a portfolio has been updated.
         /// </summary>
         event EventHandler<UpdatePortfolioEventArgs> UpdatePortfolioEvent;
-
-
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 #pragma warning disable SA1600 // Elements must be documented
@@ -383,6 +427,26 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         void historicalData(int reqId, string date, double open, double high, double low, double close, int volume, int count, double WAP, bool hasGaps);
 
         void historicalDataEnd(int reqId, string start, string end);
+
+        /// <summary>
+        /// The account PnL request data callback from TWS
+        /// </summary>
+        /// <param name="reqId">The request Id</param>
+        /// <param name="dailyPnL">The daily PnL</param>
+        /// <param name="unrealizedPnL">The unrealized PnL</param>
+        /// <param name="realizedPnL">The realized PnL</param>
+        void pnl(int reqId, double dailyPnL, double unrealizedPnL, double realizedPnL);
+
+        /// <summary>
+        /// The single position PnL data callback from TWS
+        /// </summary>
+        /// <param name="reqId">The request Id</param>
+        /// <param name="pos">The position</param>
+        /// <param name="dailyPnL">The daily PnL</param>
+        /// <param name="unrealizedPnL">The unrealized PnL</param>
+        /// <param name="realizedPnL">The realized PnL</param>
+        /// <param name="value">The position value</param>
+        void pnlSingle(int reqId, int pos, double dailyPnL, double unrealizedPnL, double realizedPnL, double value);
 
         void managedAccounts(string accountsList);
 
