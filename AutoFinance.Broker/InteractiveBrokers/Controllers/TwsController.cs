@@ -17,7 +17,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
     /// <summary>
     /// A top level controller which interacts with the base controller to do useful things
     /// </summary>
-    public class TwsController : ITwsControllerBase
+    public class TwsController : ITwsController
     {
         private ITwsControllerBase twsControllerBase;
 

@@ -9,7 +9,7 @@ namespace AutoFinance.Broker.InteractiveBrokers
     /// <summary>
     /// Initialize the TWS objects.
     /// </summary>
-    public class TwsObjectFactory
+    public class TwsObjectFactory: ITwsObjectFactory
     {
         private EReaderMonitorSignal signal;
 
@@ -21,10 +21,12 @@ namespace AutoFinance.Broker.InteractiveBrokers
         /// <param name="clientId">The client id</param>
         public TwsObjectFactory(string host, int port, int clientId)
         {
-            this.TwsCallbackHandler = new TwsCallbackHandler();
+            var callbackHandler = new TwsCallbackHandler();
+            this.TwsCallbackHandler = callbackHandler;
+            this.EWrapper = callbackHandler;
 
             this.signal = new EReaderMonitorSignal();
-            this.ClientSocket = new TwsClientSocket(new EClientSocket(this.TwsCallbackHandler, this.signal));
+            this.ClientSocket = new TwsClientSocket(new EClientSocket(this.EWrapper, this.signal));
 
             this.TwsControllerBase = new TwsControllerBase(this.ClientSocket, this.TwsCallbackHandler, host, port, clientId);
             this.TwsController = new TwsController(this.TwsControllerBase);
@@ -44,7 +46,7 @@ namespace AutoFinance.Broker.InteractiveBrokers
         /// This is exposed only for custom event listeners.
         /// It's not necessary to use this
         /// </summary>
-        public TwsCallbackHandler TwsCallbackHandler
+        public ITwsCallbackHandler TwsCallbackHandler
         {
             get;
             private set;
@@ -62,10 +64,12 @@ namespace AutoFinance.Broker.InteractiveBrokers
         /// <summary>
         /// Gets the Tws controller
         /// </summary>
-        public TwsController TwsController
+        public ITwsController TwsController
         {
             get;
             private set;
         }
+
+        public EWrapper EWrapper { get; }
     }
 }
