@@ -22,7 +22,7 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
         public async Task Should_PlaceBracketOrderWithStopLimit()
         {
             TwsObjectFactory twsObjectFactory = new TwsObjectFactory("localhost", 7462, 1);
-            TwsController twsController = twsObjectFactory.TwsController;
+            ITwsController twsController = twsObjectFactory.TwsController;
 
             await twsController.EnsureConnectedAsync();
 
