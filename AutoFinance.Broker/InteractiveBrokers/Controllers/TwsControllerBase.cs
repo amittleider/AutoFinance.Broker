@@ -229,7 +229,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                     this.twsCallbackHandler.ContractDetailsEvent -= contractDetailsEventHandler;
                     this.twsCallbackHandler.ContractDetailsEndEvent -= contractDetailsEndEventHandler;
                     this.twsCallbackHandler.ErrorEvent -= errorEventHandler;
-                    taskSource.TrySetException(new TwsException(args.ErrorMessage));
+                    taskSource.TrySetException(new TwsException(args));
                 }
             };
 
@@ -375,7 +375,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                     this.twsCallbackHandler.HistoricalDataEvent -= historicalDataEventHandler;
                     this.twsCallbackHandler.HistoricalDataEndEvent -= historicalDataEndEventHandler;
                     this.twsCallbackHandler.ErrorEvent -= errorEventHandler;
-                    taskSource.TrySetException(new TwsException(args.ErrorMessage));
+                    taskSource.TrySetException(new TwsException(args));
                 }
             };
 
@@ -604,7 +604,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                     eventArgs.ErrorCode == TwsErrorCodes.OrderCannotBeCancelled2)
                 {
                     this.twsCallbackHandler.ErrorEvent -= errorEventCallback;
-                    taskSource.TrySetException(new TwsException($"Order {eventArgs.Id} cannot be canceled"));
+                    taskSource.TrySetException(new TwsException($"Order {eventArgs.Id} cannot be canceled", eventArgs.ErrorCode, eventArgs.Id));
                 }
             };
 
@@ -990,7 +990,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                     this.twsCallbackHandler.TickSnapshotEndEvent -= tickSnapshotEndEventHandler;
                     this.twsCallbackHandler.TickEFPEvent -= tickEFPEventHandler;
                     this.twsCallbackHandler.ErrorEvent -= errorEventHandler;
-                    taskSource.TrySetException(new TwsException(args.ErrorMessage));
+                    taskSource.TrySetException(new TwsException(args));
                 }
             };
 
@@ -1085,7 +1085,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                     // The error is associated with this request
                     this.twsCallbackHandler.RealtimeBarEvent -= realtimeBarEventHandler;
                     this.twsCallbackHandler.ErrorEvent -= errorEventHandler;
-                    taskSource.TrySetException(new TwsException(args.ErrorMessage));
+                    taskSource.TrySetException(new TwsException(args));
                 }
             };
 
