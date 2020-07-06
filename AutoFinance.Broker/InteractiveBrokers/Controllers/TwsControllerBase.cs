@@ -668,13 +668,15 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             {
                 if (orderId == eventArgs.Id)
                 {
-                    if (eventArgs.ErrorCode == TwsErrorCodes.InvalidOrderType ||
-                        eventArgs.ErrorCode == TwsErrorCodes.AmbiguousContract)
+                    if (
+                        eventArgs.ErrorCode == TwsErrorCodes.InvalidOrderType ||
+                        eventArgs.ErrorCode == TwsErrorCodes.AmbiguousContract ||
+                        eventArgs.ErrorCode == TwsErrorCodes.OrderRejected)
                     {
                         // Unregister the callbacks
                         this.twsCallbackHandler.OpenOrderEvent -= openOrderEventCallback;
                         this.twsCallbackHandler.ErrorEvent -= orderErrorEventCallback;
-                        taskSource.TrySetResult(false);
+                        taskSource.TrySetException(new TwsException(eventArgs));
                     }
                 }
             };
