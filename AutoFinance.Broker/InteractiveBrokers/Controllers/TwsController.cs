@@ -244,6 +244,31 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         }
 
         /// <summary>
+        /// Cancels all orders with the given symbol
+        /// </summary>
+        /// <returns>True if successful, false otherwise</returns>
+        public async Task<bool> CancelAllOrders()
+        {
+            await this.twsControllerBase.EnsureConnectedAsync();
+
+            var openOrders = await this.twsControllerBase.RequestOpenOrders();
+
+            bool success = true;
+            foreach (var openOrder in openOrders)
+            {
+                try
+                {
+                    success &= await this.twsControllerBase.CancelOrderAsync(openOrder.OrderId);
+                }
+                catch (TwsException)
+                {
+                }
+            }
+
+            return success;
+        }
+
+        /// <summary>
         /// Liquidates the position with the given symbol to the given exchange
         /// </summary>
         /// <param name="symbol">The symbol</param>
