@@ -1,4 +1,4 @@
-﻿// Licensed under the Apache License, Version 2.0.
+// Licensed under the Apache License, Version 2.0.
 
 namespace AutoFinance.Broker.InteractiveBrokers.Controllers
 {
@@ -217,6 +217,88 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         }
 
         /// <summary>
+        /// Places a bracket order for a position that already exists.
+        /// Useful to re-set expired GTC brackets.
+        /// </summary>
+        /// <param name="symbol">The symbol</param>
+        /// <param name="exchange">The exchange</param>
+        /// <param name="takePrice">The take price</param>
+        /// <param name="stopActivationPrice">The stop activation price</param>
+        /// <param name="stopLimitPrice">The stop limit price</param>
+        /// <returns>True if the order placement succeeded, false otherwise</returns>
+        public async Task<bool> PlaceBracketForExistingPosition(string symbol, string exchange, double takePrice, double stopActivationPrice, double stopLimitPrice)
+        {
+            await this.twsControllerBase.EnsureConnectedAsync();
+
+            // Close any outstanding orders
+            var cancellationSuccess = this.CancelOrders(symbol).ConfigureAwait(false).GetAwaiter().GetResult();
+            if (!cancellationSuccess)
+            {
+                return false;
+            }
+
+            // Get the number of shares and direction
+            var positions = this.twsControllerBase.RequestPositions().ConfigureAwait(false).GetAwaiter().GetResult();
+
+            var position = positions.Where(p => p.Contract.Symbol == symbol && p.Position != 0).FirstOrDefault();
+
+            if (position == null)
+            {
+                return false;
+            }
+
+            // Use a REL order to exit
+            string exitOrderDirection = string.Empty;
+            if (position.Position > 0)
+            {
+                exitOrderDirection = TwsOrderActions.Sell;
+            }
+
+            if (position.Position < 0)
+            {
+                exitOrderDirection = TwsOrderActions.Buy;
+            }
+
+            int takeProfitOrderId = await this.GetNextValidIdAsync();
+            var stopLossOrderId = await this.GetNextValidIdAsync();
+            string ocaGroup = Guid.NewGuid().ToString();
+
+            Order order = new Order()
+            {
+                Action = "SELL",
+                OrderType = TwsOrderType.Limit,
+                TotalQuantity = 200,
+                LmtPrice = takePrice,
+                Tif = TwsTimeInForce.GoodTillClose,
+                OcaType = (int)TwsOcaType.CancelAllRemainingOrdersWithBlock,
+                OcaGroup = ocaGroup,
+                Transmit = true,
+            };
+
+            Order order2 = new Order()
+            {
+                Action = "SELL",
+                OrderType = TwsOrderType.StopLimit,
+                TotalQuantity = 200,
+                AuxPrice = stopActivationPrice,
+                LmtPrice = stopLimitPrice,
+                Tif = TwsTimeInForce.GoodTillClose,
+                OcaType = (int)TwsOcaType.CancelAllRemainingOrdersWithBlock,
+                OcaGroup = ocaGroup,
+                Transmit = true,
+            };
+
+            position.Contract.Exchange = exchange; // TWS does not save the original traded exchange on the contract.
+
+            var takeProfitTask = this.twsControllerBase.PlaceOrderAsync(takeProfitOrderId, position.Contract, order);
+            var stopLossTask = this.twsControllerBase.PlaceOrderAsync(stopLossOrderId, position.Contract, order2);
+
+            Task.WaitAll(takeProfitTask, stopLossTask);
+
+            return takeProfitTask.Result && stopLossTask.Result;
+        }
+
+        /// <summary>
         /// Cancels all orders with the given symbol
         /// </summary>
         /// <param name="symbol">The symbol</param>
@@ -230,7 +312,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
 
             if (openOrdersForSymbol.Count == 0)
             {
-                return false;
+                return true;
             }
 
             bool success = true;
@@ -239,6 +321,31 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                 try
                 {
                     success &= await this.twsControllerBase.CancelOrderAsync(openOrder);
+                }
+                catch (TwsException)
+                {
+                }
+            }
+
+            return success;
+        }
+
+        /// <summary>
+        /// Cancels all orders with the given symbol
+        /// </summary>
+        /// <returns>True if successful, false otherwise</returns>
+        public async Task<bool> CancelAllOrders()
+        {
+            await this.twsControllerBase.EnsureConnectedAsync();
+
+            var openOrders = await this.twsControllerBase.RequestOpenOrders();
+
+            bool success = true;
+            foreach (var openOrder in openOrders)
+            {
+                try
+                {
+                    success &= await this.twsControllerBase.CancelOrderAsync(openOrder.OrderId);
                 }
                 catch (TwsException)
                 {

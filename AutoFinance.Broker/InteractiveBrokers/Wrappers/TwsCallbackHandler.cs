@@ -730,8 +730,16 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <inheritdoc/>
         public void tickEFP(int tickerId, int tickType, double basisPoints, string formattedBasisPoints, double impliedFuture, int holdDays, string futureLastTradeDate, double dividendImpact, double dividendsToLastTradeDate)
         {
-            var eventArgs = new TickEFPEventArgs(tickerId, tickType, basisPoints, formattedBasisPoints, impliedFuture, holdDays,
-                futureLastTradeDate, dividendImpact, dividendsToLastTradeDate);
+            var eventArgs = new TickEFPEventArgs(
+                tickerId,
+                tickType,
+                basisPoints,
+                formattedBasisPoints,
+                impliedFuture,
+                holdDays,
+                futureLastTradeDate,
+                dividendImpact,
+                dividendsToLastTradeDate);
             this.TickEFPEvent?.Invoke(this, eventArgs);
         }
 

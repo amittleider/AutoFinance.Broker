@@ -14,7 +14,7 @@
     public class TwsControllerTests
     {
         [Fact]
-        public async Task Should_PlaceSimpleBracketOrder()
+        public void Should_PlaceSimpleBracketOrder()
         {
             // Setup
 
@@ -81,7 +81,7 @@
             var twsController = new TwsController(mockControllerBase.Object);
 
             // Call
-            bool orderAck = await twsController.PlaceBracketOrder(contract, entryAction, quantity, takePrice, stopPrice);
+            bool orderAck = twsController.PlaceBracketOrder(contract, entryAction, quantity, takePrice, stopPrice).ConfigureAwait(false).GetAwaiter().GetResult();
 
             // Asssert
             orderAck.Should().BeTrue();
@@ -94,7 +94,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task ContractDetailsController_Should_ReturnValidContractAsync_UnderNormalCircumstances()
+        public void ContractDetailsController_Should_ReturnValidContractAsync_UnderNormalCircumstances()
         {
             // Setup
             // Define the contract input to the contract details controller
@@ -139,7 +139,7 @@
             TwsControllerBase contractDetailsController = new TwsControllerBase(mockTwsClientSocket.Object, mockTwsCallbackHandler.Object, "mock", 0, 0);
 
             // Call
-            List<ContractDetails> actualContractDetails = await contractDetailsController.GetContractAsync(contract);
+            List<ContractDetails> actualContractDetails = contractDetailsController.GetContractAsync(contract).ConfigureAwait(false).GetAwaiter().GetResult();
 
             // Assert
             actualContractDetails[0].Should().Be(expectedContractDetails);
@@ -150,7 +150,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task OrderPlacementController_Should_PlaceOrdersSuccessfully()
+        public void OrderPlacementController_Should_PlaceOrdersSuccessfully()
         {
             // Setup
             // Define the contract input to the contract details controller
@@ -195,7 +195,7 @@
             TwsControllerBase contractDetailsController = new TwsControllerBase(mockTwsClientSocket.Object, mockTwsCallbackHandler.Object, "mock", 0, 0);
 
             // Call
-            List<ContractDetails> actualContractDetails = await contractDetailsController.GetContractAsync(contract);
+            List<ContractDetails> actualContractDetails = contractDetailsController.GetContractAsync(contract).ConfigureAwait(false).GetAwaiter().GetResult();
 
             // Assert
             actualContractDetails[0].Should().Be(expectedContractDetails);
