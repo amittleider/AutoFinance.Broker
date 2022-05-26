@@ -8,6 +8,11 @@ namespace AutoFinance.Broker.InteractiveBrokers.Constants
     public class TwsErrorCodes
     {
         /// <summary>
+        /// Ambiguous contract error code
+        /// </summary>
+        public const int AmbiguousContract = 200;
+
+        /// <summary>
         /// OrderCancelled error code
         /// </summary>
         public const int OrderCancelled = 202;
@@ -18,9 +23,9 @@ namespace AutoFinance.Broker.InteractiveBrokers.Constants
         public const int InvalidOrderType = 387;
 
         /// <summary>
-        /// Ambiguous contract error code
+        /// Not conntected
         /// </summary>
-        public const int AmbiguousContract = 200;
+        public const int NotConntected = 504;
 
         /// <summary>
         /// Order can't be cancelled (possibly filled)

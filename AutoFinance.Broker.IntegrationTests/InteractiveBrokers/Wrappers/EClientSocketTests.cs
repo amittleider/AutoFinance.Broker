@@ -30,7 +30,7 @@
             EClientSocket clientSocket = new EClientSocket(mockTwsWrapper.Object, signal);
 
             // Call
-            clientSocket.eConnect("localhost", 7462, 2);
+            clientSocket.eConnect("localhost", TestConstants.Port, 2);
             clientSocket.eDisconnect();
 
             // Assert
@@ -53,7 +53,7 @@
             EReaderMonitorSignal signal = new EReaderMonitorSignal();
             EClientSocket clientSocket = new EClientSocket(mockTwsWrapper.Object, signal);
 
-            clientSocket.eConnect("localhost", 7462, 2);
+            clientSocket.eConnect("localhost", TestConstants.Port, 2);
 
             // Create a reader to consume messages from the TWS. The EReader will consume the incoming messages and put them in a queue
             // Be very careful with the order. The EReader constructor must be called after a call to clientSocket.eConnect().
@@ -109,7 +109,7 @@
             EReaderMonitorSignal signal = new EReaderMonitorSignal();
             EClientSocket clientSocket = new EClientSocket(mockTwsWrapper.Object, signal);
 
-            clientSocket.eConnect("localhost", 7462, 2);
+            clientSocket.eConnect("localhost", TestConstants.Port, 2);
 
             // Create a reader to consume messages from the TWS. The EReader will consume the incoming messages and put them in a queue
             // Be very careful with the order. The EReader constructor must be called after a call to clientSocket.eConnect().
@@ -420,7 +420,7 @@
             EReaderMonitorSignal signal = new EReaderMonitorSignal();
             EClientSocket clientSocket = new EClientSocket(mockTwsWrapper.Object, signal);
 
-            clientSocket.eConnect("localhost", 7462, 2);
+            clientSocket.eConnect("localhost", TestConstants.Port, 2);
 
             // Create a reader to consume messages from the TWS. The EReader will consume the incoming messages and put them in a queue
             // Be very careful with the order. The EReader constructor must be called after a call to clientSocket.eConnect().
@@ -525,7 +525,7 @@
             EReaderMonitorSignal signal = new EReaderMonitorSignal();
             EClientSocket clientSocket = new EClientSocket(mockTwsWrapper.Object, signal);
 
-            clientSocket.eConnect("localhost", 7462, 2);
+            clientSocket.eConnect("localhost", TestConstants.Port, 2);
 
             // Create a reader to consume messages from the TWS. The EReader will consume the incoming messages and put them in a queue
             // Be very careful with the order. The EReader constructor must be called after a call to clientSocket.eConnect().
@@ -600,7 +600,7 @@
             EReaderMonitorSignal signal = new EReaderMonitorSignal();
             EClientSocket clientSocket = new EClientSocket(mockTwsWrapper.Object, signal);
 
-            clientSocket.eConnect("localhost", 7462, 2);
+            clientSocket.eConnect("localhost", TestConstants.Port, 2);
 
             // Create a reader to consume messages from the TWS. The EReader will consume the incoming messages and put them in a queue
             // Be very careful with the order. The EReader constructor must be called after a call to clientSocket.eConnect().
@@ -682,7 +682,7 @@
             EReaderMonitorSignal signal = new EReaderMonitorSignal();
             EClientSocket clientSocket = new EClientSocket(mockTwsWrapper.Object, signal);
 
-            clientSocket.eConnect("localhost", 7462, 2);
+            clientSocket.eConnect("localhost", TestConstants.Port, 2);
 
             // Create a reader to consume messages from the TWS. The EReader will consume the incoming messages and put them in a queue
             // Be very careful with the order. The EReader constructor must be called after a call to clientSocket.eConnect().
@@ -774,7 +774,7 @@
             EReaderMonitorSignal signal = new EReaderMonitorSignal();
             EClientSocket clientSocket = new EClientSocket(mockTwsWrapper.Object, signal);
 
-            clientSocket.eConnect("localhost", 7462, 2);
+            clientSocket.eConnect("localhost", TestConstants.Port, 2);
 
             // Create a reader to consume messages from the TWS. The EReader will consume the incoming messages and put them in a queue
             // Be very careful with the order. The EReader constructor must be called after a call to clientSocket.eConnect().
@@ -823,7 +823,7 @@
             EReaderMonitorSignal signal = new EReaderMonitorSignal();
             EClientSocket clientSocket = new EClientSocket(mockTwsWrapper.Object, signal);
 
-            clientSocket.eConnect("localhost", 7462, 2);
+            clientSocket.eConnect("localhost", TestConstants.Port, 2);
 
             // Create a reader to consume messages from the TWS. The EReader will consume the incoming messages and put them in a queue
             // Be very careful with the order. The EReader constructor must be called after a call to clientSocket.eConnect().
@@ -875,7 +875,7 @@
             EReaderMonitorSignal signal = new EReaderMonitorSignal();
             EClientSocket clientSocket = new EClientSocket(mockTwsWrapper.Object, signal);
 
-            clientSocket.eConnect("localhost", 7462, 2);
+            clientSocket.eConnect("localhost", TestConstants.Port, 2);
 
             // Create a reader to consume messages from the TWS. The EReader will consume the incoming messages and put them in a queue
             // Be very careful with the order. The EReader constructor must be called after a call to clientSocket.eConnect().
@@ -928,7 +928,7 @@
             EReaderMonitorSignal signal = new EReaderMonitorSignal();
             EClientSocket clientSocket = new EClientSocket(mockTwsWrapper.Object, signal);
 
-            clientSocket.eConnect("localhost", 7462, 2);
+            clientSocket.eConnect("localhost", TestConstants.Port, 2);
 
             // Create a reader to consume messages from the TWS. The EReader will consume the incoming messages and put them in a queue
             // Be very careful with the order. The EReader constructor must be called after a call to clientSocket.eConnect().

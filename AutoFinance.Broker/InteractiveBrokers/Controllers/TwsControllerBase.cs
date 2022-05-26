@@ -1,4 +1,4 @@
-// Licensed under the Apache License, Version 2.0.
+﻿// Licensed under the Apache License, Version 2.0.
 
 namespace AutoFinance.Broker.InteractiveBrokers.Controllers
 {
@@ -591,6 +591,11 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                         this.twsCallbackHandler.ErrorEvent -= orderErrorEventCallback;
                         taskSource.TrySetResult(false);
                     }
+                }
+
+                if (eventArgs.ErrorCode == TwsErrorCodes.NotConntected)
+                {
+                    taskSource.TrySetResult(false);
                 }
             };
 
