@@ -9,7 +9,7 @@ namespace AutoFinance.Broker.InteractiveBrokers
     /// <summary>
     /// Initialize the TWS objects.
     /// </summary>
-    public class TwsObjectFactory: ITwsObjectFactory
+    public class TwsObjectFactory : ITwsObjectFactory
     {
         private EReaderMonitorSignal signal;
 
@@ -70,6 +70,9 @@ namespace AutoFinance.Broker.InteractiveBrokers
             private set;
         }
 
+        /// <summary>
+        /// Get the EWrapper
+        /// </summary>
         public EWrapper EWrapper { get; }
     }
 }

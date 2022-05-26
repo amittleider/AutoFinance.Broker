@@ -1,4 +1,4 @@
-﻿namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers
+namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers
 {
     using System;
     using System.Threading;
@@ -30,7 +30,7 @@
             EClientSocket clientSocket = new EClientSocket(mockTwsWrapper.Object, signal);
 
             // Call
-            clientSocket.eConnect("localhost", 7462, 2);
+            clientSocket.eConnect("localhost", TestConstants.Port, 2);
             clientSocket.eDisconnect();
 
             // Assert
@@ -53,7 +53,7 @@
             EReaderMonitorSignal signal = new EReaderMonitorSignal();
             EClientSocket clientSocket = new EClientSocket(mockTwsWrapper.Object, signal);
 
-            clientSocket.eConnect("localhost", 7462, 2);
+            clientSocket.eConnect("localhost", TestConstants.Port, 2);
 
             // Create a reader to consume messages from the TWS. The EReader will consume the incoming messages and put them in a queue
             // Be very careful with the order. The EReader constructor must be called after a call to clientSocket.eConnect().
@@ -109,7 +109,7 @@
             EReaderMonitorSignal signal = new EReaderMonitorSignal();
             EClientSocket clientSocket = new EClientSocket(mockTwsWrapper.Object, signal);
 
-            clientSocket.eConnect("localhost", 7462, 2);
+            clientSocket.eConnect("localhost", TestConstants.Port, 2);
 
             // Create a reader to consume messages from the TWS. The EReader will consume the incoming messages and put them in a queue
             // Be very careful with the order. The EReader constructor must be called after a call to clientSocket.eConnect().
@@ -420,7 +420,7 @@
             EReaderMonitorSignal signal = new EReaderMonitorSignal();
             EClientSocket clientSocket = new EClientSocket(mockTwsWrapper.Object, signal);
 
-            clientSocket.eConnect("localhost", 7462, 2);
+            clientSocket.eConnect("localhost", TestConstants.Port, 2);
 
             // Create a reader to consume messages from the TWS. The EReader will consume the incoming messages and put them in a queue
             // Be very careful with the order. The EReader constructor must be called after a call to clientSocket.eConnect().
@@ -525,7 +525,7 @@
             EReaderMonitorSignal signal = new EReaderMonitorSignal();
             EClientSocket clientSocket = new EClientSocket(mockTwsWrapper.Object, signal);
 
-            clientSocket.eConnect("localhost", 7462, 2);
+            clientSocket.eConnect("localhost", TestConstants.Port, 2);
 
             // Create a reader to consume messages from the TWS. The EReader will consume the incoming messages and put them in a queue
             // Be very careful with the order. The EReader constructor must be called after a call to clientSocket.eConnect().
@@ -600,7 +600,7 @@
             EReaderMonitorSignal signal = new EReaderMonitorSignal();
             EClientSocket clientSocket = new EClientSocket(mockTwsWrapper.Object, signal);
 
-            clientSocket.eConnect("localhost", 7462, 2);
+            clientSocket.eConnect("localhost", TestConstants.Port, 2);
 
             // Create a reader to consume messages from the TWS. The EReader will consume the incoming messages and put them in a queue
             // Be very careful with the order. The EReader constructor must be called after a call to clientSocket.eConnect().
@@ -663,6 +663,60 @@
         }
 
         /// <summary>
+        /// Tests requesting continuoushistorical data from TWS
+        /// </summary>
+        [Fact]
+        public void ReqHistoricalDataContinuous_Should_Callback()
+        {
+            // Setup
+            // Initialize the contract that will be traded
+            Contract contract = new Contract
+            {
+                SecType = TwsContractSecType.Cash,
+                Symbol = "EUR",
+                Currency = TwsCurrency.Usd,
+                Exchange = "IDEALPRO",
+            };
+
+            Mock<EWrapper> mockTwsWrapper = new Mock<EWrapper>();
+            EReaderMonitorSignal signal = new EReaderMonitorSignal();
+            EClientSocket clientSocket = new EClientSocket(mockTwsWrapper.Object, signal);
+
+            clientSocket.eConnect("localhost", TestConstants.Port, 2);
+
+            // Create a reader to consume messages from the TWS. The EReader will consume the incoming messages and put them in a queue
+            // Be very careful with the order. The EReader constructor must be called after a call to clientSocket.eConnect().
+            var reader = new EReader(clientSocket, signal);
+            reader.Start();
+
+            Thread thread = new Thread(
+             () =>
+             {
+                 while (true)
+                 {
+                     signal.waitForSignal();
+                     reader.processMsgs();
+                 }
+             })
+            { IsBackground = true };
+            thread.Start();
+
+            // Wait for the next valid order ID to come in
+            Thread.Sleep(1000);
+
+            // Call
+            int requestId = 4001;
+            clientSocket.reqHistoricalData(requestId, contract, "", "30 S", "5 secs", "MIDPOINT", 1, 1, true, null);
+
+            // Wait for the order to be placed and the callbacks to be called
+            Thread.Sleep(1000);
+
+            // Wait for the response and tear down the connection
+            clientSocket.eDisconnect();
+            mockTwsWrapper.Verify(mock => mock.historicalDataUpdate(requestId, It.IsAny<Bar>()));
+        }
+
+        /// <summary>
         /// Tests requesting historical data from TWS
         /// </summary>
         [Fact(Skip = "Requires market data subscription")]
@@ -682,7 +736,7 @@
             EReaderMonitorSignal signal = new EReaderMonitorSignal();
             EClientSocket clientSocket = new EClientSocket(mockTwsWrapper.Object, signal);
 
-            clientSocket.eConnect("localhost", 7462, 2);
+            clientSocket.eConnect("localhost", TestConstants.Port, 2);
 
             // Create a reader to consume messages from the TWS. The EReader will consume the incoming messages and put them in a queue
             // Be very careful with the order. The EReader constructor must be called after a call to clientSocket.eConnect().
@@ -753,60 +807,6 @@
             mockTwsWrapper.Verify(mock => mock.historicalData(requestId, It.IsAny<Bar>()));
             mockTwsWrapper.Verify(mock => mock.historicalDataEnd(requestId, It.IsAny<string>(), It.IsAny<string>()));
         }
-        
-        /// <summary>
-        /// Tests requesting continuoushistorical data from TWS
-        /// </summary>
-        [Fact]
-        public void ReqHistoricalDataContinuous_Should_Callback()
-        {
-            // Setup
-            // Initialize the contract that will be traded
-            Contract contract = new Contract
-            {
-                SecType = TwsContractSecType.Cash,
-                Symbol = "EUR",
-                Currency = TwsCurrency.Usd,
-                Exchange = "IDEALPRO",
-            };
-
-            Mock<EWrapper> mockTwsWrapper = new Mock<EWrapper>();
-            EReaderMonitorSignal signal = new EReaderMonitorSignal();
-            EClientSocket clientSocket = new EClientSocket(mockTwsWrapper.Object, signal);
-
-            clientSocket.eConnect("localhost", 7462, 2);
-
-            // Create a reader to consume messages from the TWS. The EReader will consume the incoming messages and put them in a queue
-            // Be very careful with the order. The EReader constructor must be called after a call to clientSocket.eConnect().
-            var reader = new EReader(clientSocket, signal);
-            reader.Start();
-
-            Thread thread = new Thread(
-             () =>
-             {
-                 while (true)
-                 {
-                     signal.waitForSignal();
-                     reader.processMsgs();
-                 }
-             })
-            { IsBackground = true };
-            thread.Start();
-
-            // Wait for the next valid order ID to come in
-            Thread.Sleep(1000);
-
-            // Call
-            int requestId = 4001;
-            clientSocket.reqHistoricalData(requestId, contract, "", "30 S", "5 secs", "MIDPOINT", 1, 1, true, null);
-
-            // Wait for the order to be placed and the callbacks to be called
-            Thread.Sleep(1000);
-
-            // Wait for the response and tear down the connection
-            clientSocket.eDisconnect();
-            mockTwsWrapper.Verify(mock => mock.historicalDataUpdate(requestId, It.IsAny<Bar>()));
-        }
 
         /// <summary>
         /// Tests requesting historical data from TWS
@@ -828,7 +828,7 @@
             EReaderMonitorSignal signal = new EReaderMonitorSignal();
             EClientSocket clientSocket = new EClientSocket(mockTwsWrapper.Object, signal);
 
-            clientSocket.eConnect("localhost", 7462, 2);
+            clientSocket.eConnect("localhost", TestConstants.Port, 2);
 
             // Create a reader to consume messages from the TWS. The EReader will consume the incoming messages and put them in a queue
             // Be very careful with the order. The EReader constructor must be called after a call to clientSocket.eConnect().
@@ -877,7 +877,7 @@
             EReaderMonitorSignal signal = new EReaderMonitorSignal();
             EClientSocket clientSocket = new EClientSocket(mockTwsWrapper.Object, signal);
 
-            clientSocket.eConnect("localhost", 7462, 2);
+            clientSocket.eConnect("localhost", TestConstants.Port, 2);
 
             // Create a reader to consume messages from the TWS. The EReader will consume the incoming messages and put them in a queue
             // Be very careful with the order. The EReader constructor must be called after a call to clientSocket.eConnect().
@@ -929,7 +929,7 @@
             EReaderMonitorSignal signal = new EReaderMonitorSignal();
             EClientSocket clientSocket = new EClientSocket(mockTwsWrapper.Object, signal);
 
-            clientSocket.eConnect("localhost", 7462, 2);
+            clientSocket.eConnect("localhost", TestConstants.Port, 2);
 
             // Create a reader to consume messages from the TWS. The EReader will consume the incoming messages and put them in a queue
             // Be very careful with the order. The EReader constructor must be called after a call to clientSocket.eConnect().
@@ -982,7 +982,7 @@
             EReaderMonitorSignal signal = new EReaderMonitorSignal();
             EClientSocket clientSocket = new EClientSocket(mockTwsWrapper.Object, signal);
 
-            clientSocket.eConnect("localhost", 7462, 2);
+            clientSocket.eConnect("localhost", TestConstants.Port, 2);
 
             // Create a reader to consume messages from the TWS. The EReader will consume the incoming messages and put them in a queue
             // Be very careful with the order. The EReader constructor must be called after a call to clientSocket.eConnect().
