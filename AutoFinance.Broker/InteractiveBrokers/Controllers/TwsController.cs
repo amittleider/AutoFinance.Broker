@@ -1,4 +1,4 @@
-// Licensed under the Apache License, Version 2.0.
+﻿// Licensed under the Apache License, Version 2.0.
 
 namespace AutoFinance.Broker.InteractiveBrokers.Controllers
 {
@@ -234,6 +234,31 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                 try
                 {
                     success &= await this.twsControllerBase.CancelOrderAsync(openOrder);
+                }
+                catch (TwsException)
+                {
+                }
+            }
+
+            return success;
+        }
+
+        /// <summary>
+        /// Cancels all orders with the given symbol
+        /// </summary>
+        /// <returns>True if successful, false otherwise</returns>
+        public async Task<bool> CancelAllOrders()
+        {
+            await this.twsControllerBase.EnsureConnectedAsync();
+
+            var openOrders = await this.twsControllerBase.RequestOpenOrders();
+
+            bool success = true;
+            foreach (var openOrder in openOrders)
+            {
+                try
+                {
+                    success &= await this.twsControllerBase.CancelOrderAsync(openOrder.OrderId);
                 }
                 catch (TwsException)
                 {

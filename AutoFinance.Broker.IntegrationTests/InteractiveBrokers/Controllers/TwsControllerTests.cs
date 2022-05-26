@@ -41,5 +41,20 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
 
             await twsController.DisconnectAsync();
         }
+
+        [Fact]
+        public async Task Should_CancelAllOrders()
+        {
+            TwsObjectFactory twsObjectFactory = new TwsObjectFactory("localhost", 4002, 1);
+            TwsController twsController = twsObjectFactory.TwsController;
+
+            await twsController.EnsureConnectedAsync();
+
+            bool success = await twsController.CancelAllOrders();
+
+            success.Should().BeTrue();
+
+            await twsController.DisconnectAsync();
+        }
     }
 }
