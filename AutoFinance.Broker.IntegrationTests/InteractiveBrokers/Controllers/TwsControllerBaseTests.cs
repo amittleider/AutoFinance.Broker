@@ -691,6 +691,10 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
             };
 
             var marketDataResult = await twsObjectFactory.TwsControllerBase.RequestMarketDataAsync(contract, "233", false, false, null);
+            // wait up to 10 seconds for some market data
+            await Task.Delay(10 * 1000);
+            // cancel subscription for proper work of TWS API
+            twsObjectFactory.TwsControllerBase.CancelMarketData(marketDataResult.TickerId);
 
             marketDataResult.Should().NotBeNull();
             tickPriceEventArgs.Should().NotBeNull();
@@ -731,6 +735,10 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
             // Request delayed data feed
             twsObjectFactory.TwsControllerBase.RequestMarketDataType(3);
             var marketDataResult = await twsObjectFactory.TwsControllerBase.RequestMarketDataAsync(contract, "233", false, false, null);
+            // wait up to 10 seconds for some market data
+            await Task.Delay(10 * 1000);
+            // cancel subscription for proper work of TWS API
+            twsObjectFactory.TwsControllerBase.CancelMarketData(marketDataResult.TickerId);
 
             marketDataResult.Should().NotBeNull();
             tickPriceEventArgs.Should().NotBeNull();
