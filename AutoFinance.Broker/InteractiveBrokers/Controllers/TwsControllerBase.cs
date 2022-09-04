@@ -1000,8 +1000,6 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             CancellationTokenSource tokenSource = new CancellationTokenSource(60 * 1000);
             tokenSource.Token.Register(() =>
             {
-                this.CancelMarketData(tickerId);
-
                 this.twsCallbackHandler.TickPriceEvent -= tickPriceEventHandler;
                 this.twsCallbackHandler.TickSizeEvent -= tickSizeEventHandler;
                 this.twsCallbackHandler.TickStringEvent -= tickStringEventHandler;
@@ -1011,7 +1009,11 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
                 this.twsCallbackHandler.TickEFPEvent -= tickEFPEventHandler;
                 this.twsCallbackHandler.ErrorEvent -= errorEventHandler;
 
-                taskSource.TrySetCanceled();
+                // https://stackoverflow.com/questions/20830998/async-always-waitingforactivation
+                if (taskSource.Task.Status == TaskStatus.WaitingForActivation)
+                {
+                    taskSource.TrySetResult(new TickSnapshotEndEventArgs(tickerId));
+                }
             });
 
             this.twsCallbackHandler.TickPriceEvent += tickPriceEventHandler;
