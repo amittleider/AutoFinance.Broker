@@ -265,9 +265,9 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
 
             Order order = new Order()
             {
-                Action = "SELL",
+                Action = exitOrderDirection,
                 OrderType = TwsOrderType.Limit,
-                TotalQuantity = 200,
+                TotalQuantity = Math.Abs(position.Position),
                 LmtPrice = takePrice,
                 Tif = TwsTimeInForce.GoodTillClose,
                 OcaType = (int)TwsOcaType.CancelAllRemainingOrdersWithBlock,
@@ -277,9 +277,9 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
 
             Order order2 = new Order()
             {
-                Action = "SELL",
+                Action = exitOrderDirection,
                 OrderType = TwsOrderType.StopLimit,
-                TotalQuantity = 200,
+                TotalQuantity = Math.Abs(position.Position),
                 AuxPrice = stopActivationPrice,
                 LmtPrice = stopLimitPrice,
                 Tif = TwsTimeInForce.GoodTillClose,

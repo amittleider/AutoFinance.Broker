@@ -105,7 +105,7 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers.Controllers
 
             await twsController.EnsureConnectedAsync();
 
-            bool success = await twsController.PlaceBracketForExistingPosition("GRWG", "SMART", 6, 4, 3.9);
+            bool success = await twsController.PlaceBracketForExistingPosition("FOSL", "SMART", 2, 5, 5.1);
 
             success.Should().BeTrue();
 
