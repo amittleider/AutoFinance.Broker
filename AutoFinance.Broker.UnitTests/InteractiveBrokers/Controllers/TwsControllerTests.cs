@@ -200,5 +200,61 @@
             // Assert
             actualContractDetails[0].Should().Be(expectedContractDetails);
         }
+
+        [Fact]
+        public async Task PlaceBracketForExisting_WithLongPos_Should_PlaceBuyBracket()
+        {
+            // Setup
+
+            // Initialize the contract to trade
+            Contract contract = new Contract();
+            contract.SecType = TwsContractSecType.Stock;
+            contract.Symbol = "MSFT";
+            contract.Exchange = TwsExchange.Smart;
+            contract.PrimaryExch = TwsExchange.Island;
+
+            // Initialize the controllers
+            Mock<ITwsControllerBase> mockControllerBase = new Mock<ITwsControllerBase>();
+            mockControllerBase.SetupSequence(mock => mock.GetNextValidIdAsync())
+                .ReturnsAsync(1)
+                .ReturnsAsync(2);
+
+            var expectedTakeProfit = It.Is<Order>(o => o.TotalQuantity == 900 &&
+                o.Action == TwsOrderActions.Sell &&
+                o.OrderType == TwsOrderType.StopLimit &&
+                o.LmtPrice == 100 &&
+                o.OcaType == (int)TwsOcaType.CancelAllRemainingOrdersWithBlock);
+            var expectedStopLoss = It.Is<Order>(
+                o => o.TotalQuantity == 900 && 
+                o.Action == TwsOrderActions.Sell && 
+                o.OrderType == TwsOrderType.StopLimit &&
+                o.AuxPrice == 49 &&
+                o.LmtPrice == 50 &&
+                o.OcaGroup == expectedTakeProfit.OcaGroup &&
+                o.OcaType == (int)TwsOcaType.CancelAllRemainingOrdersWithBlock);
+
+            mockControllerBase.Setup(mock => mock.PlaceOrderAsync(1, contract, It.IsAny<Order>())).ReturnsAsync(true);
+            mockControllerBase.Setup(mock => mock.PlaceOrderAsync(2, contract, It.IsAny<Order>())).ReturnsAsync(true);
+            mockControllerBase.Setup(mock => mock.EnsureConnectedAsync()).Returns(Task.CompletedTask);
+
+            List<OpenOrderEventArgs> openOrders = new List<OpenOrderEventArgs>();
+            mockControllerBase.Setup(mock => mock.RequestOpenOrders()).ReturnsAsync(openOrders);
+
+            List<PositionStatusEventArgs> positions = new List<PositionStatusEventArgs>();
+            positions.Add(new PositionStatusEventArgs("acct", contract, 900, 75));
+
+            mockControllerBase.Setup(mock => mock.RequestPositions()).ReturnsAsync(positions);
+
+            // Initialize the order details
+            var twsController = new TwsController(mockControllerBase.Object);
+
+            // Call
+            bool orderAck = await twsController.PlaceBracketForExistingPosition("MSFT", "SMART", 100, 50, 49);
+
+            // Asssert
+            orderAck.Should().BeTrue();
+
+            mockControllerBase.VerifyAll();
+        }
     }
 }
