@@ -399,7 +399,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
             this.clientSocket.ReqHistoricalData(
                 requestId,
                 contract,
-                endDateTime.ToString("yyyyMMdd HH:mm:ss"),
+                endDateTime.ToString("yyyyMMdd-HH:mm:ss"),
                 duration,
                 barSizeSetting,
                 whatToShow,
