@@ -21,7 +21,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.EventArgs
         /// <param name="volume">The volume</param>
         /// <param name="wap">The weighted average price</param>
         /// <param name="count">The number of trades during the period</param>
-        public RealtimeBarEventArgs(int requestId, long time, double open, double high, double low, double close, long volume, double wap, int count)
+        public RealtimeBarEventArgs(int requestId, long time, double open, double high, double low, double close, decimal volume, decimal wap, int count)
         {
             this.RequestId = requestId;
             this.Time = time;
@@ -91,7 +91,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.EventArgs
         /// <summary>
         /// Gets the volume
         /// </summary>
-        public long Volume
+        public decimal Volume
         {
             get;
             private set;
@@ -100,7 +100,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.EventArgs
         /// <summary>
         /// Gets the weighted average price
         /// </summary>
-        public double Wap
+        public decimal Wap
         {
             get;
             private set;

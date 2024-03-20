@@ -103,7 +103,7 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers
             // Setup
             Mock<EWrapper> mockTwsWrapper = new Mock<EWrapper>();
             mockTwsWrapper.Setup(mock => mock.updateAccountValue(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
-            mockTwsWrapper.Setup(mock => mock.updatePortfolio(It.IsAny<Contract>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<string>()));
+            mockTwsWrapper.Setup(mock => mock.updatePortfolio(It.IsAny<Contract>(), It.IsAny<decimal>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<string>()));
             mockTwsWrapper.Setup(mock => mock.accountDownloadEnd(It.IsAny<string>()));
 
             EReaderMonitorSignal signal = new EReaderMonitorSignal();
@@ -377,7 +377,7 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers
             // EWrapper.accountDownloadEnd("DU348954")
             // EWrapper.connectionClosed()
             mockTwsWrapper.Verify(mock => mock.updateAccountValue(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
-            mockTwsWrapper.Verify(mock => mock.updatePortfolio(It.IsAny<Contract>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<string>()));
+            mockTwsWrapper.Verify(mock => mock.updatePortfolio(It.IsAny<Contract>(), It.IsAny<decimal>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<string>()));
             mockTwsWrapper.Verify(mock => mock.accountDownloadEnd(It.IsAny<string>()), Times.Once);
         }
 
@@ -415,7 +415,7 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers
                 orderId = oid;
             });
             mockTwsWrapper.Setup(mock => mock.openOrder(orderId, It.IsAny<Contract>(), It.IsAny<Order>(), It.IsAny<OrderState>()));
-            mockTwsWrapper.Setup(mock => mock.orderStatus(orderId, It.IsAny<string>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<double>(), clientId, It.IsAny<string>(), It.IsAny<double>()));
+            mockTwsWrapper.Setup(mock => mock.orderStatus(orderId, It.IsAny<string>(), It.IsAny<decimal>(), It.IsAny<decimal>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<double>(), clientId, It.IsAny<string>(), It.IsAny<double>()));
 
             EReaderMonitorSignal signal = new EReaderMonitorSignal();
             EClientSocket clientSocket = new EClientSocket(mockTwsWrapper.Object, signal);
@@ -485,7 +485,7 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers
             // EWrapper.orderStatus(104, "Cancelled", 0, 1, 0, 1752774138, 0, 0, 2, null)}
             // EWrapper.error(104, 202, "Order Canceled - reason:Reject: This order would cross a related resting order in this or an affiliated account.")}
             mockTwsWrapper.Verify(mock => mock.openOrder(orderId, It.IsAny<Contract>(), It.IsAny<Order>(), It.IsAny<OrderState>()), Times.AtLeastOnce);
-            mockTwsWrapper.Verify(mock => mock.orderStatus(orderId, It.IsAny<string>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<double>(), clientId, It.IsAny<string>(), It.IsAny<double>()), Times.AtLeastOnce);
+            mockTwsWrapper.Verify(mock => mock.orderStatus(orderId, It.IsAny<string>(), It.IsAny<decimal>(), It.IsAny<decimal>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<double>(), clientId, It.IsAny<string>(), It.IsAny<double>()), Times.AtLeastOnce);
         }
 
         /// <summary>
@@ -520,7 +520,7 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers
                 orderId = oid;
             });
             mockTwsWrapper.Setup(mock => mock.openOrder(orderId, It.IsAny<Contract>(), It.IsAny<Order>(), It.IsAny<OrderState>()));
-            mockTwsWrapper.Setup(mock => mock.orderStatus(orderId, It.IsAny<string>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<double>(), clientId, It.IsAny<string>(), It.IsAny<double>()));
+            mockTwsWrapper.Setup(mock => mock.orderStatus(orderId, It.IsAny<string>(), It.IsAny<decimal>(), It.IsAny<decimal>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<double>(), clientId, It.IsAny<string>(), It.IsAny<double>()));
 
             EReaderMonitorSignal signal = new EReaderMonitorSignal();
             EClientSocket clientSocket = new EClientSocket(mockTwsWrapper.Object, signal);
@@ -630,7 +630,7 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers
             Thread.Sleep(1000);
 
             // Call the test method
-            clientSocket.cancelOrder(orderId);
+            clientSocket.cancelOrder(orderId,"");
 
             // Wait for the order to be cancelled and the callbacks to be called
             Thread.Sleep(1000);
@@ -658,8 +658,8 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers
             // EWrapper.orderStatus(141, "Cancelled", 0, 1, 0, 1375368034, 0, 0, 2, null)
             // EWrapper.error(141, 202, "Order Canceled - reason:")
             // EWrapper.connectionClosed()
-            mockTwsWrapper.Verify(mock => mock.orderStatus(orderId, "Cancelled", It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<double>(), clientId, It.IsAny<string>(), It.IsAny<double>()), Times.Once);
-            mockTwsWrapper.Verify(mock => mock.error(orderId, 202, It.IsAny<string>()), Times.Once);
+            mockTwsWrapper.Verify(mock => mock.orderStatus(orderId, "Cancelled", It.IsAny<decimal>(), It.IsAny<decimal>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<double>(), clientId, It.IsAny<string>(), It.IsAny<double>()), Times.Once);
+            mockTwsWrapper.Verify(mock => mock.error(orderId, 202, It.IsAny<string>(), It.IsAny<string>()));
         }
 
         /// <summary>
@@ -858,7 +858,7 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers
             clientSocket.eDisconnect();
 
             // Assert
-            mockTwsWrapper.Verify(mock => mock.realtimeBar(4001, It.IsAny<long>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<long>(), It.IsAny<double>(), It.IsAny<int>()), Times.AtLeastOnce);
+            mockTwsWrapper.Verify(mock => mock.realtimeBar(4001, It.IsAny<long>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<long>(), It.IsAny<decimal>(), It.IsAny<int>()), Times.AtLeastOnce);
         }
 
         /// <summary>
@@ -871,7 +871,7 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers
             // Setup
             Mock<EWrapper> mockTwsWrapper = new Mock<EWrapper>();
             mockTwsWrapper.Setup(mock => mock.openOrder(It.IsAny<int>(), It.IsAny<Contract>(), It.IsAny<Order>(), It.IsAny<OrderState>()));
-            mockTwsWrapper.Setup(mock => mock.orderStatus(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<double>()));
+            mockTwsWrapper.Setup(mock => mock.orderStatus(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<decimal>(), It.IsAny<decimal>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<double>()));
             mockTwsWrapper.Setup(mock => mock.openOrderEnd());
 
             EReaderMonitorSignal signal = new EReaderMonitorSignal();
@@ -923,7 +923,7 @@ namespace AutoFinance.Broker.IntegrationTests.InteractiveBrokers
         {
             // Setup
             Mock<EWrapper> mockTwsWrapper = new Mock<EWrapper>();
-            mockTwsWrapper.Setup(mock => mock.position(It.IsAny<string>(), It.IsAny<Contract>(), It.IsAny<double>(), It.IsAny<double>()));
+            mockTwsWrapper.Setup(mock => mock.position(It.IsAny<string>(), It.IsAny<Contract>(), It.IsAny<decimal>(), It.IsAny<double>()));
             mockTwsWrapper.Setup(mock => mock.positionEnd());
 
             EReaderMonitorSignal signal = new EReaderMonitorSignal();

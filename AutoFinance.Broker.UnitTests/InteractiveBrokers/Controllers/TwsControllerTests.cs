@@ -74,7 +74,7 @@
 
             // Initialize the order details
             string entryAction = TwsOrderActions.Buy;
-            double quantity = 100;
+            decimal quantity = 100;
             double takePrice = 190;
             double stopPrice = 150;
 

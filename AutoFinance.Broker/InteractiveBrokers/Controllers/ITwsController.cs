@@ -21,7 +21,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <param name="stopPrice">The stop price</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         Task<bool> PlaceBracketOrder(
-            Contract contract, string entryAction, double quantity, double takePrice, double stopPrice);
+            Contract contract, string entryAction, decimal quantity, double takePrice, double stopPrice);
 
         /// <summary>
         /// Places a bracket order with a limit order entry
@@ -36,7 +36,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         Task<bool> PlaceBracketOrder(
             Contract contract,
             string entryAction,
-            double quantity,
+            decimal quantity,
             double entryOrderPrice,
             double takePrice,
             double stopPrice);
@@ -55,7 +55,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         Task<bool> PlaceBracketOrder(
             Contract contract,
             string entryAction,
-            double quantity,
+            decimal quantity,
             double entryOrderPrice,
             double takePrice,
             double stopActivationPrice,

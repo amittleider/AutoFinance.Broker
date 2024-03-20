@@ -20,7 +20,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.EventArgs
         /// <param name="count">The count</param>
         /// <param name="wap">The weighted average price</param>
         /// <param name="hasGaps">If the data has gaps</param>
-        public HistoricalDataEventArgs(int requestId, string date, double open, double high, double low, double close, int volume, int count, double wap, bool hasGaps)
+        public HistoricalDataEventArgs(int requestId, string date, double open, double high, double low, double close, decimal volume, int count, decimal wap, bool hasGaps)
         {
             this.RequestId = requestId;
             this.Date = date;
@@ -91,7 +91,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.EventArgs
         /// <summary>
         /// Gets the volume
         /// </summary>
-        public int Volume
+        public decimal Volume
         {
             get;
             private set;
@@ -109,7 +109,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.EventArgs
         /// <summary>
         /// Gets the weighted average price
         /// </summary>
-        public double Wap
+        public decimal Wap
         {
             get;
             private set;

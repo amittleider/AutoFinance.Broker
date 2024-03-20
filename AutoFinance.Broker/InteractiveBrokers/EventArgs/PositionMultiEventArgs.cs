@@ -18,7 +18,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.EventArgs
         /// <param name="contract">The contract information.</param>
         /// <param name="position">The position value.</param>
         /// <param name="averageCost">The average cost.</param>
-        public PositionMultiEventArgs(int reqId, string account, string modelCode, Contract contract, double position, double averageCost)
+        public PositionMultiEventArgs(int reqId, string account, string modelCode, Contract contract, decimal position, double averageCost)
        {
            this.RequestId = reqId;
            this.Account = account;
@@ -51,7 +51,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.EventArgs
         /// <summary>
         /// Gets the position value.
         /// </summary>
-        public double Position { get; private set; }
+        public decimal Position { get; private set; }
 
         /// <summary>
         /// Gets the average cost.

@@ -13,11 +13,12 @@ namespace AutoFinance.Broker.InteractiveBrokers.EventArgs
         /// <param name="id">The error Id</param>
         /// <param name="errorCode">The error code</param>
         /// <param name="errorMsg">The error message</param>
-        public ErrorEventArgs(int id, int errorCode, string errorMsg)
+        public ErrorEventArgs(int id, int errorCode, string errorMsg, string advancedOrderRejectJson)
         {
             this.Id = id;
             this.ErrorCode = errorCode;
             this.ErrorMessage = errorMsg;
+            AdvancedOrderRejectJson=advancedOrderRejectJson;
         }
 
         /// <summary>
@@ -46,5 +47,6 @@ namespace AutoFinance.Broker.InteractiveBrokers.EventArgs
             get;
             private set;
         }
+        public string AdvancedOrderRejectJson { get; }
     }
 }

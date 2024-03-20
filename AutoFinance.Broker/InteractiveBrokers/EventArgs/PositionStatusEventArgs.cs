@@ -16,7 +16,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <param name="contract">The contract</param>
         /// <param name="position">The position quantity</param>
         /// <param name="averageCost">The average cost</param>
-        public PositionStatusEventArgs(string account, Contract contract, double position, double averageCost)
+        public PositionStatusEventArgs(string account, Contract contract, decimal position, double averageCost)
         {
             this.Account = account;
             this.Contract = contract;
@@ -45,7 +45,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <summary>
         /// Gets the position
         /// </summary>
-        public double Position
+        public decimal Position
         {
             get;
             private set;
