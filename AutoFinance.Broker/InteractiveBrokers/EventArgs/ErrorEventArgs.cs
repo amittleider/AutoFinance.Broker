@@ -47,6 +47,10 @@ namespace AutoFinance.Broker.InteractiveBrokers.EventArgs
             get;
             private set;
         }
-        public string AdvancedOrderRejectJson { get; }
+        public string AdvancedOrderRejectJson 
+        { 
+            get; 
+            private set;
+        }
     }
 }
