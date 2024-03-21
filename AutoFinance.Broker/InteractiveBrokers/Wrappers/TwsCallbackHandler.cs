@@ -394,7 +394,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <inheritdoc/>
         public void error(string str)
         {
-            var eventArgs = new ErrorEventArgs(-1, -1, str,"");
+            var eventArgs = new ErrorEventArgs(-1, -1, str, "");
             this.ErrorEvent?.Invoke(this, eventArgs);
         }
 
