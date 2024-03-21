@@ -45,7 +45,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <param name="takePrice">The take price</param>
         /// <param name="stopPrice">The stop price</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task<bool> PlaceBracketOrder(Contract contract, string entryAction, double quantity, double takePrice, double stopPrice)
+        public async Task<bool> PlaceBracketOrder(Contract contract, string entryAction, decimal quantity, double takePrice, double stopPrice)
         {
             await this.EnsureConnectedAsync();
 
@@ -104,7 +104,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <param name="takePrice">The take profit price</param>
         /// <param name="stopPrice">The stop loss price</param>
         /// <returns>True if the orders are correctly placed</returns>
-        public async Task<bool> PlaceBracketOrder(Contract contract, string entryAction, double quantity, double entryOrderPrice, double takePrice, double stopPrice)
+        public async Task<bool> PlaceBracketOrder(Contract contract, string entryAction, decimal quantity, double entryOrderPrice, double takePrice, double stopPrice)
         {
             await this.EnsureConnectedAsync();
 
@@ -165,7 +165,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         /// <param name="stopActivationPrice">The stop loss price</param>
         /// <param name="stopLimitPrice">The price to put the limit after the stop activation price is touched</param>
         /// <returns>True if the orders are correctly placed</returns>
-        public async Task<bool> PlaceBracketOrder(Contract contract, string entryAction, double quantity, double entryOrderPrice, double takePrice, double stopActivationPrice, double stopLimitPrice)
+        public async Task<bool> PlaceBracketOrder(Contract contract, string entryAction, decimal quantity, double entryOrderPrice, double takePrice, double stopActivationPrice, double stopLimitPrice)
         {
             await this.EnsureConnectedAsync();
 

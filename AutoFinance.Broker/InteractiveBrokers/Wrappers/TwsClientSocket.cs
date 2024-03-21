@@ -73,7 +73,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <param name="orderId">The order Id to cancel</param>
         public void CancelOrder(int orderId)
         {
-            this.EClientSocket.cancelOrder(orderId);
+            this.EClientSocket.cancelOrder(orderId, "");
         }
 
         /// <summary>

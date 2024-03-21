@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29806.167
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34701.34
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoFinance.Broker", "AutoFinance.Broker\AutoFinance.Broker.csproj", "{C1881ABC-5F92-4B02-88CF-7E4DB511B6EE}"
 EndProject
@@ -9,9 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoFinance.Broker.Integrat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoFinance.Broker.UnitTests", "AutoFinance.Broker.UnitTests\AutoFinance.Broker.UnitTests.csproj", "{3E73FA1A-B9DE-4300-9E2B-12D1893B4E8E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tws-api-dotnet-standard", "tws-api-dotnet-standard", "{3D6BACDA-4961-4C61-9278-400C0F578E9D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InteractiveBrokers.TwsClient", "tws-api-dotnet-standard\InteractiveBrokers.TwsClient\InteractiveBrokers.TwsClient.csproj", "{9A403482-A5B6-4838-AB97-96E51E3F1CFD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InteractiveBrokers.TwsClient", "InteractiveBrokers.TwsClient\InteractiveBrokers.TwsClient.csproj", "{BE07C13E-2846-43D2-A5B9-3E6980D5D2A2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,24 +57,21 @@ Global
 		{3E73FA1A-B9DE-4300-9E2B-12D1893B4E8E}.Release|x64.Build.0 = Release|Any CPU
 		{3E73FA1A-B9DE-4300-9E2B-12D1893B4E8E}.Release|x86.ActiveCfg = Release|Any CPU
 		{3E73FA1A-B9DE-4300-9E2B-12D1893B4E8E}.Release|x86.Build.0 = Release|Any CPU
-		{9A403482-A5B6-4838-AB97-96E51E3F1CFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9A403482-A5B6-4838-AB97-96E51E3F1CFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9A403482-A5B6-4838-AB97-96E51E3F1CFD}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{9A403482-A5B6-4838-AB97-96E51E3F1CFD}.Debug|x64.Build.0 = Debug|Any CPU
-		{9A403482-A5B6-4838-AB97-96E51E3F1CFD}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{9A403482-A5B6-4838-AB97-96E51E3F1CFD}.Debug|x86.Build.0 = Debug|Any CPU
-		{9A403482-A5B6-4838-AB97-96E51E3F1CFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9A403482-A5B6-4838-AB97-96E51E3F1CFD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9A403482-A5B6-4838-AB97-96E51E3F1CFD}.Release|x64.ActiveCfg = Release|Any CPU
-		{9A403482-A5B6-4838-AB97-96E51E3F1CFD}.Release|x64.Build.0 = Release|Any CPU
-		{9A403482-A5B6-4838-AB97-96E51E3F1CFD}.Release|x86.ActiveCfg = Release|Any CPU
-		{9A403482-A5B6-4838-AB97-96E51E3F1CFD}.Release|x86.Build.0 = Release|Any CPU
+		{BE07C13E-2846-43D2-A5B9-3E6980D5D2A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE07C13E-2846-43D2-A5B9-3E6980D5D2A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE07C13E-2846-43D2-A5B9-3E6980D5D2A2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BE07C13E-2846-43D2-A5B9-3E6980D5D2A2}.Debug|x64.Build.0 = Debug|Any CPU
+		{BE07C13E-2846-43D2-A5B9-3E6980D5D2A2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BE07C13E-2846-43D2-A5B9-3E6980D5D2A2}.Debug|x86.Build.0 = Debug|Any CPU
+		{BE07C13E-2846-43D2-A5B9-3E6980D5D2A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE07C13E-2846-43D2-A5B9-3E6980D5D2A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE07C13E-2846-43D2-A5B9-3E6980D5D2A2}.Release|x64.ActiveCfg = Release|Any CPU
+		{BE07C13E-2846-43D2-A5B9-3E6980D5D2A2}.Release|x64.Build.0 = Release|Any CPU
+		{BE07C13E-2846-43D2-A5B9-3E6980D5D2A2}.Release|x86.ActiveCfg = Release|Any CPU
+		{BE07C13E-2846-43D2-A5B9-3E6980D5D2A2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{9A403482-A5B6-4838-AB97-96E51E3F1CFD} = {3D6BACDA-4961-4C61-9278-400C0F578E9D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A6CB732A-0614-44CD-A2E6-8A85535EA667}

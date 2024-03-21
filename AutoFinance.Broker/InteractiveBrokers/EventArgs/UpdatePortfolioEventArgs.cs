@@ -21,7 +21,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.EventArgs
         /// <param name="realizedPNL">The realized PNL.</param>
         /// <param name="accountName">The account name.</param>
         public UpdatePortfolioEventArgs(
-            Contract contract, double position, double marketPrice, double marketValue, double averageCost,
+            Contract contract, decimal position, double marketPrice, double marketValue, double averageCost,
             double unrealizedPNL, double realizedPNL, string accountName)
        {
            this.Contract = contract;
@@ -39,7 +39,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.EventArgs
         /// </summary>
         public Contract Contract { get; private set; }
 
-        public double Position { get; private set; }
+        public decimal Position { get; private set; }
 
         public double MarketPrice { get; private set; }
 

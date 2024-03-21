@@ -382,7 +382,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <param name="id">The request Id (?)</param>
         /// <param name="errorCode">The error code</param>
         /// <param name="errorMsg">The error message</param>
-        void error(int id, int errorCode, string errorMsg);
+        void error(int id, int errorCode, string errorMsg, string advancedOrderRejectJson);
 
         /// <summary>
         /// The error callback from TWS
@@ -424,7 +424,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <param name="count">The count</param>
         /// <param name="WAP">The weighted average price</param>
         /// <param name="hasGaps">If the data has gaps</param>
-        void historicalData(int reqId, string date, double open, double high, double low, double close, int volume, int count, double WAP, bool hasGaps);
+        void historicalData(int reqId, string date, double open, double high, double low, double close, decimal volume, int count, decimal WAP, bool hasGaps);
 
         void historicalDataEnd(int reqId, string start, string end);
 
@@ -446,7 +446,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <param name="unrealizedPnL">The unrealized PnL</param>
         /// <param name="realizedPnL">The realized PnL</param>
         /// <param name="value">The position value</param>
-        void pnlSingle(int reqId, int pos, double dailyPnL, double unrealizedPnL, double realizedPnL, double value);
+        void pnlSingle(int reqId, decimal pos, double dailyPnL, double unrealizedPnL, double realizedPnL, double value);
 
         void managedAccounts(string accountsList);
 
@@ -458,17 +458,17 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
 
         void openOrderEnd();
 
-        void orderStatus(int orderId, string status, double filled, double remaining, double avgFillPrice, int permId, int parentId, double lastFillPrice, int clientId, string whyHeld, double mktCapPrice);
+        void orderStatus(int orderId, string status, decimal filled, decimal remaining, double avgFillPrice, int permId, int parentId, double lastFillPrice, int clientId, string whyHeld, double mktCapPrice);
 
-        void position(string account, Contract contract, double pos, double avgCost);
+        void position(string account, Contract contract, decimal pos, double avgCost);
 
         void positionEnd();
 
-        void positionMulti(int requestId, string account, string modelCode, Contract contract, double pos, double avgCost);
+        void positionMulti(int requestId, string account, string modelCode, Contract contract, decimal pos, double avgCost);
 
         void positionMultiEnd(int requestId);
 
-        void realtimeBar(int reqId, long time, double open, double high, double low, double close, long volume, double WAP, int count);
+        void realtimeBar(int reqId, long time, double open, double high, double low, double close, decimal volume, decimal WAP, int count);
 
         void receiveFA(int faDataType, string faXmlData);
 
@@ -488,11 +488,11 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
 
         void tickGeneric(int tickerId, int field, double value);
 
-        void tickOptionComputation(int tickerId, int field, double impliedVolatility, double delta, double optPrice, double pvDividend, double gamma, double vega, double theta, double undPrice);
+        void tickOptionComputation(int tickerId, int field, int tickAttrib, double impliedVolatility, double delta, double optPrice, double pvDividend, double gamma, double vega, double theta, double undPrice);
 
         void tickPrice(int tickerId, int field, double price, int canAutoExecute);
 
-        void tickSize(int tickerId, int field, int size);
+        void tickSize(int tickerId, int field, decimal size);
 
         void tickSnapshotEnd(int tickerId);
 
@@ -502,13 +502,13 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
 
         void updateAccountValue(string key, string value, string currency, string accountName);
 
-        void updateMktDepth(int tickerId, int position, int operation, int side, double price, int size);
+        void updateMktDepth(int tickerId, int position, int operation, int side, double price, decimal size);
 
-        void updateMktDepthL2(int tickerId, int position, string marketMaker, int operation, int side, double price, int size);
+        void updateMktDepthL2(int tickerId, int position, string marketMaker, int operation, decimal side, double price, int size);
 
         void updateNewsBulletin(int msgId, int msgType, string message, string origExchange);
 
-        void updatePortfolio(Contract contract, double position, double marketPrice, double marketValue, double averageCost, double unrealisedPNL, double realisedPNL, string accountName);
+        void updatePortfolio(Contract contract, decimal position, double marketPrice, double marketValue, double averageCost, double unrealisedPNL, double realisedPNL, string accountName);
 
         void verifyAndAuthCompleted(bool isSuccessful, string errorText);
 

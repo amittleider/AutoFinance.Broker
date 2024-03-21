@@ -2,6 +2,6 @@
 {
     internal class TestConstants
     {
-        public const int Port = 4002;
+        public const int Port = 7497;
     }
 }

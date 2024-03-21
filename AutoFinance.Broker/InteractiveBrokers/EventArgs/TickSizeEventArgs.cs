@@ -13,7 +13,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.EventArgs
         /// <param name="tickerId">The ticker id</param>
         /// <param name="field">The ticker field</param>
         /// <param name="size">The size</param>
-        public TickSizeEventArgs(int tickerId, int field, int size)
+        public TickSizeEventArgs(int tickerId, int field, decimal size)
         {
             this.TickerId = tickerId;
             this.Field = field;
@@ -41,7 +41,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.EventArgs
         /// <summary>
         /// Gets the size
         /// </summary>
-        public int Size
+        public decimal Size
         {
             get;
             private set;

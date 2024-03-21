@@ -21,7 +21,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.EventArgs
         /// <param name="lastFillPrice">The last fill price of the order</param>
         /// <param name="clientId">The client Id that sent the order. The client Id should be static in this application.</param>
         /// <param name="whyHeld">Why held (?)</param>
-        public OrderStatusEventArgs(int orderId, string status, double filled, double remaining, double avgFillPrice, int permId, int parentId, double lastFillPrice, int clientId, string whyHeld)
+        public OrderStatusEventArgs(int orderId, string status, decimal filled, decimal remaining, double avgFillPrice, int permId, int parentId, double lastFillPrice, int clientId, string whyHeld)
         {
             this.OrderId = orderId;
             this.Status = status;
@@ -56,7 +56,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.EventArgs
         /// <summary>
         /// Gets the amount of shares filled
         /// </summary>
-        public double Filled
+        public decimal Filled
         {
             get;
             private set;
@@ -65,7 +65,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.EventArgs
         /// <summary>
         /// Gets the amount of shares remaining
         /// </summary>
-        public double Remaining
+        public decimal Remaining
         {
             get;
             private set;

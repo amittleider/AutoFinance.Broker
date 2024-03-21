@@ -18,7 +18,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <param name="unrealizedPnL">The unrealized PnL</param>
         /// <param name="realizedPnL">The realized PnL</param>
         /// <param name="value">The position value</param>
-        public PnLSingleEventArgs(int requestId, int position, double dailyPnL, double unrealizedPnL, double realizedPnL, double value)
+        public PnLSingleEventArgs(int requestId, decimal position, double dailyPnL, double unrealizedPnL, double realizedPnL, double value)
         {
             this.RequestId = requestId;
             this.Position = position;
@@ -40,7 +40,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Wrappers
         /// <summary>
         /// Gets the position size
         /// </summary>
-        public int Position
+        public decimal Position
         {
             get;
             private set;
