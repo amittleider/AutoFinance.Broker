@@ -302,7 +302,7 @@ namespace AutoFinance.Broker.InteractiveBrokers.Controllers
         public Task<List<HistoricalDataEventArgs>> GetHistoricalDataAsync(Contract contract, DateTime endDateTime, TwsDuration duration, TwsBarSizeSetting barSizeSetting, TwsHistoricalDataRequestType whatToShow, bool useRth = true, bool formatDate = true)
         {
             var useRthToInt = useRth ? 1 : 0;
-            var formatDateToInt = formatDate ? 1 : 0;
+            var formatDateToInt = formatDate ? 1 : 2;
             return this.GetHistoricalDataAsync(
                 contract,
                 endDateTime,
